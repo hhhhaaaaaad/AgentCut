@@ -1,0 +1,26 @@
+# Ralph 执行进度
+
+## 任务
+顺序执行：A) RENDER 任务落库 + 结果端点；B) README + 启动脚本；C) 联调环境验证。
+
+## 迭代记录
+
+### US-A（完成）
+- RenderTaskService 增加 RENDER 任务落库：createPending → start → render → markSuccess（resultJson 存 outputPath/duration/size）。
+- TaskController 新增 GET /render/{taskId}/result 返回渲染结果。
+- 验证：mvn compile BUILD SUCCESS。
+
+### US-B（完成）
+- README 补充「前置依赖」：ffmpeg/ffprobe 必装、Docker 可选（内存仓储+本地存储）、Java/Python/Node 版本。
+- 补充 Python 模拟模式说明（无 DASHSCOPE_API_KEY 时 SIMULATE=true）。
+
+### US-C（完成，环境验证 + 阻塞点记录）
+- 环境探测：Docker 28.5.2（daemon 未运行）、Python 3.12.7（但 fastapi/uvicorn/langchain/av 未装，仅 pydantic 2.8.2）、Node 22.12.0、npm 10.9.0。
+- **阻塞点（需人工处理才能真联调）**：
+  1. ffmpeg/ffprobe 未安装 → 渲染步骤会报错。
+  2. Python 依赖未装 → `pip install -r requirements.txt`。
+  3. Docker daemon 未运行 → MySQL/Redis/MinIO 起不来（骨架用内存实现，非硬阻塞）。
+
+## 学到的模式
+- 后端 DDD 结构、端口-实现分离、Jackson mix-in 多态、FFmpeg plan→命令编译 均已落地并可编译。
+- 子 agent 在「需读大代码库/精确对齐契约」的 Java 任务上会卡死；自包含的前端/Python 任务能顺利完成。后续同类任务优先亲手做或拆细。
