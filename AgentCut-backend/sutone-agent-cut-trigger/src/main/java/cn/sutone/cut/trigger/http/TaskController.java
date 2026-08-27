@@ -63,4 +63,14 @@ public class TaskController {
         String planJson = body.getOrDefault("planJson", "{}");
         analyzeTaskService.handleCallback(taskId, reportJson, planJson);
     }
+
+    /** 查询渲染结果（成片 outputPath） */
+    @GetMapping("/render/{taskId}/result")
+    public Object renderResult(@PathVariable Long taskId) throws Exception {
+        TaskEntity t = taskService.query(taskId);
+        if (t == null || t.getResultJson() == null) {
+            return null;
+        }
+        return objectMapper.readTree(t.getResultJson());
+    }
 }

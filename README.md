@@ -33,9 +33,15 @@ Maven 多模块（DDD 分层），`groupId=cn.sutone`，包名 `cn.sutone.cut.*`
 
 模块依赖关系：`app → domain + infrastructure`；`domain → types`；`infrastructure → domain`；`trigger → app + api`；`api → types`。
 
+## 前置依赖
+
+- **ffmpeg + ffprobe（必装）**：渲染引擎通过 ProcessBuilder 调用，需在 PATH 中。Windows 从 [ffmpeg.org](https://ffmpeg.org) 下载 static build 并加入 PATH；macOS `brew install ffmpeg`；Linux `apt install ffmpeg`。缺了它「应用方案」步骤会报错。
+- **Docker（可选）**：`docker-compose.yml` 提供 MySQL/Redis/RocketMQ/MinIO。但 MVP 骨架用**内存仓储 + 本地文件存储**，不起数据库也能跑通「分析→编辑→渲染」主流程。
+- Java 17、Python 3.11+、Node 18+。
+
 ## 快速开始
 
-### 1. 基础设施（本地中间件）
+### 1. 基础设施（本地中间件，可选）
 
 ```bash
 docker compose up -d
@@ -56,6 +62,7 @@ mvn -pl sutone-agent-cut-app -am spring-boot:run
 ```bash
 cd AgentCut-ai
 pip install -r requirements.txt
+# 未设置 DASHSCOPE_API_KEY 时走模拟模式（SIMULATE=true，工具返回占位数据，服务可端到端跑通）
 export DASHSCOPE_API_KEY=<你的密钥>
 uvicorn app.main:app --reload --port 8000
 # 健康检查：GET http://localhost:8000/health

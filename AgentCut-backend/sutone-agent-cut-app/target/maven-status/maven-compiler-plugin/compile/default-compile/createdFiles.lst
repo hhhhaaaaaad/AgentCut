@@ -1,7 +1,10 @@
 cn\sutone\cut\app\service\TaskService.class
+cn\sutone\cut\app\config\WebConfig$1.class
 cn\sutone\cut\app\service\RenderTaskService.class
 cn\sutone\cut\app\service\AnalyzeTaskService.class
+cn\sutone\cut\app\config\WebConfig.class
 cn\sutone\cut\app\config\DomainServiceConfig.class
+cn\sutone\cut\app\config\WebConfig$OperationTypeMixin.class
 cn\sutone\cut\app\service\ProjectService.class
 cn\sutone\cut\app\AgentCutApplication.class
 cn\sutone\cut\app\service\PlanService.class

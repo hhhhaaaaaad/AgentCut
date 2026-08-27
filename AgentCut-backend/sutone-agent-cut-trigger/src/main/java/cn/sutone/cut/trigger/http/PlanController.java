@@ -7,13 +7,15 @@ import cn.sutone.cut.domain.render.model.valobj.RenderOutput;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 
 /**
- * 剪辑方案接口（查询/版本/回滚/应用）。
+ * 剪辑方案接口（查询/保存/版本/回滚/应用）。
  */
 @RestController
 @RequestMapping("/api/v1")
@@ -30,6 +32,13 @@ public class PlanController {
     @GetMapping("/plans/{projectId}")
     public PlanEntity queryPlan(@PathVariable Long projectId) {
         return planService.queryPlan(projectId);
+    }
+
+    /** 保存方案（生成新版本） */
+    @PutMapping("/plans/{projectId}")
+    public void savePlan(@PathVariable Long projectId, @RequestBody PlanEntity plan) {
+        plan.setProjectId(projectId);
+        planService.savePlan(plan);
     }
 
     @GetMapping("/plans/{projectId}/versions")
