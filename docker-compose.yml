@@ -1,0 +1,99 @@
+# AgentCut 本地开发基础设施
+# 密码为占位默认值，请通过 .env 或环境变量覆盖后使用
+version: "3.8"
+
+services:
+  mysql:
+    image: mysql:8
+    container_name: agentcut-mysql
+    environment:
+      # 占位密码：请用 .env 的 MYSQL_ROOT_PASSWORD 覆盖
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD:-root123456}
+      MYSQL_DATABASE: ${MYSQL_DATABASE:-agentcut}
+      TZ: Asia/Shanghai
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+    command:
+      - --character-set-server=utf8mb4
+      - --collation-server=utf8mb4_unicode_ci
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+
+  redis:
+    image: redis:7
+    container_name: agentcut-redis
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    command: ["redis-server", "--appendonly", "yes"]
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+
+  rocketmq-nameserver:
+    image: apache/rocketmq:5.2.0
+    container_name: agentcut-rocketmq-nameserver
+    command: sh mqnamesrv
+    ports:
+      - "9876:9876"
+    volumes:
+      - rocketmq_nameserver_logs:/home/rocketmq/logs
+    healthcheck:
+      test: ["CMD", "sh", "-c", "echo > /dev/tcp/localhost/9876"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+
+  rocketmq-broker:
+    image: apache/rocketmq:5.2.0
+    container_name: agentcut-rocketmq-broker
+    command: sh mqbroker -n rocketmq-nameserver:9876 --enable-proxy
+    depends_on:
+      rocketmq-nameserver:
+        condition: service_healthy
+    environment:
+      NAMESRV_ADDR: rocketmq-nameserver:9876
+      TZ: Asia/Shanghai
+    ports:
+      - "10911:10911" # broker
+      - "10909:10909" # quick start (vip 通道关闭时使用)
+      - "8081:8080"   # rocketmq-dashboard (可选，代理模式)
+    volumes:
+      - rocketmq_broker_logs:/home/rocketmq/logs
+      - rocketmq_broker_store:/home/rocketmq/store
+
+  minio:
+    image: minio/minio:RELEASE.2024-05-28T17-09-47Z
+    container_name: agentcut-minio
+    command: server /data --console-address ":9001"
+    environment:
+      # 占位账号密码：请用 .env 的 MINIO_ROOT_USER / MINIO_ROOT_PASSWORD 覆盖
+      MINIO_ROOT_USER: ${MINIO_ROOT_USER:-minioadmin}
+      MINIO_ROOT_PASSWORD: ${MINIO_ROOT_PASSWORD:-minioadmin123}
+      TZ: Asia/Shanghai
+    ports:
+      - "9000:9000"   # S3 API
+      - "9001:9001"   # 控制台
+    volumes:
+      - minio_data:/data
+    healthcheck:
+      test: ["CMD", "mc", "ready", "local"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+
+volumes:
+  mysql_data:
+  redis_data:
+  rocketmq_nameserver_logs:
+  rocketmq_broker_logs:
+  rocketmq_broker_store:
+  minio_data:

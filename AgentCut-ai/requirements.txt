@@ -1,0 +1,25 @@
+# AgentCut 分析服务依赖（Python 3.11）
+# 版本为合理下限，未锁定，安装时取满足条件的最新版本
+
+# --- Web 框架 ---
+fastapi>=0.110
+uvicorn[standard]>=0.29
+python-multipart>=0.0.9
+httpx>=0.27                     # 回调 callbackUrl
+
+# --- Agent 编排 ---
+langchain>=0.2
+langchain-openai>=0.1           # ChatOpenAI（with_structured_output 用）
+langgraph>=0.1
+openai>=1.30
+
+# --- 数据约束 ---
+pydantic>=2.6
+
+# --- 视频处理 ---
+av>=13.0                      # PyAV（import av）
+opencv-python>=4.9
+scenedetect>=0.6.4
+
+# --- 语音转写 ---
+funasr>=1.1.5

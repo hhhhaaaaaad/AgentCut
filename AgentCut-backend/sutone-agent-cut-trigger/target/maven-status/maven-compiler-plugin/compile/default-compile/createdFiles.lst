@@ -1,0 +1,4 @@
+cn\sutone\cut\trigger\http\PlanController.class
+cn\sutone\cut\trigger\http\TaskController.class
+cn\sutone\cut\trigger\http\HealthController.class
+cn\sutone\cut\trigger\http\ProjectController.class

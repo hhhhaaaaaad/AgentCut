@@ -1,0 +1,164 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://agentcut.sutone.cn/schemas/plan.schema.json",
+  "title": "AgentCut 剪辑方案 Schema",
+  "description": "Agent 生成、人可编辑、引擎可执行的剪辑方案文档。MVP 版本，op 范围：keep/delete、speed、crop、subtitle、volume、mute、bgm。",
+  "type": "object",
+  "required": ["schemaVersion", "planVersion", "projectId", "source", "global", "timeline"],
+  "additionalProperties": false,
+  "properties": {
+    "schemaVersion": { "type": "string", "const": "1.0" },
+    "planVersion": { "type": "integer", "minimum": 1 },
+    "projectId": { "type": "string" },
+    "title": { "type": "string" },
+    "source": { "$ref": "#/definitions/source" },
+    "global": { "$ref": "#/definitions/global" },
+    "timeline": { "type": "array", "items": { "$ref": "#/definitions/segment" } },
+    "transitions": { "type": "array", "items": { "$ref": "#/definitions/transition" } }
+  },
+  "definitions": {
+    "timeRange": {
+      "type": "object",
+      "required": ["start", "end"],
+      "additionalProperties": false,
+      "properties": {
+        "start": { "type": "number", "minimum": 0 },
+        "end": { "type": "number", "minimum": 0 }
+      }
+    },
+    "source": {
+      "type": "object",
+      "required": ["assetId", "url", "duration", "fps", "width", "height"],
+      "additionalProperties": false,
+      "properties": {
+        "assetId": { "type": "string" },
+        "url": { "type": "string", "format": "uri" },
+        "duration": { "type": "number", "minimum": 0 },
+        "fps": { "type": "number", "exclusiveMinimum": 0 },
+        "width": { "type": "integer", "exclusiveMinimum": 0 },
+        "height": { "type": "integer", "exclusiveMinimum": 0 }
+      }
+    },
+    "outputConfig": {
+      "type": "object",
+      "required": ["width", "height", "fps"],
+      "additionalProperties": false,
+      "properties": {
+        "width": { "type": "integer", "exclusiveMinimum": 0 },
+        "height": { "type": "integer", "exclusiveMinimum": 0 },
+        "fps": { "type": "number", "exclusiveMinimum": 0 },
+        "codec": { "type": "string", "default": "libx264" },
+        "bitrate": { "type": "string" }
+      }
+    },
+    "bgm": {
+      "type": "object",
+      "required": ["url"],
+      "additionalProperties": false,
+      "properties": {
+        "url": { "type": "string", "format": "uri" },
+        "volume": { "type": "number", "minimum": 0, "maximum": 1, "default": 0.3 },
+        "loop": { "type": "boolean", "default": true }
+      }
+    },
+    "subtitleStyle": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "fontSize": { "type": "integer", "minimum": 1 },
+        "color": { "type": "string", "pattern": "^#[0-9a-fA-F]{6}$" },
+        "position": { "type": "string", "enum": ["top", "bottom", "center"] }
+      }
+    },
+    "global": {
+      "type": "object",
+      "required": ["output"],
+      "additionalProperties": false,
+      "properties": {
+        "output": { "$ref": "#/definitions/outputConfig" },
+        "bgm": { "$ref": "#/definitions/bgm" },
+        "subtitleStyle": { "$ref": "#/definitions/subtitleStyle" }
+      }
+    },
+    "segment": {
+      "type": "object",
+      "required": ["id", "keep", "sourceRange"],
+      "additionalProperties": false,
+      "properties": {
+        "id": { "type": "string", "pattern": "^[A-Za-z0-9_-]+$" },
+        "keep": { "type": "boolean" },
+        "sourceRange": { "$ref": "#/definitions/timeRange" },
+        "operations": { "type": "array", "items": { "$ref": "#/definitions/operation" } }
+      }
+    },
+    "operation": {
+      "oneOf": [
+        { "$ref": "#/definitions/opSpeed" },
+        { "$ref": "#/definitions/opCrop" },
+        { "$ref": "#/definitions/opSubtitle" },
+        { "$ref": "#/definitions/opVolume" },
+        { "$ref": "#/definitions/opMute" }
+      ]
+    },
+    "opSpeed": {
+      "type": "object",
+      "required": ["type", "rate"],
+      "additionalProperties": false,
+      "properties": {
+        "type": { "const": "speed" },
+        "rate": { "type": "number", "exclusiveMinimum": 0 }
+      }
+    },
+    "opCrop": {
+      "type": "object",
+      "required": ["type", "x", "y", "width", "height"],
+      "additionalProperties": false,
+      "properties": {
+        "type": { "const": "crop" },
+        "x": { "type": "number", "minimum": 0 },
+        "y": { "type": "number", "minimum": 0 },
+        "width": { "type": "number", "exclusiveMinimum": 0 },
+        "height": { "type": "number", "exclusiveMinimum": 0 }
+      }
+    },
+    "opSubtitle": {
+      "type": "object",
+      "required": ["type", "text", "start", "end"],
+      "additionalProperties": false,
+      "properties": {
+        "type": { "const": "subtitle" },
+        "text": { "type": "string" },
+        "start": { "type": "number", "minimum": 0 },
+        "end": { "type": "number", "minimum": 0 }
+      }
+    },
+    "opVolume": {
+      "type": "object",
+      "required": ["type", "volume"],
+      "additionalProperties": false,
+      "properties": {
+        "type": { "const": "volume" },
+        "volume": { "type": "number", "minimum": 0, "maximum": 1 }
+      }
+    },
+    "opMute": {
+      "type": "object",
+      "required": ["type"],
+      "additionalProperties": false,
+      "properties": {
+        "type": { "const": "mute" }
+      }
+    },
+    "transition": {
+      "type": "object",
+      "required": ["from", "to", "type"],
+      "additionalProperties": false,
+      "properties": {
+        "from": { "type": "string" },
+        "to": { "type": "string" },
+        "type": { "type": "string", "enum": ["fade", "none"] },
+        "duration": { "type": "number", "minimum": 0, "default": 0.5 }
+      }
+    }
+  }
+}
