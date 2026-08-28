@@ -48,4 +48,13 @@ public class InMemoryPlanRepository implements IPlanRepository {
         Map<Integer, String> map = versions.get(projectId);
         return map == null ? null : map.get(versionNo);
     }
+
+    @Override
+    public int nextVersionNo(String projectId) {
+        Map<Integer, String> map = versions.get(projectId);
+        if (map == null || map.isEmpty()) {
+            return 1;
+        }
+        return map.keySet().stream().mapToInt(Integer::intValue).max().getAsInt() + 1;
+    }
 }

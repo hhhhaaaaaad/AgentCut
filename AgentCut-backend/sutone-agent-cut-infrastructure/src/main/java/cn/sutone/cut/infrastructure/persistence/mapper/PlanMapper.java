@@ -43,4 +43,7 @@ public interface PlanMapper {
 
     @Select("SELECT content_json FROM plan_version WHERE plan_id = #{planId} AND version_no = #{versionNo}")
     String selectVersionContent(@Param("planId") Long planId, @Param("versionNo") int versionNo);
+
+    @Select("SELECT COALESCE(MAX(version_no), 0) FROM plan_version WHERE plan_id = #{planId}")
+    Integer selectMaxVersionNo(@Param("planId") Long planId);
 }

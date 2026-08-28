@@ -25,7 +25,9 @@ public class PlanDomainService {
     public void savePlan(PlanEntity plan, String contentJson) {
         validate(plan);
         planRepository.save(plan);
-        planRepository.saveVersion(plan.getProjectId(), plan.getPlanVersion(), contentJson);
+        // 版本号由系统递增（LLM 的 planVersion 是方案文档字段，非存档版本号）
+        int versionNo = planRepository.nextVersionNo(plan.getProjectId());
+        planRepository.saveVersion(plan.getProjectId(), versionNo, contentJson);
     }
 
     /**

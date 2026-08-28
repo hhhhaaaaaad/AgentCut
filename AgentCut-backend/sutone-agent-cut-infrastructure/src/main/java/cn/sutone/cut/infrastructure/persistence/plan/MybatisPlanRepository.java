@@ -69,6 +69,16 @@ public class MybatisPlanRepository implements IPlanRepository {
         return planId == null ? null : planMapper.selectVersionContent(planId, versionNo);
     }
 
+    @Override
+    public int nextVersionNo(String projectId) {
+        Long planId = planMapper.selectPlanId(toProjectId(projectId));
+        if (planId == null) {
+            return 1;
+        }
+        Integer max = planMapper.selectMaxVersionNo(planId);
+        return max == null ? 1 : max + 1;
+    }
+
     private Long toProjectId(String projectId) {
         try {
             return Long.parseLong(projectId);

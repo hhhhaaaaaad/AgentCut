@@ -25,4 +25,7 @@ public interface IPlanRepository {
 
     /** 查询某项目指定版本的内容 JSON */
     String queryVersionContent(String projectId, int versionNo);
+
+    /** 查询某项目下一个版本号（当前最大版本 + 1） */
+    int nextVersionNo(String projectId);
 }
