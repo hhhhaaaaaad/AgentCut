@@ -36,6 +36,14 @@ def _simulate_scenes(duration: float, n: int = 6) -> List[TimeRange]:
     ]
 
 
+def _decide_max_scenes(duration: float) -> int:
+    """根据视频时长决定场景数上限（每 5 秒约 1 帧，最少 8，封顶 64）。
+
+    帧数随视频长度合理变化：短视频保留足够细节，长视频受 VLM 上下文限制封顶。
+    """
+    return max(8, min(64, int(duration / 5)))
+
+
 def _to_seconds(tc) -> float:
     """把 scenedetect 的 FrameTimecode 兼容转成秒。"""
     get = getattr(tc, "get_seconds", None)
@@ -46,7 +54,6 @@ def detect_scenes(
     video_path: Optional[str],
     threshold: float = 27.0,
     min_scene_len: float = 0.4,
-    max_scenes: int = 20,
 ) -> List[TimeRange]:
     """检测场景边界，返回按时间升序的场景区间列表。"""
     meta = probe_video(video_path)
@@ -83,7 +90,8 @@ def detect_scenes(
                 scenes.append(TimeRange(start=round(s, 3), end=round(e, 3)))
         if not scenes:  # 全部过短则整片视为一个场景
             return [TimeRange(start=0.0, end=duration)]
-        # 场景过多时均匀采样到上限（避免下游 VLM 一次处理过多帧导致请求超限）
+        # 场景过多时按动态预算均匀采样（预算随视频时长变化，避免固定帧数对长视频过稀）
+        max_scenes = _decide_max_scenes(duration)
         if len(scenes) > max_scenes:
             step = len(scenes) / max_scenes
             scenes = [scenes[int(i * step)] for i in range(max_scenes)]
