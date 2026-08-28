@@ -78,13 +78,17 @@ def _build_understanding_prompt(scenes, transcripts, meta) -> str:
     transcript_text = "\n".join(
         f"[{t.start:.1f}s-{t.end:.1f}s] {t.text}" for t in transcripts
     )
+    # 截断转写文本，避免 prompt 过长导致 VLM 输出暴涨/超限
+    if len(transcript_text) > 800:
+        transcript_text = transcript_text[:800] + "...(已截断)"
     return (
         "你是视频内容分析助手。请基于以下场景时间线与语音转写，判断每个场景的内容、重要度，"
         "并给出剪辑建议。\n"
         f"视频元数据: {meta}\n"
         f"场景列表:\n{scene_overview}\n"
         f"语音转写:\n{transcript_text}\n"
-        '只输出 JSON，格式: '
+        "每个场景描述一句话即可，不要复述转写原文。"
+        "只输出 JSON，格式: "
         '{"summary":"...","sceneDescriptions":["..."],"sceneTags":[["..."]],'
         '"sceneImportance":[0~1],"highlights":[{"sceneIndex":0,"start":0.0,"end":1.0,'
         '"reason":"..","score":0.8}],'

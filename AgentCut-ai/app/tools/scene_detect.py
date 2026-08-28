@@ -37,11 +37,12 @@ def _simulate_scenes(duration: float, n: int = 6) -> List[TimeRange]:
 
 
 def _decide_max_scenes(duration: float) -> int:
-    """根据视频时长决定场景数上限（每 5 秒约 1 帧，最少 8，封顶 64）。
+    """根据视频时长决定场景数上限（每 8 秒约 1 帧，最少 8，封顶 24）。
 
-    帧数随视频长度合理变化：短视频保留足够细节，长视频受 VLM 上下文限制封顶。
+    帧数随视频长度合理变化；封顶 24 是为了控制一次性传给 VLM 的帧数，
+    避免请求体过大导致处理缓慢/超时（实测 36 帧会显著变慢）。
     """
-    return max(8, min(64, int(duration / 5)))
+    return max(8, min(24, int(duration / 8)))
 
 
 def _to_seconds(tc) -> float:
