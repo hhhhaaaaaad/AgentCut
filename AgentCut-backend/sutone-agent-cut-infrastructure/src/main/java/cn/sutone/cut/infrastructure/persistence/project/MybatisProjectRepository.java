@@ -2,44 +2,46 @@ package cn.sutone.cut.infrastructure.persistence.project;
 
 import cn.sutone.cut.domain.project.adapter.repository.IProjectRepository;
 import cn.sutone.cut.domain.project.model.entity.ProjectEntity;
+import cn.sutone.cut.infrastructure.persistence.mapper.ProjectMapper;
 import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.atomic.AtomicLong;
 
 /**
- * 项目仓储 MVP 内存实现。后续替换为 MyBatis Mapper。
+ * 项目仓储 MyBatis 实现（mysql profile）。
  */
 @Repository
-@Profile("!mysql")
-public class InMemoryProjectRepository implements IProjectRepository {
+@Profile("mysql")
+public class MybatisProjectRepository implements IProjectRepository {
 
-    private final Map<Long, ProjectEntity> store = new ConcurrentHashMap<>();
-    private final AtomicLong idGen = new AtomicLong(1);
+    private final ProjectMapper projectMapper;
+
+    public MybatisProjectRepository(ProjectMapper projectMapper) {
+        this.projectMapper = projectMapper;
+    }
 
     @Override
     public void save(ProjectEntity project) {
         if (project.getProjectId() == null) {
-            project.setProjectId(idGen.getAndIncrement());
+            projectMapper.insert(project);
+        } else {
+            projectMapper.update(project);
         }
-        store.put(project.getProjectId(), project);
     }
 
     @Override
     public ProjectEntity queryById(Long projectId) {
-        return store.get(projectId);
+        return projectMapper.selectById(projectId);
     }
 
     @Override
     public List<ProjectEntity> queryByUserId(Long userId) {
-        return store.values().stream().filter(p -> userId.equals(p.getUserId())).toList();
+        return projectMapper.selectByUserId(userId);
     }
 
     @Override
     public void delete(Long projectId) {
-        store.remove(projectId);
+        projectMapper.delete(projectId);
     }
 }

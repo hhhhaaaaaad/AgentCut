@@ -27,8 +27,8 @@ public class PlanEntity {
     private String schemaVersion;
     /** 方案自身版本号（存档/回滚用） */
     private int planVersion;
-    /** 所属项目 ID */
-    private Long projectId;
+    /** 所属项目 ID（契约字段，plan-schema.json 定义为 string） */
+    private String projectId;
     /** 方案标题 */
     private String title;
     /** 源视频信息 */

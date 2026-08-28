@@ -37,7 +37,7 @@ public class PlanController {
     /** 保存方案（生成新版本） */
     @PutMapping("/plans/{projectId}")
     public void savePlan(@PathVariable Long projectId, @RequestBody PlanEntity plan) {
-        plan.setProjectId(projectId);
+        plan.setProjectId(String.valueOf(projectId));
         planService.savePlan(plan);
     }
 

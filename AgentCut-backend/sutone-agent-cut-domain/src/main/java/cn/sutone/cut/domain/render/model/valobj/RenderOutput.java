@@ -14,6 +14,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class RenderOutput {
 
+    private Long taskId;
     private String outputPath;
     private double duration;
     private long size;

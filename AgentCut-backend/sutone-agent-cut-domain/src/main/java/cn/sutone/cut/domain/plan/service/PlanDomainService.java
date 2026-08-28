@@ -18,22 +18,24 @@ public class PlanDomainService {
 
     /**
      * 保存方案：校验通过后落库，并生成历史版本。
+     *
+     * @param plan        方案实体
+     * @param contentJson 序列化后的方案 JSON（由应用层用 PlanJsonMapper 生成，领域层不做序列化）
      */
-    public void savePlan(PlanEntity plan) {
+    public void savePlan(PlanEntity plan, String contentJson) {
         validate(plan);
         planRepository.save(plan);
-        planRepository.saveVersion(plan.getProjectId(), plan.getPlanVersion(), toJson(plan));
+        planRepository.saveVersion(plan.getProjectId(), plan.getPlanVersion(), contentJson);
     }
 
     /**
      * 回滚到指定版本：把历史版本内容恢复为当前方案。
      */
-    public String rollback(Long projectId, int versionNo) {
+    public String rollback(String projectId, int versionNo) {
         String content = planRepository.queryVersionContent(projectId, versionNo);
         if (content == null) {
             throw new IllegalArgumentException("版本不存在: " + versionNo);
         }
-        // 骨架：回滚后重新落库（具体反序列化由基础设施层完成）
         return content;
     }
 
@@ -54,10 +56,5 @@ public class PlanDomainService {
                 throw new IllegalArgumentException("片段超出源视频时长: " + seg.getId());
             }
         }
-    }
-
-    private String toJson(PlanEntity plan) {
-        // 骨架：序列化交给基础设施层（Jackson），此处返回占位
-        return "{}";
     }
 }

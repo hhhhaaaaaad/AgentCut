@@ -32,6 +32,21 @@ public class PlanJsonMapper {
         return objectMapper.writeValueAsString(plan);
     }
 
+    /**
+     * 通用对象序列化为 JSON（吞掉 checked 异常，供 payload 等场景使用）。
+     *
+     * <p>对比手动拼接 JSON 字符串，Jackson 会正确转义反斜杠等特殊字符，
+     * 避免 Windows 路径（如 file://E:\\...）写入 MySQL JSON 字段时触发
+     * "Invalid escape character" 校验错误。</p>
+     */
+    public String writeJson(Object value) {
+        try {
+            return objectMapper.writeValueAsString(value);
+        } catch (Exception e) {
+            throw new IllegalStateException("JSON 序列化失败: " + e.getMessage(), e);
+        }
+    }
+
     public PlanEntity fromJson(String json) throws Exception {
         return objectMapper.readValue(json, PlanEntity.class);
     }

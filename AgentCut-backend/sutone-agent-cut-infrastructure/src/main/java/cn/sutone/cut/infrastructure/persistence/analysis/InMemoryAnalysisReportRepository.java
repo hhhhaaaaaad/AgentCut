@@ -2,6 +2,7 @@ package cn.sutone.cut.infrastructure.persistence.analysis;
 
 import cn.sutone.cut.domain.analysis.adapter.repository.IAnalysisReportRepository;
 import cn.sutone.cut.domain.analysis.model.entity.AnalysisReportEntity;
+import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -13,6 +14,7 @@ import java.util.concurrent.atomic.AtomicLong;
  * 分析报告仓储 MVP 内存实现。后续替换为 MyBatis Mapper。
  */
 @Repository
+@Profile("!mysql")
 public class InMemoryAnalysisReportRepository implements IAnalysisReportRepository {
 
     private final Map<Long, AnalysisReportEntity> store = new ConcurrentHashMap<>();

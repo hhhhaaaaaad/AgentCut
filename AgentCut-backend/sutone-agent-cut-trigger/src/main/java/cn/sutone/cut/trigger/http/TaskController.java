@@ -14,10 +14,12 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.Map;
+import com.fasterxml.jackson.databind.JsonNode;
+
+import java.util.List;
 
 /**
- * 任务接口（分析 / 查询 / 回调）。
+ * 任务接口（分析 / 查询 / 列表 / 回调 / 渲染结果）。
  */
 @RestController
 @RequestMapping("/api/v1")
@@ -43,24 +45,20 @@ public class TaskController {
 
     @GetMapping("/tasks/{taskId}")
     public TaskDTO queryTask(@PathVariable Long taskId) {
-        TaskEntity t = taskService.query(taskId);
-        if (t == null) {
-            return null;
-        }
-        return TaskDTO.builder()
-                .taskId(t.getTaskId())
-                .type(t.getType() != null ? t.getType().name() : null)
-                .status(t.getStatus() != null ? t.getStatus().name() : null)
-                .progress(t.getProgress())
-                .resultJson(t.getResultJson())
-                .build();
+        return toDTO(taskService.query(taskId));
+    }
+
+    @GetMapping("/projects/{projectId}/tasks")
+    public List<TaskDTO> listTasks(@PathVariable Long projectId) {
+        return taskService.listByProject(projectId).stream().map(this::toDTO).toList();
     }
 
     /** Python 分析完成回调：存报告 + 方案，标记任务成功 */
     @PostMapping("/analyze/callback")
-    public void analyzeCallback(@RequestParam Long taskId, @RequestBody Map<String, String> body) {
-        String reportJson = body.getOrDefault("reportJson", "{}");
-        String planJson = body.getOrDefault("planJson", "{}");
+    public void analyzeCallback(@RequestParam Long taskId, @RequestBody JsonNode body) {
+        JsonNode result = body.get("result");
+        String reportJson = result != null && result.has("analysis") ? result.get("analysis").toString() : "{}";
+        String planJson = result != null && result.has("plan") ? result.get("plan").toString() : "{}";
         analyzeTaskService.handleCallback(taskId, reportJson, planJson);
     }
 
@@ -72,5 +70,18 @@ public class TaskController {
             return null;
         }
         return objectMapper.readTree(t.getResultJson());
+    }
+
+    private TaskDTO toDTO(TaskEntity t) {
+        if (t == null) {
+            return null;
+        }
+        return TaskDTO.builder()
+                .taskId(t.getTaskId())
+                .type(t.getType() != null ? t.getType().name() : null)
+                .status(t.getStatus() != null ? t.getStatus().name() : null)
+                .progress(t.getProgress())
+                .resultJson(t.getResultJson())
+                .build();
     }
 }

@@ -15,12 +15,14 @@ import cn.sutone.cut.domain.task.model.entity.TaskEntity;
 import cn.sutone.cut.domain.task.model.valobj.enums.TaskType;
 import cn.sutone.cut.domain.task.service.TaskDomainService;
 import cn.sutone.cut.infrastructure.plan.PlanJsonMapper;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 /**
  * 分析任务编排：建任务 → 调 Python → 回调落库。
  */
+@Slf4j
 @Service
 public class AnalyzeTaskService {
 
@@ -33,7 +35,7 @@ public class AnalyzeTaskService {
     private final PlanJsonMapper planJsonMapper;
     private final PlanDomainService planDomainService;
 
-    @Value("${agentcut.callback.base-url:http://localhost:8080}")
+    @Value("${agentcut.callback.base-url:http://127.0.0.1:8080}")
     private String callbackBaseUrl;
 
     public AnalyzeTaskService(ProjectDomainService projectDomainService, IAssetRepository assetRepository,
@@ -64,11 +66,16 @@ public class AnalyzeTaskService {
                 .findFirst()
                 .orElseThrow(() -> new IllegalArgumentException("项目无源视频素材"));
 
+        // 用 Jackson 序列化 payload（手动拼 JSON 会导致 Windows 路径反斜杠转义错误）
+        java.util.Map<String, Object> payload = new java.util.HashMap<>();
+        payload.put("videoUrl", source.getOssUrl());
         TaskEntity task = taskDomainService.createPending(projectId, TaskType.ANALYZE,
-                "{\"videoUrl\":\"" + source.getOssUrl() + "\"}");
+                planJsonMapper.writeJson(payload));
 
         String callbackUrl = callbackBaseUrl + "/api/v1/analyze/callback?taskId=" + task.getTaskId();
-        videoAnalysisClient.submitAnalyze(source.getOssUrl(), callbackUrl, targetJson);
+        log.info("analyze 触发: taskId={}, callbackUrl={}", task.getTaskId(), callbackUrl);
+        String pyResp = videoAnalysisClient.submitAnalyze(source.getOssUrl(), callbackUrl, targetJson);
+        log.info("analyze Python 响应: {}", pyResp);
 
         return task.getTaskId();
     }
@@ -92,13 +99,33 @@ public class AnalyzeTaskService {
 
         try {
             PlanEntity plan = planJsonMapper.fromJson(planJson);
-            plan.setProjectId(task.getProjectId());
-            planDomainService.savePlan(plan);
+            plan.setProjectId(String.valueOf(task.getProjectId()));
+            // 回填源视频 URL：模拟模式下方案 source.url 可能为空，用源素材 URL 覆盖
+            fillSourceUrl(plan, task.getProjectId());
+            // 反序列化后重新规范化序列化，作为版本存档内容
+            String canonicalJson = planJsonMapper.toJson(plan);
+            planDomainService.savePlan(plan, canonicalJson);
         } catch (Exception e) {
             taskDomainService.markFailed(taskId, "方案反序列化失败: " + e.getMessage());
             return;
         }
 
         taskDomainService.markSuccess(taskId, planJson);
+    }
+
+    /**
+     * 回填源视频 URL：方案 source.url 为空时，用项目源素材的 ossUrl 覆盖。
+     */
+    private void fillSourceUrl(PlanEntity plan, Long projectId) {
+        if (plan.getSource() == null) {
+            return;
+        }
+        if (plan.getSource().getUrl() != null && !plan.getSource().getUrl().isBlank()) {
+            return;
+        }
+        assetRepository.queryByProjectId(projectId).stream()
+                .filter(a -> a.getType() == AssetType.SOURCE)
+                .findFirst()
+                .ifPresent(a -> plan.getSource().setUrl(a.getOssUrl()));
     }
 }

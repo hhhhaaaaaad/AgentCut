@@ -14,4 +14,6 @@ public interface IAssetRepository {
     AssetEntity queryById(Long assetId);
 
     List<AssetEntity> queryByProjectId(Long projectId);
+
+    void delete(Long assetId);
 }

@@ -2,6 +2,7 @@ package cn.sutone.cut.infrastructure.persistence.asset;
 
 import cn.sutone.cut.domain.asset.adapter.repository.IAssetRepository;
 import cn.sutone.cut.domain.asset.model.entity.AssetEntity;
+import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -13,6 +14,7 @@ import java.util.concurrent.atomic.AtomicLong;
  * 素材仓储 MVP 内存实现。后续替换为 MyBatis Mapper。
  */
 @Repository
+@Profile("!mysql")
 public class InMemoryAssetRepository implements IAssetRepository {
 
     private final Map<Long, AssetEntity> store = new ConcurrentHashMap<>();
@@ -34,5 +36,10 @@ public class InMemoryAssetRepository implements IAssetRepository {
     @Override
     public List<AssetEntity> queryByProjectId(Long projectId) {
         return store.values().stream().filter(a -> projectId.equals(a.getProjectId())).toList();
+    }
+
+    @Override
+    public void delete(Long assetId) {
+        store.remove(assetId);
     }
 }

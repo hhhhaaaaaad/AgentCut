@@ -14,4 +14,6 @@ public interface IProjectRepository {
     ProjectEntity queryById(Long projectId);
 
     List<ProjectEntity> queryByUserId(Long userId);
+
+    void delete(Long projectId);
 }

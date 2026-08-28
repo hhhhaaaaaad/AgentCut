@@ -34,10 +34,50 @@ public class FfmpegRenderEngine implements IRenderEngine {
             execute(argv);
         }
 
-        // 3. 返回产物
+        // 3. 返回产物（补全成片元信息：大小 + 时长）
+        Path output = Path.of(command.getOutputPath());
+        long size = fileSize(output);
+        double duration = probeDuration(output);
         return RenderOutput.builder()
                 .outputPath(command.getOutputPath())
+                .duration(duration)
+                .size(size)
                 .build();
+    }
+
+    /**
+     * 读取成片文件大小（字节）；失败返回 0。
+     */
+    private long fileSize(Path file) {
+        try {
+            return Files.size(file);
+        } catch (IOException e) {
+            log.warn("读取成片大小失败: {}", e.getMessage());
+            return 0L;
+        }
+    }
+
+    /**
+     * 用 ffprobe 探测成片时长（秒）；失败返回 0。
+     */
+    private double probeDuration(Path file) {
+        try {
+            ProcessBuilder pb = new ProcessBuilder("ffprobe", "-v", "error",
+                    "-show_entries", "format=duration",
+                    "-of", "default=noprint_wrappers=1:nokey=1",
+                    file.toString());
+            pb.redirectErrorStream(true);
+            Process p = pb.start();
+            String out;
+            try (var in = p.getInputStream()) {
+                out = new String(in.readAllBytes(), StandardCharsets.UTF_8).trim();
+            }
+            p.waitFor();
+            return out.isEmpty() ? 0.0 : Double.parseDouble(out);
+        } catch (Exception e) {
+            log.warn("探测成片时长失败: {}", e.getMessage());
+            return 0.0;
+        }
     }
 
     /**
@@ -72,7 +112,13 @@ public class FfmpegRenderEngine implements IRenderEngine {
         try {
             StringBuilder sb = new StringBuilder();
             for (String f : files) {
-                sb.append("file '").append(f.replace("\\", "/")).append("'\n");
+                // concat demuxer 的列表相对路径是相对列表文件所在目录，只需写文件名
+                String name = f.replace("\\", "/");
+                int idx = name.lastIndexOf('/');
+                if (idx >= 0) {
+                    name = name.substring(idx + 1);
+                }
+                sb.append("file '").append(name).append("'\n");
             }
             Files.writeString(Path.of(listPath), sb.toString(), StandardCharsets.UTF_8);
         } catch (IOException e) {

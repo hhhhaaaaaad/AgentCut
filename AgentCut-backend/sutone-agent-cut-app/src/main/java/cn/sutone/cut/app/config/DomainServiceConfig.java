@@ -7,6 +7,7 @@ import cn.sutone.cut.domain.project.service.ProjectDomainService;
 import cn.sutone.cut.domain.render.service.RenderPlanService;
 import cn.sutone.cut.domain.task.adapter.repository.ITaskRepository;
 import cn.sutone.cut.domain.task.service.TaskDomainService;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -34,7 +35,8 @@ public class DomainServiceConfig {
     }
 
     @Bean
-    public RenderPlanService renderPlanService() {
-        return new RenderPlanService();
+    public RenderPlanService renderPlanService(
+            @Value("${agentcut.render.subtitle-font:}") String subtitleFont) {
+        return new RenderPlanService(subtitleFont);
     }
 }

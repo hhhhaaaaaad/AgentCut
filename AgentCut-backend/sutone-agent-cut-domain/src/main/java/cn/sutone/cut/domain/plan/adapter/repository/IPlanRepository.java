@@ -6,6 +6,8 @@ import java.util.List;
 
 /**
  * 剪辑方案仓储接口（含版本化）。
+ *
+ * <p>projectId 使用字符串，与 plan-schema.json 契约保持一致。</p>
  */
 public interface IPlanRepository {
 
@@ -13,14 +15,14 @@ public interface IPlanRepository {
     void save(PlanEntity plan);
 
     /** 按项目查询当前方案 */
-    PlanEntity queryCurrentByProjectId(Long projectId);
+    PlanEntity queryCurrentByProjectId(String projectId);
 
     /** 保存一个历史版本 */
-    void saveVersion(Long projectId, int versionNo, String contentJson);
+    void saveVersion(String projectId, int versionNo, String contentJson);
 
     /** 查询某项目的版本号列表 */
-    List<Integer> queryVersionNumbers(Long projectId);
+    List<Integer> queryVersionNumbers(String projectId);
 
     /** 查询某项目指定版本的内容 JSON */
-    String queryVersionContent(Long projectId, int versionNo);
+    String queryVersionContent(String projectId, int versionNo);
 }

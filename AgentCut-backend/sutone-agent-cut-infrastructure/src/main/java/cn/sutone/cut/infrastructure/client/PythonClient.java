@@ -1,6 +1,8 @@
 package cn.sutone.cut.infrastructure.client;
 
 import cn.sutone.cut.domain.adapter.port.IVideoAnalysisClient;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
@@ -13,7 +15,7 @@ import java.time.Duration;
 /**
  * Python 分析服务客户端（HTTP 调用 AgentCut-ai 的 /analyze）。
  *
- * <p>使用 JDK 内置 HttpClient，避免额外依赖。</p>
+ * <p>使用 JDK 内置 HttpClient + Jackson 序列化（正确处理 Windows 路径反斜杠等转义）。</p>
  */
 @Component
 public class PythonClient implements IVideoAnalysisClient {
@@ -22,15 +24,26 @@ public class PythonClient implements IVideoAnalysisClient {
             .connectTimeout(Duration.ofSeconds(10))
             .build();
 
-    @Value("${agentcut.python.base-url:http://localhost:8000}")
+    private final ObjectMapper objectMapper;
+
+    @Value("${agentcut.python.base-url:http://127.0.0.1:8000}")
     private String baseUrl;
+
+    public PythonClient(ObjectMapper objectMapper) {
+        this.objectMapper = objectMapper;
+    }
 
     @Override
     public String submitAnalyze(String videoUrl, String callbackUrl, String targetJson) {
-        String body = String.format(
-                "{\"videoUrl\":\"%s\",\"callbackUrl\":\"%s\",\"target\":%s}",
-                videoUrl, callbackUrl, targetJson);
-        return post("/analyze", body);
+        try {
+            ObjectNode body = objectMapper.createObjectNode();
+            body.put("videoUrl", videoUrl);
+            body.put("callbackUrl", callbackUrl);
+            body.set("target", objectMapper.readTree(targetJson));
+            return post("/analyze", objectMapper.writeValueAsString(body));
+        } catch (Exception e) {
+            throw new IllegalStateException("构造分析请求失败: " + e.getMessage(), e);
+        }
     }
 
     @Override
