@@ -36,6 +36,9 @@ def probe_video(video_path: Optional[str]) -> dict:
 
     文件不存在或 PyAV 缺失时返回模拟元数据（MVP 降级，默认 60s / 1920x1080 / 30fps）。
     """
+    # 规范化路径：剥离 file:// 前缀（Java 后端 ossUrl 携带该前缀，os.path / ffprobe 无法识别）
+    if video_path and video_path.startswith("file://"):
+        video_path = video_path[len("file://"):]
     if _HAS_AV and video_path and os.path.exists(video_path):
         try:
             container = av.open(video_path)
@@ -56,8 +59,61 @@ def probe_video(video_path: Optional[str]) -> dict:
             return meta
         except Exception as exc:
             logger.warning("probe_video 失败，降级为模拟元数据：%s", exc)
+    # PyAV 缺失时回退 ffprobe（独立命令，不依赖 PyAV）探测真实尺寸，
+    # 避免模拟方案按错误的 1920x1080 生成 crop 导致 FFmpeg 渲染失败。
+    if video_path and os.path.exists(video_path):
+        meta = _probe_with_ffprobe(video_path)
+        if meta:
+            return meta
     logger.info("probe_video 进入模拟模式（video_path=%s）", video_path)
     return {"duration": 60.0, "fps": 30.0, "width": 1920, "height": 1080, "has_audio": True}
+
+
+def _probe_with_ffprobe(video_path: str) -> Optional[dict]:
+    """用 ffprobe 命令探测视频元数据（PyAV 缺失时的回退）。
+
+    返回 None 表示探测失败（文件损坏 / ffprobe 不在 PATH），由调用方兜底模拟元数据。
+    """
+    import json
+    import subprocess
+
+    try:
+        out = subprocess.run(
+            ["ffprobe", "-v", "error", "-show_streams", "-show_format",
+             "-of", "json", video_path],
+            capture_output=True, text=True, timeout=15,
+        )
+        if out.returncode != 0:
+            return None
+        data = json.loads(out.stdout)
+        streams = data.get("streams", [])
+        vstream = next((s for s in streams if s.get("codec_type") == "video"), None)
+        if not vstream or not vstream.get("width") or not vstream.get("height"):
+            return None
+        fps = 30.0
+        rf = vstream.get("r_frame_rate")
+        if rf and "/" in rf:
+            n, d = rf.split("/")
+            if float(d) != 0:
+                fps = float(n) / float(d)
+        duration = 60.0
+        dur = (data.get("format") or {}).get("duration")
+        if dur:
+            try:
+                duration = float(dur)
+            except Exception:
+                pass
+        has_audio = any(s.get("codec_type") == "audio" for s in streams)
+        return {
+            "duration": round(duration, 3),
+            "fps": round(fps, 3),
+            "width": int(vstream["width"]),
+            "height": int(vstream["height"]),
+            "has_audio": has_audio,
+        }
+    except Exception as exc:
+        logger.warning("ffprobe 探测失败：%s", exc)
+        return None
 
 
 def _grab_frame(container, stream, target_sec: float):

@@ -157,7 +157,7 @@ class AnalysisAgent:
         if not asset_id:
             base = os.path.basename(video_path) if video_path else "mock"
             asset_id = "asset_" + base
-        if _HAS_LANGGRAPH and not config.SIMULATE:
+        if _HAS_LANGGRAPH and not config.SIMULATE_FORCED:
             return self._run_with_graph(video_path, asset_id)
         return self._run_sequential(video_path, asset_id)
 

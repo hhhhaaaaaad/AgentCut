@@ -81,6 +81,17 @@ def _safe_max_duration(target) -> Optional[float]:
         return None
 
 
+def _extract_json(text: str) -> str:
+    """从 LLM 输出中剥离可能的 Markdown 代码块包裹，返回纯 JSON 文本。"""
+    text = (text or "").strip()
+    if text.startswith("```"):
+        text = text.strip("`")
+        if text.lower().startswith("json"):
+            text = text[4:]
+        text = text.strip()
+    return text
+
+
 class PlanAgent:
     """剪辑方案规划 Agent：report + target → Plan。"""
 
@@ -97,7 +108,7 @@ class PlanAgent:
     ) -> Plan:
         """生成剪辑方案 Plan（LLM 结构化输出优先，否则确定性构建）。"""
         pid = project_id or self.project_id or report.assetId or "prj_default"
-        if config.SIMULATE or self.llm is None:
+        if config.SIMULATE_FORCED or self.llm is None:
             return self._build_deterministic(report, target, pid)
         return self._build_with_llm(report, target, pid)
 
@@ -107,8 +118,12 @@ class PlanAgent:
 
     def _build_with_llm(self, report: AnalysisReport, target, project_id: str) -> Plan:
         prompt = self._build_prompt(report, target, project_id)
-        structured = self.llm.with_structured_output(Plan)
-        plan = structured.invoke(prompt)
+        # DeepSeek 等端点不支持 response_format（with_structured_output 依赖它），
+        # 改为让 LLM 输出 JSON 文本后手动解析 + Pydantic 校验。
+        prompt += "\n\n请直接输出一个符合上述 schema 的 JSON 对象，不要输出任何解释、前后缀或 Markdown 代码块标记。"
+        raw = self.llm.invoke(prompt)
+        text = raw.content if hasattr(raw, "content") else str(raw)
+        plan = Plan.model_validate(json.loads(_extract_json(text)))
         # 强制契约字段（LLM 可能自由发挥）
         plan.schemaVersion = "1.0"
         plan.planVersion = 1
@@ -117,15 +132,8 @@ class PlanAgent:
         return plan
 
     def _build_prompt(self, report: AnalysisReport, target, project_id: str) -> str:
-        schema_hint = (
-            "剪辑方案必须符合 docs/plan-schema.json：\n"
-            "- timeline 需覆盖源视频所有场景（顺序即成片顺序），不需要的片段 keep=false\n"
-            "- 操作仅支持 speed(rate) / crop(x,y,width,height) / subtitle(text,start,end) / "
-            "volume(volume) / mute\n"
-            "- global.output 按 target.aspectRatio 设置，需要裁切时用 crop 操作\n"
-            "- 加字幕时配合 global.subtitleStyle 与 timeline 内 subtitle 操作\n"
-            "- transitions 可空，引用片段必须存在\n"
-        )
+        # 用 Pydantic 生成精确 JSON Schema，让 LLM 严格对齐字段名（避免字段名漂移导致校验失败）
+        schema_json = json.dumps(Plan.model_json_schema(), ensure_ascii=False)
         target_json = (
             target.model_dump(mode="json", by_alias=True)
             if hasattr(target, "model_dump")
@@ -133,11 +141,12 @@ class PlanAgent:
         )
         return (
             "你是 AgentCut 的视频剪辑方案规划师。请根据分析报告与用户目标生成剪辑方案。\n"
-            f"{schema_hint}\n"
+            "剪辑方案必须严格符合以下 JSON Schema（字段名、required 字段必须完全一致，不要输出 schema 之外的字段）：\n"
+            f"{schema_json}\n\n"
             f"projectId: {project_id}\n"
             f"用户目标(target):\n{json.dumps(target_json, ensure_ascii=False)}\n"
-            f"分析报告(report):\n{report.model_dump_json(indent=2)}\n"
-            "请输出符合 plan-schema.json 的剪辑方案。"
+            f"分析报告(report):\n{report.model_dump_json(indent=2)}\n\n"
+            "请只输出一个符合上述 JSON Schema 的剪辑方案 JSON 对象，不要输出任何解释、前后缀或代码块标记。"
         )
 
     # ------------------------------------------------------------------

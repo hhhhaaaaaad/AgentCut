@@ -42,8 +42,8 @@ class TargetConstraints(BaseModel):
 
     aspectRatio: str = Field(default="16:9", description="目标画幅，如 '9:16' / '16:9' / '1:1'")
     maxDuration: Optional[float] = Field(default=None, ge=1, description="目标时长上限（秒）")
-    addSubtitle: bool = Field(default=False, description="是否自动添加字幕")
-    style: str = Field(default="", description="风格意图（自由文本），如 '快节奏口播'")
+    addSubtitle: Optional[bool] = Field(default=False, description="是否自动添加字幕")
+    style: Optional[str] = Field(default="", description="风格意图（自由文本），如 '快节奏口播'")
 
 
 class AnalyzeRequest(BaseModel):
@@ -94,6 +94,9 @@ async def _resolve_video(video_url: str, work_dir: str) -> Optional[str]:
     """把视频 URL 解析为本地路径；无法解析时返回 None（分析进入模拟）。"""
     if not video_url:
         return None
+    # 规范化：剥掉 file:// 前缀（Java 后端本地存储的 ossUrl 携带该前缀）
+    if video_url.lower().startswith("file://"):
+        video_url = video_url[len("file://"):]
     low = video_url.lower()
     if low.startswith(("http://", "https://")):
         os.makedirs(work_dir, exist_ok=True)

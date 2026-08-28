@@ -1,6 +1,6 @@
-"""Qwen2.5-VL 多模态理解工具（app.tools.vlm_understand）。
+"""Qwen3-VL 多模态理解工具（app.tools.vlm_understand）。
 
-走 DashScope OpenAI 兼容端点（复用 config.BASE_URL / API_KEY / MODEL），
+走 SiliconFlow OpenAI 兼容端点（复用 config.VLM_BASE_URL / VLM_API_KEY / VLM_MODEL），
 用 OpenAI SDK 客户端构造多模态消息（本地帧图 base64 内联）。
 缺 key / 模拟模式下返回确定性占位理解结果。
 """
@@ -58,14 +58,14 @@ def _build_messages(prompt: str, frame_paths: Sequence[str]) -> list:
 
 def understand_frames(prompt: str, frame_paths: Sequence[str]) -> str:
     """把若干帧图 + 提示词交给 Qwen2.5-VL，返回文本回复。"""
-    if config.SIMULATE or not _HAS_OPENAI or not config.API_KEY:
+    if config.SIMULATE_FORCED or not _HAS_OPENAI or not config.VLM_API_KEY:
         return _simulate_frames_reply(prompt, frame_paths)
     client = get_client()
     resp = client.chat.completions.create(
-        model=config.MODEL,
+        model=config.VLM_MODEL,
         messages=_build_messages(prompt, frame_paths),
         temperature=0.2,
-        max_tokens=2048,
+        max_tokens=8192,
     )
     return resp.choices[0].message.content or ""
 
@@ -99,7 +99,7 @@ def understand_video(scenes, frames, transcripts, meta) -> dict:
     真实路径：帧图 + 提示词 → Qwen2.5-VL → 解析 JSON；
     模拟 / 无帧 / 解析失败：回退到确定性占位理解。
     """
-    if config.SIMULATE or not _HAS_OPENAI or not config.API_KEY or not frames:
+    if config.SIMULATE_FORCED or not _HAS_OPENAI or not config.VLM_API_KEY or not frames:
         return _simulate_understanding(scenes, transcripts, meta)
     prompt = _build_understanding_prompt(scenes, transcripts, meta)
     reply = understand_frames(prompt, frames)
@@ -107,10 +107,32 @@ def understand_video(scenes, frames, transcripts, meta) -> dict:
         cleaned = reply.strip().removeprefix("```json").removesuffix("```").strip()
         data = json.loads(cleaned)
         if isinstance(data, dict):
-            return data
+            return _normalize_understanding(data, scenes)
     except Exception as exc:
         logger.warning("VLM 返回非 JSON，回退为模拟理解：%s", exc)
     return _simulate_understanding(scenes, transcripts, meta)
+
+
+def _normalize_understanding(data: dict, scenes) -> dict:
+    """把 VLM 返回的字段归一化为 list（单场景时 VLM 可能返回标量而非数组）。"""
+    n = len(scenes)
+    for key, default in (("sceneDescriptions", ""), ("sceneImportance", 0.5)):
+        val = data.get(key, [])
+        if not isinstance(val, list):
+            val = [default] if val is None else [val]
+        while len(val) < n:
+            val.append(default)
+        data[key] = val[:n]
+    # sceneTags 期望 list-of-list
+    tags = data.get("sceneTags", [])
+    if not isinstance(tags, list):
+        tags = [[tags]] if tags else []
+    elif tags and not isinstance(tags[0], list):
+        tags = [[t] for t in tags]
+    while len(tags) < n:
+        tags.append([])
+    data["sceneTags"] = tags[:n]
+    return data
 
 
 def _simulate_frames_reply(prompt: str, frame_paths) -> str:

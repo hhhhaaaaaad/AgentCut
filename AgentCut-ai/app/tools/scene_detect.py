@@ -46,6 +46,7 @@ def detect_scenes(
     video_path: Optional[str],
     threshold: float = 27.0,
     min_scene_len: float = 0.4,
+    max_scenes: int = 20,
 ) -> List[TimeRange]:
     """检测场景边界，返回按时间升序的场景区间列表。"""
     meta = probe_video(video_path)
@@ -66,7 +67,10 @@ def detect_scenes(
             pass
         sm.detect_scenes(video)
         scene_list = sm.get_scene_list()
-        video.close()
+        # scenedetect 0.7 的 VideoStreamCv2 无 close()，有则调用，无则交给 gc 释放
+        close = getattr(video, "close", None)
+        if close:
+            close()
 
         if not scene_list:  # 未检出任何边界 → 整片视为一个场景
             return [TimeRange(start=0.0, end=duration)]
@@ -79,6 +83,10 @@ def detect_scenes(
                 scenes.append(TimeRange(start=round(s, 3), end=round(e, 3)))
         if not scenes:  # 全部过短则整片视为一个场景
             return [TimeRange(start=0.0, end=duration)]
+        # 场景过多时均匀采样到上限（避免下游 VLM 一次处理过多帧导致请求超限）
+        if len(scenes) > max_scenes:
+            step = len(scenes) / max_scenes
+            scenes = [scenes[int(i * step)] for i in range(max_scenes)]
         return scenes
     except Exception as exc:
         logger.warning("detect_scenes 失败，降级为模拟场景：%s", exc)
