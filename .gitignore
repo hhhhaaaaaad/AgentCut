@@ -1,0 +1,41 @@
+# ===== 敏感配置（含 API Key，勿提交）=====
+.env
+.env.local
+
+# ===== Python =====
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+*.egg-info/
+
+# ===== 前端 =====
+node_modules/
+dist/
+
+# ===== Java / Maven =====
+target/
+*.class
+
+# ===== IDE =====
+.idea/
+.vscode/
+*.iml
+
+# ===== 运行时产物 =====
+data/
+work/
+*.log
+.omc/
+.pid.txt
+
+# ===== 媒体文件 / 测试产物（体积大或临时生成，不提交）=====
+*.mp4
+asr_result.txt
+*_check.png
+*_check.jpg
+*_test.jpg
+*_test.png
+
+# ===== 外部工具（ffmpeg 二进制等，不提交）=====
+tools/
