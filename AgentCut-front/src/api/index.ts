@@ -46,9 +46,24 @@ export interface Task {
 
 /** 应用方案的结果（成片元信息） */
 export interface ApplyResult {
+  taskId?: string;
   outputPath: string;
   duration: number;
   size: number;
+}
+
+/** 素材（源视频/成片/BGM/封面） */
+export interface Asset {
+  assetId: string;
+  projectId: string;
+  type: string;
+  ossUrl: string;
+  fileName: string;
+  size: number;
+  duration: number;
+  width: number;
+  height: number;
+  fps: number;
 }
 
 /* ==================== 接口封装 ==================== */
@@ -95,7 +110,23 @@ export function applyPlan(projectId: string): Promise<ApplyResult> {
   return client.post<ApplyResult>(`/plans/${projectId}/apply`).then((r) => r.data);
 }
 
-/** 保存方案（后端未开放，预留签名，TODO：savePlan 需完整反序列化） */
-// export function savePlan(projectId: string, plan: Plan): Promise<Plan> {
-//   return client.put<Plan>(`/plans/${projectId}`, plan).then((r) => r.data);
-// }
+/** 成片下载直链（后端流式返回，Content-Disposition: attachment） */
+export function renderDownloadUrl(taskId: string): string {
+  return `${client.defaults.baseURL}/render/${taskId}/download`;
+}
+
+/** 上传源视频（multipart/form-data，字段名 file） */
+export function uploadVideo(projectId: string, file: File): Promise<Asset> {
+  const formData = new FormData();
+  formData.append('file', file);
+  return client
+    .post<Asset>(`/projects/${projectId}/upload`, formData, {
+      headers: { 'Content-Type': 'multipart/form-data' },
+    })
+    .then((r) => r.data);
+}
+
+/** 保存方案（生成新版本） */
+export function savePlan(projectId: string, plan: Plan): Promise<void> {
+  return client.put<void>(`/plans/${projectId}`, plan).then(() => undefined);
+}

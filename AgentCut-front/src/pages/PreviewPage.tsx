@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { App, Button, Card, Descriptions, Empty, Space, Tag, Typography } from 'antd';
-import { applyPlan, getPlan, type ApplyResult } from '../api';
+import { applyPlan, getPlan, renderDownloadUrl, type ApplyResult } from '../api';
 import { useProjectStore } from '../stores/projectStore';
 import type { PageKey } from '../types/nav';
 
@@ -56,11 +56,12 @@ export default function PreviewPage({ onNavigate }: Props) {
 
   const handleDownload = () => {
     if (!result) return;
-    if (/^https?:\/\//.test(result.outputPath)) {
+    if (result.taskId) {
+      window.open(renderDownloadUrl(result.taskId), '_blank');
+    } else if (/^https?:\/\//.test(result.outputPath)) {
       window.open(result.outputPath, '_blank');
     } else {
-      // 内部存储路径（oss://… 或本地相对路径）需后端提供下载/直链接口
-      message.info('后端下载直链接口未开放，当前 outputPath 为内部存储路径。');
+      message.info('成片下载链接不可用，请重新应用方案。');
     }
   };
 

@@ -3,7 +3,7 @@ import {
   Alert, App, Button, Card, Collapse, Divider, Empty, Form, Input, InputNumber, Popconfirm,
   Row, Col, Select, Space, Spin, Switch, Tag, Typography,
 } from 'antd';
-import { getPlan } from '../api';
+import { getPlan, savePlan } from '../api';
 import { useProjectStore } from '../stores/projectStore';
 import type { Bgm, Global, Operation, OperationType, OutputConfig, Plan, Segment, SubtitleStyle, TimeRange } from '../types/plan';
 import { OPERATION_LABELS, createOperation } from '../types/plan';
@@ -29,7 +29,7 @@ interface Props {
  * 编辑页：方案编辑器。
  * 左侧结构化表单（global.output 宽高、timeline 片段 keep/start/end、段内 operations）
  * 右侧 JSON 编辑器（textarea，不引 Monaco）。
- * 读方案 → 改 → 展示双向同步；保存接口后端未开放，留 TODO。
+ * 读方案 → 改 → 展示双向同步；保存走 PUT /api/v1/plans/{id} 生成新版本。
  */
 export default function EditPage({ onNavigate }: Props) {
   const { message } = App.useApp();
@@ -142,15 +142,18 @@ export default function EditPage({ onNavigate }: Props) {
     commitPlan({ ...plan, timeline: plan.timeline.filter((_, i) => i !== index) });
   };
 
-  /* ============ 保存（TODO） ============ */
-  const handleSave = () => {
+  /* ============ 保存 ============ */
+  const handleSave = async () => {
+    if (!project || !plan) return;
     setSaving(true);
-    // TODO: 后端 PUT /api/v1/plans/{projectId}（savePlan）需完整反序列化方案，暂未开放。
-    // 开放后改为调用 savePlan(project.projectId, plan) 即可。
-    window.setTimeout(() => {
+    try {
+      await savePlan(project.projectId, plan);
+      message.success('方案已保存');
+    } catch (err) {
+      message.error(`保存失败：${err instanceof Error ? err.message : String(err)}`);
+    } finally {
       setSaving(false);
-      message.warning('保存接口未开放：后端 savePlan 需完整反序列化方案，暂不支持保存。当前方案仅在页面内可编辑。');
-    }, 400);
+    }
   };
 
   if (!project) {
@@ -387,7 +390,7 @@ export default function EditPage({ onNavigate }: Props) {
                   <Alert style={{ marginTop: 8 }} type="error" showIcon message="JSON 有误，左侧表单暂不同步" description={jsonError} />
                 ) : (
                   <Typography.Text type="secondary" style={{ marginTop: 8, display: 'block' }}>
-                    JSON 合法：编辑将实时同步到左侧结构化表单。保存功能后端未开放（TODO）。
+                    JSON 合法：编辑将实时同步到左侧结构化表单。点击「保存方案」PUT 到后端生成新版本。
                   </Typography.Text>
                 )}
               </Card>

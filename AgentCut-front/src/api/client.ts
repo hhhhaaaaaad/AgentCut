@@ -5,7 +5,7 @@ import axios from 'axios';
  * baseURL 对齐后端 Controller 前缀 /api/v1
  */
 const client = axios.create({
-  baseURL: 'http://localhost:8080/api/v1',
+  baseURL: 'http://127.0.0.1:8080/api/v1',
   timeout: 15000,
   headers: { 'Content-Type': 'application/json' },
 });

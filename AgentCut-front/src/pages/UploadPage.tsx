@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { App, Button, Card, Descriptions, Form, Input, Space, Typography, Upload, Tag } from 'antd';
-import { createProject, type CreateProjectRequest } from '../api';
+import { createProject, uploadVideo, type Asset, type CreateProjectRequest } from '../api';
 import { useProjectStore } from '../stores/projectStore';
 
 /**
@@ -11,6 +11,8 @@ export default function UploadPage() {
   const { project, setProject } = useProjectStore();
   const [form] = Form.useForm<CreateProjectRequest>();
   const [creating, setCreating] = useState(false);
+  const [uploading, setUploading] = useState(false);
+  const [asset, setAsset] = useState<Asset | null>(null);
 
   const handleCreate = async () => {
     const values = await form.validateFields();
@@ -21,11 +23,26 @@ export default function UploadPage() {
         userId: values.userId || undefined,
       });
       setProject(created);
+      setAsset(null);
       message.success(`项目已创建：${created.title}`);
     } catch (err) {
       message.error(`创建项目失败：${err instanceof Error ? err.message : String(err)}`);
     } finally {
       setCreating(false);
+    }
+  };
+
+  const handleUpload = async (file: File) => {
+    if (!project) return;
+    setUploading(true);
+    try {
+      const uploaded = await uploadVideo(project.projectId, file);
+      setAsset(uploaded);
+      message.success(`视频上传成功：${uploaded.fileName}（素材 #${uploaded.assetId}）`);
+    } catch (err) {
+      message.error(`上传失败：${err instanceof Error ? err.message : String(err)}`);
+    } finally {
+      setUploading(false);
     }
   };
 
@@ -71,16 +88,34 @@ export default function UploadPage() {
             size="small"
             extra={
               <Typography.Text type="warning">
-                分片上传（断点续传 / 秒传）规划中，见后端 /projects/{'{id}'}/upload
+                当前为整文件上传（multipart），分片上传 / 断点续传规划中
               </Typography.Text>
             }
           >
-            <Upload.Dragger disabled beforeUpload={() => false} multiple={false}>
-              <p style={{ fontSize: 16, marginTop: 24 }}>点击或将视频拖拽到此处上传</p>
-              <p style={{ color: '#999' }}>
-                TODO：分片上传（sliced upload + progress）待实现；当前为占位，不发起真实请求。
+            <Upload.Dragger
+              disabled={uploading}
+              multiple={false}
+              showUploadList={false}
+              beforeUpload={(file) => {
+                void handleUpload(file);
+                return false;
+              }}
+            >
+              <p style={{ fontSize: 16, marginTop: 24 }}>
+                {uploading ? '上传中…' : '点击或将视频拖拽到此处上传'}
               </p>
+              <p style={{ color: '#999' }}>选择视频文件后自动上传到后端，建立 SOURCE 素材。</p>
             </Upload.Dragger>
+            {asset && (
+              <Descriptions column={2} size="small" style={{ marginTop: 12 }}>
+                <Descriptions.Item label="素材 ID">{asset.assetId}</Descriptions.Item>
+                <Descriptions.Item label="类型">
+                  <Tag color="green">{asset.type}</Tag>
+                </Descriptions.Item>
+                <Descriptions.Item label="文件名">{asset.fileName}</Descriptions.Item>
+                <Descriptions.Item label="大小">{(asset.size / 1024 / 1024).toFixed(2)} MB</Descriptions.Item>
+              </Descriptions>
+            )}
           </Card>
         </>
       ) : (
