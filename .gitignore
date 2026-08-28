@@ -31,7 +31,8 @@ work/
 
 # ===== 媒体文件 / 测试产物（体积大或临时生成，不提交）=====
 *.mp4
-asr_result.txt
+*.mp3
+asr_*.txt
 *_check.png
 *_check.jpg
 *_test.jpg

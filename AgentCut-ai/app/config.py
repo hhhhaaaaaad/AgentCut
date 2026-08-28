@@ -34,7 +34,7 @@ VLM_API_KEY = os.getenv("AGENTCUT_VLM_API_KEY", "")
 VLM_MODEL = os.getenv("AGENTCUT_VLM_MODEL", "Qwen/Qwen3-VL-8B-Instruct")
 
 # ---------- ASR：语音转写（SiliconFlow，复用 VLM 端点与 key） ----------
-ASR_MODEL = os.getenv("AGENTCUT_ASR_MODEL", "FunAudioLLM/SenseVoiceSmall")
+ASR_MODEL = os.getenv("AGENTCUT_ASR_MODEL", "Qwen/Qwen3-ASR-1.7B")
 
 # ---------- LLM：方案生成（DeepSeek） ----------
 LLM_BASE_URL = os.getenv("AGENTCUT_LLM_BASE_URL", "https://api.deepseek.com")

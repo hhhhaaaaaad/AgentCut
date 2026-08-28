@@ -65,7 +65,7 @@ def understand_frames(prompt: str, frame_paths: Sequence[str]) -> str:
         model=config.VLM_MODEL,
         messages=_build_messages(prompt, frame_paths),
         temperature=0.2,
-        max_tokens=8192,
+        max_tokens=16384,
     )
     return resp.choices[0].message.content or ""
 

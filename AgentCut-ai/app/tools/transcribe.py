@@ -96,9 +96,9 @@ def _simulate_transcript(scenes: Sequence[TimeRange]) -> List[TranscriptSegment]
 
 
 def _transcribe_via_api(video_path: str, scenes: Sequence[TimeRange]) -> List[TranscriptSegment]:
-    """用 SiliconFlow ASR API（SenseVoice）转写。
+    """用 SiliconFlow Qwen3-ASR + VAD 预分割转写，返回带真实时间戳的文本段。
 
-    稳定方案：FFmpeg 抽音频（压缩）→ 长音频分片 → 逐片调 API → 合并 → 按场景分配时间戳。
+    流程：FFmpeg 抽音频 → VAD 检测语音段 → 逐段调 Qwen3-ASR → 组装带时间戳的段。
     """
     import shutil
     import subprocess
@@ -110,25 +110,82 @@ def _transcribe_via_api(video_path: str, scenes: Sequence[TimeRange]) -> List[Tr
 
     tmpdir = tempfile.mkdtemp(prefix="agentcut_asr_")
     try:
-        # 1. FFmpeg 抽音频（16kHz 单声道 mp3 64kbps，压缩减小体积，提升上传稳定性）
-        audio_path = os.path.join(tmpdir, "full.mp3")
+        # 1. FFmpeg 抽音频（16kHz 16bit 单声道 wav，供 VAD + ASR）
+        audio_path = os.path.join(tmpdir, "full.wav")
         subprocess.run(
-            ["ffmpeg", "-y", "-i", video_path, "-vn", "-ac", "1", "-ar", "16000", "-b:a", "64k", audio_path],
+            ["ffmpeg", "-y", "-i", video_path, "-vn", "-ac", "1", "-ar", "16000",
+             "-acodec", "pcm_s16le", audio_path],
             check=True, capture_output=True,
         )
 
-        # 2. 短音频单次转写；长音频分片转写（绕过单次时长限制）
-        duration = _audio_duration(audio_path)
-        if duration <= _MAX_SEGMENT_SECONDS:
-            text = _transcribe_audio_file(client, audio_path)
-        else:
-            text = _transcribe_in_segments(client, audio_path, duration, tmpdir)
+        # 2. VAD 检测语音段（得到真实时间戳）
+        segments = _detect_speech_segments(audio_path)
+
+        # 3. 逐段切音频 + Qwen3-ASR 转写，组装带时间戳的转写段
+        results: List[TranscriptSegment] = []
+        for i, (start, end) in enumerate(segments):
+            seg_path = os.path.join(tmpdir, f"seg_{i}.wav")
+            subprocess.run(
+                ["ffmpeg", "-y", "-ss", str(start), "-t", str(end - start), "-i", audio_path,
+                 "-c", "copy", seg_path],
+                check=True, capture_output=True,
+            )
+            try:
+                text = _transcribe_audio_file(client, seg_path)
+                if text:
+                    results.append(TranscriptSegment(
+                        index=i, start=round(start, 3), end=round(end, 3), text=text,
+                    ))
+            except Exception as exc:
+                logger.warning("语音段 %.1fs~%.1fs 转写失败：%s", start, end, exc)
+        return results
     finally:
         shutil.rmtree(tmpdir, ignore_errors=True)
 
-    if not text:
+
+def _detect_speech_segments(audio_path: str, frame_ms: int = 30, min_segment: float = 0.3) -> List[tuple]:
+    """用 webrtcvad 检测语音段，返回 [(start, end), ...]（秒）。"""
+    import wave
+    import webrtcvad
+
+    try:
+        vad = webrtcvad.Vad(2)  # 敏感度 0~3，2 为中等
+    except Exception as exc:
+        logger.warning("webrtcvad 初始化失败：%s", exc)
         return []
-    return _distribute_text(text, scenes)
+
+    with wave.open(audio_path, "rb") as wf:
+        sample_rate = wf.getframerate()
+        n_channels = wf.getnchannels()
+        sample_width = wf.getsampwidth()
+        # webrtcvad 仅支持 16kHz 16bit 单声道
+        if sample_rate != 16000 or n_channels != 1 or sample_width != 2:
+            logger.warning("音频格式不满足 VAD 要求：%dHz/%dch/%dB", sample_rate, n_channels, sample_width)
+            return []
+        frame_size = int(sample_rate * frame_ms / 1000)
+        speech_flags = []
+        raw = wf.readframes(frame_size)
+        while len(raw) == frame_size * sample_width:
+            speech_flags.append(vad.is_speech(raw, sample_rate))
+            raw = wf.readframes(frame_size)
+
+    # 合并连续语音帧成段
+    segments = []
+    seg_start = None
+    frame_dur = frame_ms / 1000.0
+    for i, is_speech in enumerate(speech_flags):
+        t = i * frame_dur
+        if is_speech and seg_start is None:
+            seg_start = t
+        elif not is_speech and seg_start is not None:
+            if t - seg_start >= min_segment:
+                segments.append((seg_start, t))
+            seg_start = None
+    if seg_start is not None:
+        end = len(speech_flags) * frame_dur
+        if end - seg_start >= min_segment:
+            segments.append((seg_start, end))
+    return segments
 
 
 def _audio_duration(audio_path: str) -> float:
