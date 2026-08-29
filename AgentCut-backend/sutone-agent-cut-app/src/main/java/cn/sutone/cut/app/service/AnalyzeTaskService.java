@@ -83,7 +83,7 @@ public class AnalyzeTaskService {
     /**
      * Python 分析完成回调：保存报告 + 反序列化/校验/保存方案，标记任务成功。
      */
-    public void handleCallback(Long taskId, String reportJson, String planJson) {
+    public void handleCallback(Long taskId, String reportJson, String planJson, String qualityJson) {
         TaskEntity task = taskRepository.queryById(taskId);
         if (task == null) {
             throw new IllegalArgumentException("任务不存在: " + taskId);
@@ -93,6 +93,7 @@ public class AnalyzeTaskService {
                 .projectId(task.getProjectId())
                 .version(1)
                 .contentJson(reportJson)
+                .qualityJson(qualityJson)
                 .status("SUCCESS")
                 .build();
         analysisReportRepository.save(report);

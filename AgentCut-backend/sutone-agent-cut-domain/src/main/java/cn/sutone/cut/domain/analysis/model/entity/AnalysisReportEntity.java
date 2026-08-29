@@ -21,6 +21,8 @@ public class AnalysisReportEntity {
     private int version;
     /** 报告内容 JSON（场景/转写/亮点/建议） */
     private String contentJson;
+    /** 质量评审 JSON（Plan 的质检结果，raw JSON 原样落库，暂挂 analysis_report 仅为最小改动） */
+    private String qualityJson;
     private String status;
     private LocalDateTime createdAt;
 }

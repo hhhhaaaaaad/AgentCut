@@ -59,7 +59,10 @@ public class TaskController {
         JsonNode result = body.get("result");
         String reportJson = result != null && result.has("analysis") ? result.get("analysis").toString() : "{}";
         String planJson = result != null && result.has("plan") ? result.get("plan").toString() : "{}";
-        analyzeTaskService.handleCallback(taskId, reportJson, planJson);
+        // quality 为 JSON null（SIMULATE 下）时落 null，避免把 "null" 字符串写库
+        JsonNode quality = result != null ? result.get("quality") : null;
+        String qualityJson = (quality != null && !quality.isNull()) ? quality.toString() : null;
+        analyzeTaskService.handleCallback(taskId, reportJson, planJson, qualityJson);
     }
 
     /** 查询渲染结果（成片 outputPath） */

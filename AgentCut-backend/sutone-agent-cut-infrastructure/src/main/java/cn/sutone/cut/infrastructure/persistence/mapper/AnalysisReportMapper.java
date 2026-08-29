@@ -13,16 +13,16 @@ import java.util.List;
  */
 public interface AnalysisReportMapper {
 
-    @Insert("INSERT INTO analysis_report (project_id, version, content_json, status) "
-            + "VALUES (#{projectId}, #{version}, #{contentJson}, #{status})")
+    @Insert("INSERT INTO analysis_report (project_id, version, content_json, quality_json, status) "
+            + "VALUES (#{projectId}, #{version}, #{contentJson}, #{qualityJson}, #{status})")
     @Options(useGeneratedKeys = true, keyProperty = "reportId")
     int insert(AnalysisReportEntity report);
 
-    @Select("SELECT id AS reportId, project_id, version, content_json, status, created_at "
+    @Select("SELECT id AS reportId, project_id, version, content_json, quality_json, status, created_at "
             + "FROM analysis_report WHERE id = #{reportId}")
     AnalysisReportEntity selectById(@Param("reportId") Long reportId);
 
-    @Select("SELECT id AS reportId, project_id, version, content_json, status, created_at "
+    @Select("SELECT id AS reportId, project_id, version, content_json, quality_json, status, created_at "
             + "FROM analysis_report WHERE project_id = #{projectId}")
     List<AnalysisReportEntity> selectByProjectId(@Param("projectId") Long projectId);
 }

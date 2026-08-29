@@ -52,10 +52,14 @@ CREATE TABLE IF NOT EXISTS analysis_report (
     project_id   BIGINT      NOT NULL,
     version      INT         NOT NULL DEFAULT 1,
     content_json JSON        NULL COMMENT '报告内容（场景/转写/亮点/建议）',
+    quality_json JSON        NULL COMMENT '质量评审（Plan 的质检结果，raw JSON）',
     status       VARCHAR(32) NOT NULL DEFAULT 'SUCCESS',
     created_at   DATETIME    NOT NULL DEFAULT CURRENT_TIMESTAMP,
     KEY idx_report_project (project_id)
 ) ENGINE = InnoDB COMMENT = '分析报告';
+
+-- 已有库升级用（MySQL 不支持 ADD COLUMN IF NOT EXISTS，重复执行会报错，仅需手动执行一次）
+-- ALTER TABLE analysis_report ADD COLUMN quality_json JSON NULL COMMENT '质量评审（Plan 的质检结果，raw JSON）';
 
 -- -------------------------------------------------------------
 -- 剪辑方案（主表，记录当前生效版本）
