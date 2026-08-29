@@ -38,5 +38,6 @@ asr_*.txt
 *_test.jpg
 *_test.png
 
-# ===== 外部工具（ffmpeg 二进制等，不提交）=====
-tools/
+# ===== 外部工具（根目录 tools/ 下的 ffmpeg 二进制等，不提交）=====
+# 锚定根目录，避免误伤 AgentCut-ai/app/tools/ 下的 Python 源码
+/tools/
