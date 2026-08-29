@@ -1,7 +1,7 @@
-"""FunASR 语音转写工具（app.tools.transcribe）。
+"""语音转写工具（app.tools.transcribe）。
 
-默认 paraformer-zh（中文最优、精确时间戳），输出带秒级时间戳的文本段列表。
-依赖缺失 / 模拟模式下返回与场景对齐的占位转写，保证数据流完整。
+真实路径优先级：SiliconFlow ASR API（Qwen3-ASR，复用 VLM key，带真实时间戳）
+→ 本地 FunASR（paraformer-zh，需 torch）→ 模拟占位。
 """
 
 import logging
@@ -36,7 +36,7 @@ _SAMPLE_SENTENCES = [
 _MAX_SEGMENT_SECONDS = 60
 _SEGMENT_OVERLAP = 1.0
 
-# ASR 输出中的音乐标记（SenseVoice 对背景音乐片段标记这些符号，需清理）
+# ASR 输出中的音乐标记（部分 ASR 模型对背景音乐片段输出这些符号，需清理）
 _MUSIC_MARKS = ("🎼", "🎵", "🎶")
 
 
