@@ -44,6 +44,7 @@ class TargetConstraints(BaseModel):
     maxDuration: Optional[float] = Field(default=None, ge=1, description="目标时长上限（秒）")
     addSubtitle: Optional[bool] = Field(default=False, description="是否自动添加字幕")
     style: Optional[str] = Field(default="", description="风格意图（自由文本），如 '快节奏口播'")
+    qualityThreshold: Optional[float] = Field(default=None, ge=0, le=1, description="脚本质量达标阈值（0~1），低于则迭代重写")
 
 
 class AnalyzeRequest(BaseModel):
@@ -159,6 +160,9 @@ async def _run_job(job_id: str, req: AnalyzeRequest) -> None:
         result = {
             "analysis": report.model_dump(mode="json"),
             "plan": plan.to_contract_dict(),
+            "quality": plan_agent.last_quality.model_dump(mode="json")
+            if getattr(plan_agent, "last_quality", None)
+            else None,
         }
         await _update_job(job_id, status="success", progress=100, step="完成", result=result)
     except Exception as exc:

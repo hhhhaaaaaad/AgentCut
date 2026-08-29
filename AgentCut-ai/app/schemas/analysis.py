@@ -8,6 +8,8 @@ from typing import Any, Literal, Optional
 
 from pydantic import BaseModel, Field
 
+from app.schemas.expert import Chapter, NarrationAnalysis
+
 
 class Scene(BaseModel):
     """一个场景（镜头）及其语义描述。"""
@@ -79,6 +81,8 @@ class AnalysisReport(BaseModel):
     suggestions: list[EditingSuggestion] = Field(default_factory=list)
     narrationWordsPerMinute: Optional[float] = None
     vlmNotes: str = ""
+    chapters: list[Chapter] = Field(default_factory=list)  # 来自 TimelineAnalysis
+    narration: Optional[NarrationAnalysis] = None  # 来自 NarrationAgent
 
     def transcript_text(self, start: float, end: float, sep: str = " ") -> str:
         """取 [start, end) 区间内的转写文本（用于拼字幕）。"""

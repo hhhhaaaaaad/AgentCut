@@ -12,6 +12,22 @@ from app.schemas.analysis import (
     SilenceRange,
     TranscriptSegment,
 )
+from app.schemas.expert import (
+    Argument,
+    Chapter,
+    EmphasisPoint,
+    KeySentence,
+    NarrationAnalysis,
+    RedundantRange,
+    TimelineAnalysis,
+)
+from app.schemas.quality import (
+    DimensionScore,
+    QualityDimension,
+    QualityIssue,
+    QualityReview,
+    Severity,
+)
 from app.schemas.plan import (
     Bgm,
     Global,
@@ -52,4 +68,16 @@ __all__ = [
     "HighlightClip",
     "SilenceRange",
     "EditingSuggestion",
+    "TimelineAnalysis",
+    "Chapter",
+    "NarrationAnalysis",
+    "Argument",
+    "KeySentence",
+    "RedundantRange",
+    "EmphasisPoint",
+    "QualityReview",
+    "QualityIssue",
+    "DimensionScore",
+    "QualityDimension",
+    "Severity",
 ]

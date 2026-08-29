@@ -1,8 +1,9 @@
 """AnalysisAgent：理解视频并产出 AnalysisReport（app.agents.analysis_agent）。
 
-流水线（确定性工具 + VLM 决策）：
-    抽帧(PyAV) → 场景检测(PySceneDetect) → ASR(FunASR) → VLM 理解(Qwen2.5-VL) → 组装报告
+流水线（确定性工具 + 分析专家 + VLM）：
+    抽帧(PyAV) → 场景检测(PySceneDetect) → ASR(FunASR) → 分析专家(时间轴/讲解内容) + VLM → 组装报告
 
+- 两专家（TimelineAgent / NarrationAgent）+ VLM 产出，_assemble 只做信号装配，不做剪辑决策。
 - 环境中装有 langgraph 且非模拟模式时用 StateGraph 编排；否则顺序执行（二者等价）。
 - 无长期记忆：本 agent 无状态，输入视频路径 + 临时工作目录，输出 AnalysisReport。
 """
@@ -12,12 +13,14 @@ import os
 from typing import List, Optional
 
 from app import config
+from app.agents._common import detect_silence
+from app.agents.narration_agent import NarrationAgent
+from app.agents.timeline_agent import TimelineAgent
 from app.schemas.analysis import (
     AnalysisReport,
     EditingSuggestion,
     HighlightClip,
     Scene,
-    SilenceRange,
     TranscriptSegment,
 )
 from app.schemas.plan import TimeRange
@@ -36,28 +39,15 @@ except Exception as exc:  # pragma: no cover
     logger.debug("langgraph 未安装，AnalysisAgent 使用顺序执行：%s", exc)
 
 
-def _detect_silence(
-    transcripts: List[TranscriptSegment], scenes: List[TimeRange]
-) -> List[SilenceRange]:
-    """启发式静音检测：无转写文本覆盖的场景视为静音（MVP 简化）。"""
-    ranges: List[SilenceRange] = []
-    for sc in scenes:
-        has_speech = any(t.start < sc.end and t.end > sc.start for t in transcripts)
-        if not has_speech:
-            ranges.append(
-                SilenceRange(
-                    start=sc.start, end=sc.end, duration=round(sc.end - sc.start, 3)
-                )
-            )
-    return ranges
-
-
 class AnalysisAgent:
-    """视频分析 Agent：抽帧 / 场景 / ASR / VLM → AnalysisReport。"""
+    """视频分析 Agent：抽帧 / 场景 / ASR / 分析专家 + VLM → AnalysisReport。"""
 
     def __init__(self, work_dir: Optional[str] = None):
         self.work_dir = work_dir or os.path.join(config.WORK_DIR, "analysis")
         os.makedirs(self.work_dir, exist_ok=True)
+        # 分析专家由 __init__ 构造注入（便于测试与复用，避免每次重新建 client）
+        self._timeline_agent = TimelineAgent()
+        self._narration_agent = NarrationAgent()
 
     # ------------------------------------------------------------------
     # 流水线步骤（可被顺序执行 / LangGraph 节点复用）
@@ -88,7 +78,21 @@ class AnalysisAgent:
         transcripts: List[TranscriptSegment],
         meta: dict,
     ) -> dict:
+        """视觉语义（复用现有 vlm_understand；其 highlights/suggestions 不再被消费）。"""
         return vlm_understand.understand_video(scenes, frames, transcripts, meta)
+
+    def _step_experts(
+        self,
+        scenes: List[TimeRange],
+        frames: List[str],
+        transcripts: List[TranscriptSegment],
+        meta: dict,
+    ) -> dict:
+        """编排两分析专家 + VLM。"""
+        timeline = self._timeline_agent.run(scenes, transcripts, meta)
+        narration = self._narration_agent.run(transcripts, scenes, meta)
+        vlm = self._step_vlm(scenes, frames, transcripts, meta)
+        return {"timeline": timeline, "narration": narration, "vlm": vlm}
 
     def _assemble(
         self,
@@ -97,16 +101,39 @@ class AnalysisAgent:
         scenes: List[TimeRange],
         frames: List[str],
         transcripts: List[TranscriptSegment],
-        vlm: dict,
+        experts: dict,
         asset_id: str,
     ) -> AnalysisReport:
-        """把各步骤产物组装为 AnalysisReport。"""
+        """把各步骤产物组装为 AnalysisReport（只做信号装配，不做剪辑决策）。"""
+        vlm = experts["vlm"]
+        timeline = experts["timeline"]
+        narration = experts["narration"]
+
         descs = vlm.get("sceneDescriptions", [])
         tags = vlm.get("sceneTags", [])
         imps = vlm.get("sceneImportance", [])
 
+        # 重要性统一：视觉 + 讲解取高，讲解兜下限（视觉做参考、讲解兜下限）
+        narration_imp: dict = {}
+        protected = set()
+        if narration:
+            for ks in narration.keySentences:
+                narration_imp[ks.sceneIndex] = max(
+                    narration_imp.get(ks.sceneIndex, 0.0), ks.importance
+                )
+                protected.add(ks.sceneIndex)
+            for arg in narration.arguments:
+                for si in arg.sceneIndices:
+                    narration_imp[si] = max(narration_imp.get(si, 0.0), arg.importance)
+                if arg.importance >= 0.5:
+                    protected.update(arg.sceneIndices)
+
         scene_objs: List[Scene] = []
         for i, sc in enumerate(scenes):
+            visual_i = imps[i] if i < len(imps) else 0.5
+            imp = max(visual_i, narration_imp.get(i, 0.0))
+            if i in protected:
+                imp = max(imp, 0.5)
             scene_objs.append(
                 Scene(
                     index=i,
@@ -116,13 +143,74 @@ class AnalysisAgent:
                     description=descs[i] if i < len(descs) else "",
                     keyFramePaths=frames[i : i + 1] if i < len(frames) else [],
                     tags=tags[i] if i < len(tags) else [],
-                    importance=imps[i] if i < len(imps) else 0.5,
+                    importance=round(imp, 3),
                 )
             )
 
-        highlights = [HighlightClip(**h) for h in vlm.get("highlights", [])]
-        suggestions = [EditingSuggestion(**s) for s in vlm.get("suggestions", [])]
-        silences = _detect_silence(transcripts, scenes)
+        # highlights：讲解关键句 Top-N
+        highlights: List[HighlightClip] = []
+        if narration:
+            top_ks = sorted(narration.keySentences, key=lambda k: k.importance, reverse=True)[:5]
+            for ks in top_ks:
+                highlights.append(
+                    HighlightClip(
+                        sceneIndex=ks.sceneIndex,
+                        start=ks.start,
+                        end=ks.end,
+                        reason=ks.text,
+                        score=ks.importance,
+                    )
+                )
+
+        # suggestions：删除（filler + redundancy 去重）+ 保留（高 importance 论点）
+        suggestions: List[EditingSuggestion] = []
+        seen = set()
+        if timeline:
+            for fr in timeline.fillerRanges:
+                si = next(
+                    (
+                        i
+                        for i, sc in enumerate(scenes)
+                        if sc.start <= fr.start + 1e-3 < sc.end
+                    ),
+                    None,
+                )
+                key = (si, round(fr.start, 2))
+                if key in seen:
+                    continue
+                seen.add(key)
+                suggestions.append(
+                    EditingSuggestion(
+                        type="delete",
+                        sceneIndex=si,
+                        reason="静音/无口播",
+                        params={"start": fr.start, "end": fr.end},
+                    )
+                )
+        if narration:
+            for rd in narration.redundancy:
+                key = (rd.sceneIndex, round(rd.start, 2))
+                if key in seen:
+                    continue
+                seen.add(key)
+                suggestions.append(
+                    EditingSuggestion(
+                        type="delete",
+                        sceneIndex=rd.sceneIndex,
+                        reason=rd.reason or "冗余",
+                        params={"start": rd.start, "end": rd.end},
+                    )
+                )
+            for arg in narration.arguments:
+                if arg.importance >= 0.6:
+                    for si in arg.sceneIndices:
+                        suggestions.append(
+                            EditingSuggestion(
+                                type="keep", sceneIndex=si, reason=arg.claim, params={}
+                            )
+                        )
+
+        silences = detect_silence(transcripts, scenes)
 
         # 语速（字/分钟）
         total_words = sum(len(t.text) for t in transcripts)
@@ -146,6 +234,8 @@ class AnalysisAgent:
             suggestions=suggestions,
             narrationWordsPerMinute=wpm,
             vlmNotes=vlm.get("notes", ""),
+            chapters=timeline.chapters if timeline else [],
+            narration=narration,
         )
 
     # ------------------------------------------------------------------
@@ -168,11 +258,11 @@ class AnalysisAgent:
         scenes = self._step_scene(video_path, meta)
         frames = self._step_frames(video_path, scenes)
         transcripts = self._step_asr(video_path, scenes)
-        vlm = self._step_vlm(scenes, frames, transcripts, meta)
-        return self._assemble(video_path, meta, scenes, frames, transcripts, vlm, asset_id)
+        experts = self._step_experts(scenes, frames, transcripts, meta)
+        return self._assemble(video_path, meta, scenes, frames, transcripts, experts, asset_id)
 
     def _build_graph(self):
-        """LangGraph StateGraph：probe → scene → frames/asr → vlm → assemble。"""
+        """LangGraph StateGraph：probe → scene → frames/asr → experts → assemble。"""
 
         class PipelineState(TypedDict):
             video_path: Optional[str]
@@ -181,7 +271,7 @@ class AnalysisAgent:
             scenes: list
             frames: list
             transcripts: list
-            vlm: dict
+            experts: dict
 
         g = StateGraph(PipelineState)
         g.add_node("probe", lambda s: {"meta": self._step_probe(s["video_path"])})
@@ -189,18 +279,18 @@ class AnalysisAgent:
         g.add_node("frames", lambda s: {"frames": self._step_frames(s["video_path"], s["scenes"])})
         g.add_node("asr", lambda s: {"transcripts": self._step_asr(s["video_path"], s["scenes"])})
         g.add_node(
-            "vlm",
+            "experts",
             lambda s: {
-                "vlm": self._step_vlm(s["scenes"], s["frames"], s["transcripts"], s["meta"])
+                "experts": self._step_experts(s["scenes"], s["frames"], s["transcripts"], s["meta"])
             },
         )
         g.add_edge(START, "probe")
         g.add_edge("probe", "scene")
         g.add_edge("scene", "frames")
         g.add_edge("scene", "asr")
-        g.add_edge("frames", "vlm")
-        g.add_edge("asr", "vlm")
-        g.add_edge("vlm", END)
+        g.add_edge("frames", "experts")
+        g.add_edge("asr", "experts")
+        g.add_edge("experts", END)
         return g.compile()
 
     def _run_with_graph(self, video_path: Optional[str], asset_id: str) -> AnalysisReport:
@@ -212,6 +302,6 @@ class AnalysisAgent:
             state["scenes"],
             state["frames"],
             state["transcripts"],
-            state["vlm"],
+            state["experts"],
             asset_id,
         )
