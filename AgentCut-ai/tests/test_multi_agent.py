@@ -7,6 +7,7 @@ import pytest
 
 from app import config
 from app.agents.plan_agent import PlanAgent
+from app.agents.timeline_agent import TimelineAgent
 from app.agents.validator import DeterministicValidator
 from app.schemas.analysis import AnalysisReport, Scene, TranscriptSegment
 from app.schemas.expert import Argument, Chapter, KeySentence, NarrationAnalysis
@@ -257,3 +258,33 @@ def test_qa_loop_passes(monkeypatch):
     assert plan is not None
     assert pa.last_quality is not None
     assert pa.last_quality.passed is True
+
+
+# ---------------------------------------------------------------------------
+# timeline_agent：章节标题填充
+# ---------------------------------------------------------------------------
+
+
+def test_timeline_title_fallback_empty(monkeypatch):
+    monkeypatch.setattr(config, "SIMULATE_FORCED", True)
+    scenes = [TimeRange(start=0.0, end=5.0), TimeRange(start=5.0, end=10.0)]
+    transcripts = [TranscriptSegment(index=0, start=0.5, end=4.0, text="大家好今天讲剪辑")]
+    res = TimelineAgent().run(scenes, transcripts, {})
+    assert all(c.title == "" for c in res.chapters)
+
+
+def test_timeline_title_llm(monkeypatch):
+    monkeypatch.setattr(config, "SIMULATE_FORCED", False)
+
+    class _TitleLLM:
+        def invoke(self, prompt):
+            return SimpleNamespace(content='{"titles": {"0": "开场", "1": "正文"}}')
+
+    scenes = [TimeRange(start=0.0, end=5.0), TimeRange(start=5.0, end=10.0)]
+    transcripts = [
+        TranscriptSegment(index=0, start=0.5, end=4.0, text="大家好今天讲剪辑"),
+        TranscriptSegment(index=1, start=5.5, end=9.0, text="核心论点很重要"),
+    ]
+    res = TimelineAgent(llm=_TitleLLM()).run(scenes, transcripts, {})
+    assert res.chapters[0].title == "开场"
+    assert res.chapters[1].title == "正文"
