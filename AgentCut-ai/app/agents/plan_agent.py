@@ -132,7 +132,7 @@ class PlanAgent:
         """生成→QA 评分→带 issue 重写 循环，最终过校验闸。"""
         v = getattr(target, "qualityThreshold", None)
         threshold = _QA_THRESHOLD if v is None else v  # 0 是合法值，不能用 or 吞掉
-        best_plan, best_score = None, -1.0
+        best_plan, best_score, best_review = None, -1.0, None
         feedback = None
         prev_plan = None
         start = time.monotonic()
@@ -148,12 +148,13 @@ class PlanAgent:
             if review is None:  # QA 挂了 → 跳过监督，直接过闸
                 return self._gate(plan, report, target, project_id)
             if review.overallScore > best_score:
-                best_plan, best_score = plan, review.overallScore
+                best_plan, best_score, best_review = plan, review.overallScore, review
             if review.passed or review.overallScore >= threshold:
                 return self._gate(plan, report, target, project_id)
             feedback = review.issues
             prev_plan = plan  # 记录上一版，供下一轮定向修订
-        # 迭代耗尽 / 超时 → 取历史最高分那版过闸
+        # 迭代耗尽 / 超时 → 取历史最高分那版过闸；last_quality 对齐到该版评审
+        self.last_quality = best_review
         return self._gate(best_plan or plan, report, target, project_id)
 
     def _director_generate(
