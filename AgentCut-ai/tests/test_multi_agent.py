@@ -260,6 +260,37 @@ def test_qa_loop_passes(monkeypatch):
     assert pa.last_quality.passed is True
 
 
+def test_qa_loop_iterates(monkeypatch):
+    """低分 QA → 触发重写 → 高分 QA，验证循环确实会迭代（而非被时间止损截断）。"""
+    monkeypatch.setattr(config, "SIMULATE_FORCED", False)
+    report = _make_report()
+    target = _target()
+    plan_json = PlanAgent()._build_deterministic(report, target, "p").model_dump_json()
+
+    qa_low = json.dumps({
+        "overallScore": 0.5, "passed": False,
+        "issues": [{"dimension": "pacing", "severity": "medium", "reason": "r", "suggestion": "s"}],
+        "dimensionScores": [], "summary": "",
+    }, ensure_ascii=False)
+    qa_high = json.dumps({"overallScore": 0.9, "passed": True, "issues": [], "dimensionScores": [], "summary": ""}, ensure_ascii=False)
+
+    class _IterLLM:
+        def __init__(self):
+            self.director_calls = 0
+
+        def invoke(self, prompt):
+            if "质量监督" in prompt:
+                return SimpleNamespace(content=qa_low if self.director_calls == 1 else qa_high)
+            self.director_calls += 1
+            return SimpleNamespace(content=plan_json)
+
+    stub = _IterLLM()
+    pa = PlanAgent(llm=stub)
+    plan = pa._build_with_llm(report, target, "p")
+    assert stub.director_calls == 2  # 低分触发了一次重写
+    assert pa.last_quality is not None and pa.last_quality.passed is True
+
+
 # ---------------------------------------------------------------------------
 # timeline_agent：章节标题填充
 # ---------------------------------------------------------------------------
