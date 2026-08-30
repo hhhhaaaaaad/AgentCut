@@ -96,9 +96,10 @@ def _simulate_transcript(scenes: Sequence[TimeRange]) -> List[TranscriptSegment]
 
 
 def _transcribe_via_api(video_path: str, scenes: Sequence[TimeRange]) -> List[TranscriptSegment]:
-    """用 SiliconFlow Qwen3-ASR + VAD 预分割转写，返回带真实时间戳的文本段。
+    """用 SiliconFlow ASR + VAD 预分割 + 合并转写，返回带真实时间戳的文本段。
 
-    流程：FFmpeg 抽音频 → VAD 检测语音段 → 逐段调 Qwen3-ASR → 组装带时间戳的段。
+    流程：FFmpeg 抽音频 → VAD 检测语音段 → 合并相邻段（每块 ≤ 30s）→ 逐块调 ASR → 组装带时间戳段。
+    VAD 保证精确时间戳 + 跳过静音；合并避免调用过多 & 长音频 Connection error。
     """
     import shutil
     import subprocess
@@ -110,7 +111,7 @@ def _transcribe_via_api(video_path: str, scenes: Sequence[TimeRange]) -> List[Tr
 
     tmpdir = tempfile.mkdtemp(prefix="agentcut_asr_")
     try:
-        # 1. FFmpeg 抽音频（16kHz 16bit 单声道 wav，供 VAD + ASR）
+        # 1. FFmpeg 抽音频（16kHz 16bit 单声道 wav）
         audio_path = os.path.join(tmpdir, "full.wav")
         subprocess.run(
             ["ffmpeg", "-y", "-i", video_path, "-vn", "-ac", "1", "-ar", "16000",
@@ -118,13 +119,16 @@ def _transcribe_via_api(video_path: str, scenes: Sequence[TimeRange]) -> List[Tr
             check=True, capture_output=True,
         )
 
-        # 2. VAD 检测语音段（得到真实时间戳）
-        segments = _detect_speech_segments(audio_path)
+        # 2. VAD 检测语音段；无语音/失败则回退 30s 粗切
+        speech = _detect_speech_segments(audio_path)
+        if not speech:
+            duration = _audio_duration(audio_path) or 30.0
+            speech = [(s, min(s + 30.0, duration)) for s in range(0, int(duration) + 1, 30)]
 
-        # 3. 逐段切音频 + Qwen3-ASR 转写，组装带时间戳的转写段
+        # 3. 合并相邻段（每块 ≤ 30s），逐块转写
         results: List[TranscriptSegment] = []
-        for i, (start, end) in enumerate(segments):
-            seg_path = os.path.join(tmpdir, f"seg_{i}.wav")
+        for idx, (start, end) in enumerate(_merge_speech_segments(speech, max_chunk=30.0, gap=1.0)):
+            seg_path = os.path.join(tmpdir, f"seg_{idx}.wav")
             subprocess.run(
                 ["ffmpeg", "-y", "-ss", str(start), "-t", str(end - start), "-i", audio_path,
                  "-c", "copy", seg_path],
@@ -134,13 +138,38 @@ def _transcribe_via_api(video_path: str, scenes: Sequence[TimeRange]) -> List[Tr
                 text = _transcribe_audio_file(client, seg_path)
                 if text:
                     results.append(TranscriptSegment(
-                        index=i, start=round(start, 3), end=round(end, 3), text=text,
+                        index=idx, start=round(start, 3), end=round(end, 3), text=text,
                     ))
             except Exception as exc:
-                logger.warning("语音段 %.1fs~%.1fs 转写失败：%s", start, end, exc)
+                logger.warning("音频块 %.1fs~%.1fs 转写失败：%s", start, end, exc)
         return results
     finally:
         shutil.rmtree(tmpdir, ignore_errors=True)
+
+
+def _merge_speech_segments(segments: List[tuple], max_chunk: float = 30.0, gap: float = 1.0) -> List[tuple]:
+    """合并相邻语音段（段间距 ≤ gap），再把超长段切成 ≤ max_chunk 块。"""
+    if not segments:
+        return []
+    # 1. 合并相邻段
+    merged = []
+    cur_start, cur_end = segments[0]
+    for start, end in segments[1:]:
+        if start - cur_end <= gap:
+            cur_end = max(cur_end, end)
+        else:
+            merged.append((cur_start, cur_end))
+            cur_start, cur_end = start, end
+    merged.append((cur_start, cur_end))
+    # 2. 超长段切成 max_chunk 块（避免整段长音频触发 Connection error）
+    chunks = []
+    for start, end in merged:
+        while end - start > max_chunk + 1e-6:
+            chunks.append((start, start + max_chunk))
+            start += max_chunk
+        if end > start:
+            chunks.append((start, end))
+    return chunks
 
 
 def _detect_speech_segments(audio_path: str, frame_ms: int = 30, min_segment: float = 0.3) -> List[tuple]:
