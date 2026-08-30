@@ -56,7 +56,7 @@ _MAX_SUBTITLE_LEN = 120
 # 质检闭环：达标阈值 / 最大迭代轮数 / 时间止损（秒）
 _QA_THRESHOLD = 0.85
 _MAX_QA_ITERATIONS = 3
-_QA_TIME_BUDGET_SECONDS = 120.0
+_QA_TIME_BUDGET_SECONDS = 600.0  # 需容纳首轮导演生成（~3min）+ 至少一次重写
 
 
 def _norm_aspect(s: str):
@@ -134,11 +134,12 @@ class PlanAgent:
         threshold = _QA_THRESHOLD if v is None else v  # 0 是合法值，不能用 or 吞掉
         best_plan, best_score = None, -1.0
         feedback = None
+        prev_plan = None
         start = time.monotonic()
         for _ in range(_MAX_QA_ITERATIONS):
             if time.monotonic() - start > _QA_TIME_BUDGET_SECONDS:
                 break
-            plan = self._director_generate(report, target, project_id, feedback)
+            plan = self._director_generate(report, target, project_id, feedback, prev_plan)
             if plan is None:
                 logger.warning("[plan] 导演生成失败，回退确定性方案")
                 return self._build_deterministic(report, target, project_id)
@@ -151,14 +152,16 @@ class PlanAgent:
             if review.passed or review.overallScore >= threshold:
                 return self._gate(plan, report, target, project_id)
             feedback = review.issues
+            prev_plan = plan  # 记录上一版，供下一轮定向修订
         # 迭代耗尽 / 超时 → 取历史最高分那版过闸
         return self._gate(best_plan or plan, report, target, project_id)
 
     def _director_generate(
-        self, report: AnalysisReport, target, project_id: str, feedback=None
+        self, report: AnalysisReport, target, project_id: str, feedback=None,
+        prev_plan: Optional[Plan] = None,
     ) -> Optional[Plan]:
         """导演单次生成：prompt→invoke→validate；失败返回 None（不抛异常）。"""
-        prompt = self._director_prompt(report, target, project_id, feedback)
+        prompt = self._director_prompt(report, target, project_id, feedback, prev_plan)
         # DeepSeek 等端点不支持 response_format（with_structured_output 依赖它），
         # 改为让 LLM 输出 JSON 文本后手动解析 + Pydantic 校验。
         prompt += "\n\n请直接输出一个符合上述 schema 的 JSON 对象，不要输出任何解释、前后缀或 Markdown 代码块标记。"
@@ -184,7 +187,7 @@ class PlanAgent:
         logger.warning("[plan] 校验闸拒绝，回退确定性方案：%s", v.errors)
         return self._build_deterministic(report, target, project_id)
 
-    def _director_prompt(self, report, target, project_id, feedback=None) -> str:
+    def _director_prompt(self, report, target, project_id, feedback=None, prev_plan: Optional[Plan] = None) -> str:
         # 用 Pydantic 生成精确 JSON Schema，让 LLM 严格对齐字段名（避免字段名漂移导致校验失败）
         schema_json = json.dumps(Plan.model_json_schema(), ensure_ascii=False)
         target_json = (
@@ -201,11 +204,30 @@ class PlanAgent:
             f"分析报告(report):\n{report.model_dump_json(indent=2)}\n"
         )
         base += "\n" + self._build_hard_constraints(report) + "\n"
-        if feedback:
-            issues = [f.model_dump(mode="json") for f in feedback]
+        if prev_plan is not None:
             base += (
-                "\n上一次质量评审发现以下问题，请逐条修正后再输出：\n"
-                f"{json.dumps(issues, ensure_ascii=False, indent=2)}\n"
+                "\n这是上一版剪辑方案，请在其基础上只修改评审指出的问题，其余保持不变：\n"
+                f"{prev_plan.model_dump_json(indent=2)}\n"
+            )
+        if feedback:
+            by_severity: dict = {"high": [], "medium": [], "low": []}
+            for f in feedback:
+                sev = getattr(f, "severity", "medium")
+                by_severity.setdefault(sev, []).append(f.model_dump(mode="json"))
+            parts = []
+            if by_severity.get("high"):
+                parts.append(
+                    "【必须修复】high 问题，逐条修复后再输出：\n"
+                    + json.dumps(by_severity["high"], ensure_ascii=False, indent=2)
+                )
+            if by_severity.get("medium"):
+                parts.append(
+                    "【建议修复】medium 问题：\n"
+                    + json.dumps(by_severity["medium"], ensure_ascii=False, indent=2)
+                )
+            base += (
+                "\n上一次质量评审发现以下问题，请逐条修复（high 必须修复，无法修复则说明原因）：\n"
+                + "\n".join(parts) + "\n"
             )
         base += "\n请只输出一个符合上述 JSON Schema 的剪辑方案 JSON 对象，不要输出任何解释、前后缀或代码块标记。"
         return base
@@ -241,8 +263,12 @@ class PlanAgent:
                 "【必须删除】以下区间为废话/冗余/静音，建议删除：\n" + "\n".join(delete_items)
             )
         lines.append(
-            "【硬性规则】变速 rate ≤ 2.5；crop 不得越界；keep=false 不得带 operations；"
-            "时间轴连续无重叠；区间不得超出源时长。"
+            "【硬性规则】变速 rate ≤ 2.5；crop 不得越界且参数必须取整（整数像素）；"
+            "keep=false 不得带 operations；时间轴连续无重叠；区间不得超出源时长。"
+        )
+        lines.append(
+            "【转场规则】默认硬切（transitions 为空）；仅当相邻保留片段源素材连续、确有需要时才加 fade；"
+            "fade 时长 ≤ 0.3s，且必须落在删除区/静音区，不得覆盖口播语音。"
         )
         return "\n".join(lines)
 
