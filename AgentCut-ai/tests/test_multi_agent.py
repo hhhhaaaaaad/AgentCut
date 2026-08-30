@@ -319,3 +319,31 @@ def test_timeline_title_llm(monkeypatch):
     res = TimelineAgent(llm=_TitleLLM()).run(scenes, transcripts, {})
     assert res.chapters[0].title == "开场"
     assert res.chapters[1].title == "正文"
+
+
+def test_hard_constraints_include_argument_scenes():
+    # argument 依赖的 sceneIndex（不在 keySentences 里）也应纳入「必须保留」
+    scenes = [
+        Scene(index=0, start=0.0, end=5.0, importance=0.8),
+        Scene(index=1, start=5.0, end=10.0, importance=0.5),
+    ]
+    narration = NarrationAnalysis(
+        keySentences=[KeySentence(sceneIndex=0, start=0.5, end=4.0, text="关键句", importance=0.9)],
+        arguments=[Argument(index=0, claim="某个论点", sceneIndices=[1], importance=0.8)],
+    )
+    report = _make_report(scenes=scenes, narration=narration)
+    constraints = PlanAgent()._build_hard_constraints(report)
+    assert "sceneIndex=1" in constraints  # 仅出现在 arguments.sceneIndices 里
+
+
+def test_sanitize_restores_protected_scene():
+    # 导演删掉了关键场景（scene 1 = 5~10s），_sanitize_plan 应确定性恢复为 keep
+    report = _make_report()  # protected = {1}
+    pa = PlanAgent()
+    plan = _make_plan()
+    plan.timeline[1].keep = False  # seg_2（5~10s）被删
+    restored = pa._sanitize_plan(plan, report)
+    assert any(
+        seg.keep and seg.sourceRange.start <= 5.0 and 10.0 <= seg.sourceRange.end
+        for seg in restored.timeline
+    )

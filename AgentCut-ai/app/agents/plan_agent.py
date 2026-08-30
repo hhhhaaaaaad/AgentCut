@@ -180,12 +180,71 @@ class PlanAgent:
         return plan
 
     def _gate(self, plan: Plan, report: AnalysisReport, target, project_id: str) -> Plan:
-        """确定性校验闸：非法方案回退确定性构建（永远合法）。"""
+        """确定性校验闸：先兜底修复（恢复关键场景/去转场），再校验，非法则回退确定性构建。"""
+        plan = self._sanitize_plan(plan, report)
         v = self.validator.validate(plan, report, target)
         if v.valid:
             return plan
         logger.warning("[plan] 校验闸拒绝，回退确定性方案：%s", v.errors)
         return self._build_deterministic(report, target, project_id)
+
+    def _sanitize_plan(self, plan: Plan, report: AnalysisReport) -> Plan:
+        """确定性兜底：恢复被误删的关键场景 + 去掉覆盖语音的转场。"""
+        if plan is None:
+            return plan
+        plan = self._restore_protected_scenes(plan, report)
+        if self.last_quality is not None and any(
+            i.severity == "high" and i.dimension == "narration_visual_match"
+            for i in self.last_quality.issues
+        ):
+            plan.transitions = []
+        return plan
+
+    def _protected_scene_indices(self, report: AnalysisReport) -> set:
+        """关键场景（highlights + keySentences + 高 importance 论点的 sceneIndices）。"""
+        protected = {h.sceneIndex for h in report.highlights}
+        narration = getattr(report, "narration", None)
+        if narration:
+            for ks in narration.keySentences:
+                protected.add(ks.sceneIndex)
+            for arg in narration.arguments:
+                if arg.importance >= 0.5:
+                    protected.update(arg.sceneIndices)
+        return protected
+
+    def _restore_protected_scenes(self, plan: Plan, report: AnalysisReport) -> Plan:
+        """确保 protected 场景的完整 [start, end] 区间被 keep（不被部分删除）。"""
+        protected = self._protected_scene_indices(report)
+        if not protected:
+            return plan
+        for si in protected:
+            if si >= len(report.scenes):
+                continue
+            sc = report.scenes[si]
+            s, e = sc.start, sc.end
+            if any(
+                seg.keep and seg.sourceRange.start <= s + 1e-3 and e - 1e-3 <= seg.sourceRange.end
+                for seg in plan.timeline
+            ):
+                continue
+            target = next(
+                (seg for seg in plan.timeline
+                 if seg.sourceRange.start < e and seg.sourceRange.end > s),
+                None,
+            )
+            if target is not None:
+                target.keep = True
+                target.sourceRange.start = min(target.sourceRange.start, s)
+                target.sourceRange.end = max(target.sourceRange.end, e)
+            else:
+                plan.timeline.append(Segment(
+                    id=f"restore_{si}",
+                    keep=True,
+                    sourceRange=TimeRange(start=s, end=e),
+                    operations=[],
+                ))
+        plan.timeline.sort(key=lambda seg: seg.sourceRange.start)
+        return plan
 
     def _director_prompt(self, report, target, project_id, feedback=None, prev_plan: Optional[Plan] = None) -> str:
         # 用 Pydantic 生成精确 JSON Schema，让 LLM 严格对齐字段名（避免字段名漂移导致校验失败）
@@ -235,12 +294,24 @@ class PlanAgent:
     def _build_hard_constraints(self, report) -> str:
         """从分析报告提取硬约束（必须保留/必须删除/硬性规则），消除语义断层。"""
         keep_items: List[str] = []
+        seen_keep: set = set()
+
+        def add_keep(si: int, label: str) -> None:
+            if si not in seen_keep:
+                seen_keep.add(si)
+                keep_items.append(f"  sceneIndex={si}: {label}")
+
         for h in report.highlights[:10]:
-            keep_items.append(f"  sceneIndex={h.sceneIndex} ({h.start:.1f}s~{h.end:.1f}s): {h.reason}")
+            add_keep(h.sceneIndex, f"({h.start:.1f}s~{h.end:.1f}s) {h.reason}")
         narration = getattr(report, "narration", None)
         if narration:
             for ks in sorted(narration.keySentences, key=lambda k: k.importance, reverse=True)[:10]:
-                keep_items.append(f"  sceneIndex={ks.sceneIndex} ({ks.start:.1f}s~{ks.end:.1f}s): {ks.text[:40]}")
+                add_keep(ks.sceneIndex, f"({ks.start:.1f}s~{ks.end:.1f}s) {ks.text[:40]}")
+            # ① 补：高 importance 论点的依赖场景（arguments.sceneIndices）
+            for arg in narration.arguments:
+                if arg.importance >= 0.5:
+                    for si in arg.sceneIndices:
+                        add_keep(si, f"论点「{arg.claim[:30]}」依赖的铺垫/内容")
 
         delete_items: List[str] = []
         for s in report.suggestions:
@@ -269,6 +340,13 @@ class PlanAgent:
         lines.append(
             "【转场规则】默认硬切（transitions 为空）；仅当相邻保留片段源素材连续、确有需要时才加 fade；"
             "fade 时长 ≤ 0.3s，且必须落在删除区/静音区，不得覆盖口播语音。"
+        )
+        lines.append(
+            "【删减预算】仅删除明确标注的冗余/废话段；建议成片保留源内容 60%~80%，除非冗余段占比明显高于该比例。"
+        )
+        lines.append(
+            "【切分规则】删除边界必须对齐到完整句子/场景边界，不得把一句话拆断；"
+            "segment 的 start/end 对齐到 1/30s 帧边界（整数帧）。"
         )
         return "\n".join(lines)
 
