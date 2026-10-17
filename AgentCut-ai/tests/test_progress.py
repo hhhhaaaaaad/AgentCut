@@ -12,6 +12,7 @@ from app.agents.analysis_agent import AnalysisAgent
 from app.api import analyze
 from app.schemas.plan import TimeRange
 from app.tools import transcribe
+from app.tools import vlm_understand
 
 
 def _make_agent(tmp_path) -> AnalysisAgent:
@@ -137,3 +138,18 @@ def test_forced_simulation_skips_local_asr_import(tmp_path, monkeypatch):
     provenance = transcribe.get_last_provenance()
     assert provenance["mode"] == "SIMULATED"
     assert provenance["reason"] == "simulate_forced"
+
+
+def test_simulated_vlm_supports_single_scene(monkeypatch):
+    from app import config
+
+    monkeypatch.setattr(config, "SIMULATE_FORCED", True)
+    result = vlm_understand.understand_video(
+        [TimeRange(start=0.0, end=1.0)],
+        [],
+        [],
+        {},
+    )
+
+    assert result["simulated"] is True
+    assert result["suggestions"][0]["sceneIndex"] == 0

@@ -173,12 +173,21 @@ def _simulate_understanding(scenes, transcripts, meta, reason: str = "模拟理�
                 "score": scene_importance[idx],
             }
         )
-    suggestions = [
-        {"type": "keep", "sceneIndex": ranked[0], "reason": "核心内容，建议保留", "params": {}},
-        {"type": "keep", "sceneIndex": ranked[1], "reason": "亮点片段，建议保留", "params": {}},
-        {"type": "delete", "sceneIndex": ranked[-1], "reason": "重要性低，可考虑删除", "params": {}},
-        {"type": "subtitle", "sceneIndex": None, "reason": "建议全片添加字幕提升可读性", "params": {}},
-    ]
+    suggestions = []
+    if ranked:
+        suggestions.append(
+            {"type": "keep", "sceneIndex": ranked[0], "reason": "核心内容，建议保留", "params": {}}
+        )
+    if len(ranked) > 1:
+        suggestions.append(
+            {"type": "keep", "sceneIndex": ranked[1], "reason": "亮点片段，建议保留", "params": {}}
+        )
+        suggestions.append(
+            {"type": "delete", "sceneIndex": ranked[-1], "reason": "重要性低，可考虑删除", "params": {}}
+        )
+    suggestions.append(
+        {"type": "subtitle", "sceneIndex": None, "reason": "建议全片添加字幕提升可读性", "params": {}}
+    )
     return {
         "summary": "这是一个口播类视频，围绕主题依次展开，中段为重点讲解部分。",
         "sceneDescriptions": scene_desc,
