@@ -54,6 +54,18 @@ public class TaskDomainService {
         taskRepository.update(task);
     }
 
+    public void markNeedsReview(Long taskId, String resultJson, String reason) {
+        TaskEntity task = taskRepository.queryById(taskId);
+        if (task == null
+                || task.getStatus() == TaskStatus.SUCCESS
+                || task.getStatus() == TaskStatus.NEEDS_REVIEW
+                || task.getStatus() == TaskStatus.FAILED) {
+            return;
+        }
+        task.markNeedsReview(resultJson, reason);
+        taskRepository.update(task);
+    }
+
     public void markFailed(Long taskId, String errorMsg) {
         TaskEntity task = taskRepository.queryById(taskId);
         task.markFailed(errorMsg);

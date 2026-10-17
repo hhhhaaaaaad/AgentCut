@@ -19,6 +19,7 @@ import cn.sutone.cut.domain.task.service.TaskDomainService;
 import cn.sutone.cut.infrastructure.plan.PlanJsonMapper;
 import lombok.extern.slf4j.Slf4j;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -119,7 +120,9 @@ public class AnalyzeTaskService {
         if (task == null) {
             throw new IllegalArgumentException("任务不存在: " + taskId);
         }
-        if (task.getStatus() == TaskStatus.SUCCESS || task.getStatus() == TaskStatus.FAILED) {
+        if (task.getStatus() == TaskStatus.SUCCESS
+                || task.getStatus() == TaskStatus.NEEDS_REVIEW
+                || task.getStatus() == TaskStatus.FAILED) {
             log.warn("任务 {} 已是终态 {}，忽略迟到的失败回调", taskId, task.getStatus());
             return;
         }
@@ -140,17 +143,20 @@ public class AnalyzeTaskService {
 
         // 终态守卫：看门狗可能已因心跳超时把任务判为 FAILED，而那个僵死的 Python 进程
         // 最终仍会发来 "completed" 回调。若不挡住，会把已失败的任务复活成 SUCCESS。
-        if (task.getStatus() == TaskStatus.SUCCESS || task.getStatus() == TaskStatus.FAILED) {
+        if (task.getStatus() == TaskStatus.SUCCESS
+                || task.getStatus() == TaskStatus.NEEDS_REVIEW
+                || task.getStatus() == TaskStatus.FAILED) {
             log.warn("任务 {} 已是终态 {}，忽略迟到的完成回调", taskId, task.getStatus());
             return;
         }
 
+        boolean needsReview = qualityFailed(qualityJson);
         AnalysisReportEntity report = AnalysisReportEntity.builder()
                 .projectId(task.getProjectId())
                 .version(1)
                 .contentJson(reportJson)
                 .qualityJson(qualityJson)
-                .status("SUCCESS")
+                .status(needsReview ? "NEEDS_REVIEW" : "SUCCESS")
                 .build();
         analysisReportRepository.save(report);
 
@@ -167,7 +173,24 @@ public class AnalyzeTaskService {
             return;
         }
 
-        taskDomainService.markSuccess(taskId, planJson);
+        if (needsReview) {
+            taskDomainService.markNeedsReview(taskId, planJson, "质量评审未通过，需人工复核");
+        } else {
+            taskDomainService.markSuccess(taskId, planJson);
+        }
+    }
+
+    private boolean qualityFailed(String qualityJson) {
+        if (qualityJson == null || qualityJson.isBlank()) {
+            return false;
+        }
+        try {
+            JsonNode quality = objectMapper.readTree(qualityJson);
+            return quality != null && quality.has("passed") && !quality.get("passed").asBoolean();
+        } catch (Exception e) {
+            log.warn("质量结果无法解析，按质量不可用处理: {}", e.getMessage());
+            return false;
+        }
     }
 
     /**

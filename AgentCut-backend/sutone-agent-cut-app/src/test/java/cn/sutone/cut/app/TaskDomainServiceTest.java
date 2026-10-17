@@ -92,6 +92,32 @@ class TaskDomainServiceTest {
     }
 
     @Test
+    void updateProgressDoesNotMoveBackwards() {
+        TaskEntity task = service.createPending(1L, TaskType.ANALYZE, "{}");
+
+        service.updateProgress(task.getTaskId(), 45, "语音转写");
+        service.updateProgress(task.getTaskId(), 35, "抽取关键帧");
+
+        TaskEntity loaded = repository.queryById(task.getTaskId());
+        assertEquals(45, loaded.getProgress());
+        assertEquals("语音转写", loaded.getStep());
+    }
+
+    @Test
+    void needsReviewIsTerminalAndRetainsPlan() {
+        TaskEntity task = service.createPending(1L, TaskType.ANALYZE, "{}");
+
+        service.markNeedsReview(task.getTaskId(), "{\"plan\":true}", "质量评审未通过");
+        service.updateProgress(task.getTaskId(), 80, "迟到进度");
+
+        TaskEntity loaded = repository.queryById(task.getTaskId());
+        assertEquals(TaskStatus.NEEDS_REVIEW, loaded.getStatus());
+        assertEquals(100, loaded.getProgress());
+        assertEquals("{\"plan\":true}", loaded.getResultJson());
+        assertEquals("质量评审未通过", loaded.getErrorMsg());
+    }
+
+    @Test
     void updateProgressDoesNotReviveSuccessfulTask() {
         TaskEntity task = service.createPending(1L, TaskType.ANALYZE, "{}");
         service.markSuccess(task.getTaskId(), "{\"ok\":true}");

@@ -44,11 +44,17 @@ public class TaskEntity {
 
     /** 更新进度与当前步骤，并刷新心跳（心跳是看门狗判活依据）。 */
     public boolean updateProgress(int progress, String step) {
-        if (this.status == TaskStatus.SUCCESS || this.status == TaskStatus.FAILED) {
+        if (this.status == TaskStatus.SUCCESS
+                || this.status == TaskStatus.NEEDS_REVIEW
+                || this.status == TaskStatus.FAILED) {
+            return false;
+        }
+        int nextProgress = Math.max(0, Math.min(100, progress));
+        if (nextProgress < this.progress) {
             return false;
         }
         this.status = TaskStatus.RUNNING;
-        this.progress = Math.max(0, Math.min(100, progress));
+        this.progress = nextProgress;
         this.step = step;
         this.heartbeatAt = LocalDateTime.now();
         this.updatedAt = LocalDateTime.now();
@@ -59,6 +65,14 @@ public class TaskEntity {
         this.status = TaskStatus.SUCCESS;
         this.progress = 100;
         this.resultJson = resultJson;
+        this.updatedAt = LocalDateTime.now();
+    }
+
+    public void markNeedsReview(String resultJson, String reason) {
+        this.status = TaskStatus.NEEDS_REVIEW;
+        this.progress = 100;
+        this.resultJson = resultJson;
+        this.errorMsg = reason;
         this.updatedAt = LocalDateTime.now();
     }
 
