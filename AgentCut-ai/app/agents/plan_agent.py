@@ -56,7 +56,6 @@ _MAX_SUBTITLE_LEN = 120
 # 质检闭环：达标阈值 / 最大迭代轮数 / 时间止损（秒）
 _QA_THRESHOLD = 0.85
 _MAX_QA_ITERATIONS = 3
-_QA_TIME_BUDGET_SECONDS = 600.0  # 需容纳首轮导演生成（~3min）+ 至少一次重写
 
 
 def _norm_aspect(s: str):
@@ -110,18 +109,42 @@ class PlanAgent:
         self.quality_agent = QualityAgent(self.llm)
         # 最近一次 QA 评审结果（analyze.py 读取；SIMULATE 下为 None）
         self.last_quality = None
+        self.last_plan_source = "UNAVAILABLE"
+        # 进度回调（由 run() 注入）：QA 循环最长可跑 config.QA_TIME_BUDGET_SECONDS，
+        # 期间若不报进度，后端看门狗会只看到一段漫长静默
+        self._progress_cb = None
+
+    def _report(self, percent: int, step: str) -> None:
+        """上报相对进度。回调为 None 时静默跳过；异常一律吞掉，绝不影响方案生成。"""
+        if self._progress_cb is None:
+            return
+        try:
+            self._progress_cb(percent, step)
+        except Exception:  # pragma: no cover - 进度上报失败不影响主流程
+            pass
 
     # ------------------------------------------------------------------
     # 入口
     # ------------------------------------------------------------------
 
     def run(
-        self, report: AnalysisReport, target, project_id: Optional[str] = None
+        self,
+        report: AnalysisReport,
+        target,
+        project_id: Optional[str] = None,
+        progress_cb=None,
     ) -> Plan:
-        """生成剪辑方案 Plan（LLM 结构化输出优先，否则确定性构建）。"""
+        """生成剪辑方案 Plan（LLM 结构化输出优先，否则确定性构建）。
+
+        progress_cb(percent, step)：可选进度回调。尾部关键字参数，不传即与旧行为一致。
+        """
+        self._progress_cb = progress_cb
         pid = project_id or self.project_id or report.assetId or "prj_default"
         if config.SIMULATE_FORCED or self.llm is None:
+            self.last_plan_source = "DETERMINISTIC_FALLBACK"
+            self._report(100, "确定性方案")
             return self._build_deterministic(report, target, pid)
+        self.last_plan_source = "REAL"
         return self._build_with_llm(report, target, pid)
 
     # ------------------------------------------------------------------
@@ -136,13 +159,20 @@ class PlanAgent:
         feedback = None
         prev_plan = None
         start = time.monotonic()
-        for _ in range(_MAX_QA_ITERATIONS):
-            if time.monotonic() - start > _QA_TIME_BUDGET_SECONDS:
+        for i in range(_MAX_QA_ITERATIONS):
+            if time.monotonic() - start > config.QA_TIME_BUDGET_SECONDS:
                 break
+            # 每轮报两次（生成 / 质检）：把最坏静默窗口从整个 QA 预算压到单次模型调用，
+            # 后端看门狗才能用较紧的超时而不误杀正常的长耗时方案生成。
+            step_span = int(100 / _MAX_QA_ITERATIONS)
+            base = i * step_span
+            self._report(base, f"生成剪辑方案（第 {i + 1} 轮）")
             plan = self._director_generate(report, target, project_id, feedback, prev_plan)
             if plan is None:
                 logger.warning("[plan] 导演生成失败，回退确定性方案")
+                self.last_plan_source = "DETERMINISTIC_FALLBACK"
                 return self._build_deterministic(report, target, project_id)
+            self._report(base + step_span // 2, f"方案质检（第 {i + 1} 轮）")
             review = self.quality_agent.review(plan, report, target)
             self.last_quality = review
             if review is None:  # QA 挂了 → 跳过监督，直接过闸
@@ -187,7 +217,18 @@ class PlanAgent:
         if v.valid:
             return plan
         logger.warning("[plan] 校验闸拒绝，回退确定性方案：%s", v.errors)
-        return self._build_deterministic(report, target, project_id)
+        self.last_plan_source = "DETERMINISTIC_FALLBACK"
+        fallback = self._sanitize_plan(
+            self._build_deterministic(report, target, project_id),
+            report,
+        )
+        fallback_result = self.validator.validate(fallback, report, target)
+        if not fallback_result.valid:
+            raise ValueError(
+                "确定性兜底方案仍未通过校验: "
+                + "; ".join(error.message for error in fallback_result.errors)
+            )
+        return fallback
 
     def _sanitize_plan(self, plan: Plan, report: AnalysisReport) -> Plan:
         """确定性兜底：恢复被误删的关键场景 + 去掉覆盖语音的转场。"""

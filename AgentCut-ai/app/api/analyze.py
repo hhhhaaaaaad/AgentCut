@@ -139,23 +139,100 @@ def _asset_id(job_id: str) -> str:
     return "asset_" + job_id[-8:]
 
 
+# 全局进度区间：分析阶段 10→72，方案生成 75→95，完成 100
+_ANALYZE_START = 10
+_ANALYZE_END = 72
+_PLAN_START = 75
+_PLAN_END = 95
+
+
+async def _push_progress(job_id: str, progress: int, step: str) -> None:
+    """更新内存任务状态，并向 Java 推送一条进度事件。
+
+    刻意不复用 _notify_callback：后者成功时会置 callbackSent=True，那是「完成态」专用标志。
+    """
+    await _update_job(job_id, progress=progress, step=step)
+    st = _jobs.get(job_id)
+    if st is None or not st.callbackUrl:
+        return
+    try:
+        async with httpx.AsyncClient(timeout=15.0) as client:
+            await client.post(
+                st.callbackUrl,
+                json={
+                    "event": "progress",
+                    "jobId": job_id,
+                    "progress": progress,
+                    "step": step,
+                },
+            )
+    except Exception as exc:  # 进度推送失败不阻断任务
+        logger.warning("进度回调失败 %s: %s", job_id, exc)
+
+
+def _make_progress_cb(
+    job_id: str,
+    loop: asyncio.AbstractEventLoop,
+    start: int = _ANALYZE_START,
+    end: int = _ANALYZE_END,
+):
+    """构造线程安全的进度回调：把某个阶段的相对进度（0~100）映射到全局 [start, end] 并推送。
+
+    agent.run / plan_agent.run 通过 asyncio.to_thread 跑在工作线程里，而 _jobs 由 asyncio.Lock
+    保护，工作线程无法 await。故用 run_coroutine_threadsafe 把状态更新与推送投回事件循环——
+    此时 _run_job 正 await 着 to_thread，事件循环空闲，不会死锁。
+    """
+    state = {"last": 0}
+    span = max(1, end - start)
+
+    def _cb(percent: int, step: str) -> None:
+        if loop.is_closed():
+            return
+        clamped = max(0, min(100, int(percent)))
+        global_progress = start + int(clamped / 100 * span)
+        # 单调不回退：LangGraph 下 frames 与 asr 是并行分支，进度会交错上报
+        if global_progress <= state["last"]:
+            return
+        state["last"] = global_progress
+        asyncio.run_coroutine_threadsafe(
+            _push_progress(job_id, global_progress, step), loop
+        )
+
+    return _cb
+
+
 async def _run_job(job_id: str, req: AnalyzeRequest) -> None:
     """执行一次自包含分析任务：下载 → 分析 → 方案 → 回调。"""
     work_dir = os.path.join(config.WORK_DIR, job_id)
-    await _update_job(job_id, status="running", progress=5, step="初始化")
+    loop = asyncio.get_running_loop()
+    progress_cb = _make_progress_cb(job_id, loop)
+    await _update_job(job_id, status="running")
+    # 用 _push_progress（而非 _update_job）报到：它会同时通知 Java，让后端心跳保持新鲜，
+    # 否则方案生成这段较长的静默期会被看门狗误判为超时。
+    await _push_progress(job_id, 5, "初始化")
     result: Optional[dict] = None
     try:
         video_path = await _resolve_video(req.videoUrl, work_dir)
-        await _update_job(job_id, progress=10, step="解析视频")
+        await _push_progress(job_id, 10, "解析视频")
 
         # ① 视频分析（抽帧 / 场景 / ASR / VLM）——耗时，丢线程池避免阻塞事件循环
         agent = AnalysisAgent(work_dir=work_dir)
-        report = await asyncio.to_thread(agent.run, video_path, _asset_id(job_id))
-        await _update_job(job_id, progress=75, step="生成剪辑方案")
+        report = await asyncio.to_thread(
+            agent.run, video_path, _asset_id(job_id), progress_cb=progress_cb
+        )
+        await _push_progress(job_id, _PLAN_START, "生成剪辑方案")
 
-        # ② 方案生成（report + target 约束）
+        # ② 方案生成（report + target 约束）。QA 循环受 config.QA_TIME_BUDGET_SECONDS 限制，
+        # 故把进度回调也传进去，让每轮生成/质检都刷新一次后端心跳。
         plan_agent = PlanAgent(project_id=report.assetId)
-        plan = await asyncio.to_thread(plan_agent.run, report, req.target, report.assetId)
+        plan = await asyncio.to_thread(
+            plan_agent.run,
+            report,
+            req.target,
+            report.assetId,
+            progress_cb=_make_progress_cb(job_id, loop, _PLAN_START, _PLAN_END),
+        )
+        await _push_progress(job_id, _PLAN_END, "剪辑方案就绪")
 
         result = {
             "analysis": report.model_dump(mode="json"),
@@ -163,16 +240,23 @@ async def _run_job(job_id: str, req: AnalyzeRequest) -> None:
             "quality": plan_agent.last_quality.model_dump(mode="json")
             if getattr(plan_agent, "last_quality", None)
             else None,
+            "provenance": {
+                "analysis": report.provenance,
+                "plan": {"mode": plan_agent.last_plan_source},
+            },
         }
         await _update_job(job_id, status="success", progress=100, step="完成", result=result)
     except Exception as exc:
         logger.exception("任务 %s 失败", job_id)
+        # 失败时保留最后一次真实进度，不推到 100——「FAILED + 100%」会误导前端
         await _update_job(
-            job_id, status="failed", progress=100, step="失败", error=str(exc), result=result
+            job_id, status="failed", step="失败", error=str(exc), result=result
         )
     finally:
         if req.callbackUrl:
-            await _notify_callback(job_id, req.callbackUrl, _status_payload(_jobs.get(job_id)))
+            payload = _status_payload(_jobs.get(job_id))
+            payload["event"] = "completed"
+            await _notify_callback(job_id, req.callbackUrl, payload)
 
 
 def _status_payload(st: Optional[JobStatus]) -> dict:
@@ -222,5 +306,7 @@ async def trigger_callback(job_id: str) -> dict:
         raise HTTPException(status_code=409, detail=f"任务尚未终态: {st.status}")
     if not st.callbackUrl:
         raise HTTPException(status_code=400, detail="该任务未配置 callbackUrl")
-    await _notify_callback(job_id, st.callbackUrl, _status_payload(st))
+    payload = _status_payload(st)
+    payload["event"] = "completed"
+    await _notify_callback(job_id, st.callbackUrl, payload)
     return {"jobId": job_id, "callbackSent": True}

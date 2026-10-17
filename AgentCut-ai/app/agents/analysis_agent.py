@@ -42,34 +42,67 @@ except Exception as exc:  # pragma: no cover
 class AnalysisAgent:
     """视频分析 Agent：抽帧 / 场景 / ASR / 分析专家 + VLM → AnalysisReport。"""
 
+    # 分析阶段内部的相对进度刻度（0~100），由上层（analyze._run_job）映射到全局区间。
+    # ASR 是流水线中最慢的一环，占据最大区间，其内部按音频块线性推进。
+    _P_PROBE = 10
+    _P_SCENE = 20
+    _P_FRAMES = 35
+    _P_ASR_START = 45
+    _P_ASR_SPAN = 40  # 45 → 85
+    _P_EXPERTS = 92
+
     def __init__(self, work_dir: Optional[str] = None):
         self.work_dir = work_dir or os.path.join(config.WORK_DIR, "analysis")
         os.makedirs(self.work_dir, exist_ok=True)
         # 分析专家由 __init__ 构造注入（便于测试与复用，避免每次重新建 client）
         self._timeline_agent = TimelineAgent()
         self._narration_agent = NarrationAgent()
+        # 进度回调：由 run() 注入。用实例属性而非逐层传参——_step_* 被顺序执行与
+        # LangGraph 节点 lambda 共用，实例属性在两条路径下都可达，无需改动 PipelineState。
+        self._progress_cb = None
+
+    def _report(self, progress: int, step: str) -> None:
+        """上报相对进度。回调为 None 时静默跳过；异常一律吞掉，绝不影响分析主流程。"""
+        if self._progress_cb is None:
+            return
+        try:
+            self._progress_cb(progress, step)
+        except Exception:  # pragma: no cover - 进度上报失败不影响主流程
+            pass
 
     # ------------------------------------------------------------------
     # 流水线步骤（可被顺序执行 / LangGraph 节点复用）
     # ------------------------------------------------------------------
 
     def _step_probe(self, video_path: Optional[str]) -> dict:
+        self._report(self._P_PROBE, "探测视频元数据")
         meta = frame_extract.probe_video(video_path)
         logger.info("[analysis] 元数据: %s", meta)
         return meta
 
     def _step_scene(self, video_path: Optional[str], meta: dict) -> List[TimeRange]:
+        self._report(self._P_SCENE, "场景切分")
         scenes = scene_detect.detect_scenes(video_path)
         return scenes or [TimeRange(start=0.0, end=meta["duration"])]
 
     def _step_frames(self, video_path: Optional[str], scenes: List[TimeRange]) -> List[str]:
         frame_dir = os.path.join(self.work_dir, "frames")
-        return frame_extract.extract_frames_by_scenes(video_path, scenes, frame_dir)
+        frames = frame_extract.extract_frames_by_scenes(video_path, scenes, frame_dir)
+        self._report(self._P_FRAMES, "抽取关键帧")
+        return frames
 
     def _step_asr(
         self, video_path: Optional[str], scenes: List[TimeRange]
     ) -> List[TranscriptSegment]:
-        return transcribe.transcribe(video_path, scenes=scenes)
+        """语音转写。transcribe 逐音频块回调 0~100，这里映射到本阶段的 45→85 区间。"""
+        self._report(self._P_ASR_START, "语音转写")
+
+        def _on_asr(percent: int, step: str) -> None:
+            self._report(
+                self._P_ASR_START + int(percent / 100 * self._P_ASR_SPAN), step
+            )
+
+        return transcribe.transcribe(video_path, scenes=scenes, progress_cb=_on_asr)
 
     def _step_vlm(
         self,
@@ -79,7 +112,10 @@ class AnalysisAgent:
         meta: dict,
     ) -> dict:
         """视觉语义（复用现有 vlm_understand；其 highlights/suggestions 不再被消费）。"""
-        return vlm_understand.understand_video(scenes, frames, transcripts, meta)
+        self._report(88, "视觉理解（VLM）")
+        result = vlm_understand.understand_video(scenes, frames, transcripts, meta)
+        self._report(self._P_EXPERTS, "视觉理解（VLM）")
+        return result
 
     def _step_experts(
         self,
@@ -217,6 +253,17 @@ class AnalysisAgent:
         speech_sec = max(sum(t.end - t.start for t in transcripts), 1e-6)
         wpm = round(total_words / speech_sec * 60.0, 1) if transcripts else None
 
+        provenance = {
+            "asr": transcribe.get_last_provenance(),
+            "vlm": vlm.get(
+                "provenance",
+                {
+                    "mode": "SIMULATED"
+                    if vlm.get("simulated", config.SIMULATE)
+                    else "UNAVAILABLE"
+                },
+            ),
+        }
         return AnalysisReport(
             assetId=asset_id,
             videoUrl=video_path or "",
@@ -227,6 +274,7 @@ class AnalysisAgent:
             title=vlm.get("title"),
             summary=vlm.get("summary", ""),
             simulated=vlm.get("simulated", config.SIMULATE),
+            provenance=provenance,
             scenes=scene_objs,
             transcripts=transcripts,
             highlights=highlights,
@@ -242,8 +290,18 @@ class AnalysisAgent:
     # 编排：LangGraph（可用时）/ 顺序执行
     # ------------------------------------------------------------------
 
-    def run(self, video_path: Optional[str], asset_id: str = "") -> AnalysisReport:
-        """执行分析流水线，返回 AnalysisReport。"""
+    def run(
+        self,
+        video_path: Optional[str],
+        asset_id: str = "",
+        progress_cb=None,
+    ) -> AnalysisReport:
+        """执行分析流水线，返回 AnalysisReport。
+
+        progress_cb(percent, step)：可选进度回调（相对本分析阶段的 0~100）。尾部关键字参数，
+        不传即与旧行为完全一致。
+        """
+        self._progress_cb = progress_cb
         if not asset_id:
             base = os.path.basename(video_path) if video_path else "mock"
             asset_id = "asset_" + base

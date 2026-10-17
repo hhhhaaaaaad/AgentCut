@@ -246,6 +246,30 @@ def test_gate_rejects_invalid_falls_back_deterministic():
     assert DeterministicValidator().validate(result, report, target).valid
 
 
+def test_gate_revalidates_deterministic_fallback(monkeypatch):
+    """fallback 必须重新经过同一个 validator，而不是直接返回。"""
+    report = _make_report()
+    target = _target()
+    pa = PlanAgent()
+    bad = _make_plan()
+    bad.timeline[0].sourceRange = TimeRange(start=0.0, end=999.0)
+
+    calls = []
+    original_validate = pa.validator.validate
+
+    def counting_validate(plan, report_arg, target_arg, **kwargs):
+        calls.append(plan)
+        return original_validate(plan, report_arg, target_arg, **kwargs)
+
+    monkeypatch.setattr(pa.validator, "validate", counting_validate)
+
+    result = pa._gate(bad, report, target, "p")
+
+    assert result is not None
+    assert len(calls) >= 2
+    assert calls[-1] is result
+
+
 def test_qa_loop_passes(monkeypatch):
     monkeypatch.setattr(config, "SIMULATE_FORCED", False)
     report = _make_report()

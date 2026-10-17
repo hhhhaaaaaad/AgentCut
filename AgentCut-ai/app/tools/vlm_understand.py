@@ -104,7 +104,7 @@ def understand_video(scenes, frames, transcripts, meta) -> dict:
     模拟 / 无帧 / 解析失败：回退到确定性占位理解。
     """
     if config.SIMULATE_FORCED or not _HAS_OPENAI or not config.VLM_API_KEY or not frames:
-        return _simulate_understanding(scenes, transcripts, meta)
+        return _simulate_understanding(scenes, transcripts, meta, "模拟模式或缺少 VLM 配置")
     prompt = _build_understanding_prompt(scenes, transcripts, meta)
     reply = understand_frames(prompt, frames)
     try:
@@ -114,7 +114,7 @@ def understand_video(scenes, frames, transcripts, meta) -> dict:
             return _normalize_understanding(data, scenes)
     except Exception as exc:
         logger.warning("VLM 返回非 JSON，回退为模拟理解：%s", exc)
-    return _simulate_understanding(scenes, transcripts, meta)
+    return _simulate_understanding(scenes, transcripts, meta, "VLM 返回无法解析")
 
 
 def _normalize_understanding(data: dict, scenes) -> dict:
@@ -136,6 +136,8 @@ def _normalize_understanding(data: dict, scenes) -> dict:
     while len(tags) < n:
         tags.append([])
     data["sceneTags"] = tags[:n]
+    data["simulated"] = False
+    data["provenance"] = {"mode": "REAL", "provider": "vlm", "model": config.VLM_MODEL}
     return data
 
 
@@ -144,7 +146,7 @@ def _simulate_frames_reply(prompt: str, frame_paths) -> str:
     return f"[模拟 VLM] 已分析 {len(frame_paths)} 张帧图。prompt 摘要: {prompt[:80]}..."
 
 
-def _simulate_understanding(scenes, transcripts, meta) -> dict:
+def _simulate_understanding(scenes, transcripts, meta, reason: str = "模拟理解") -> dict:
     """确定性占位理解：基于转写构造场景描述 / 亮点 / 建议。"""
     scene_desc: list = []
     scene_tags: list = []
@@ -184,6 +186,7 @@ def _simulate_understanding(scenes, transcripts, meta) -> dict:
         "sceneImportance": scene_importance,
         "highlights": highlights,
         "suggestions": suggestions,
-        "notes": "模拟理解（未调用真实 VLM）",
+        "notes": f"模拟理解（{reason}）",
         "simulated": True,
+        "provenance": {"mode": "SIMULATED", "reason": reason},
     }

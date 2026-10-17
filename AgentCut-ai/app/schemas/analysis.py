@@ -74,6 +74,7 @@ class AnalysisReport(BaseModel):
     title: Optional[str] = None
     summary: str = ""
     simulated: bool = False  # 是否为占位 / 模拟数据（无真实环境时）
+    provenance: dict[str, Any] = Field(default_factory=dict)
     scenes: list[Scene] = Field(default_factory=list)
     transcripts: list[TranscriptSegment] = Field(default_factory=list)
     highlights: list[HighlightClip] = Field(default_factory=list)

@@ -162,7 +162,7 @@ def main():
         import app.tools.transcribe as _tr
         from app.schemas.plan import TimeRange as _TR
 
-        def _fast_transcribe(video_path, scenes=None, lang="zh"):
+        def _fast_transcribe(video_path, scenes=None, lang="zh", progress_cb=None):
             if not scenes:
                 from app.tools.frame_extract import probe_video
                 meta = probe_video(video_path)

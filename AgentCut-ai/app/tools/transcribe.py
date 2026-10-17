@@ -36,6 +36,31 @@ _SAMPLE_SENTENCES = [
 _MAX_SEGMENT_SECONDS = 60
 _SEGMENT_OVERLAP = 1.0
 
+# FFmpeg 子进程硬超时（秒）。此前 subprocess.run 未设超时，ffmpeg 一旦挂起会永久阻塞，
+# 任务既不出进度也不出错误。取值需覆盖长视频抽音频，但不至于让看门狗误判。
+_FFMPEG_TIMEOUT_SECONDS = int(os.getenv("AGENTCUT_AI_FFMPEG_TIMEOUT", "180"))
+_last_provenance = {"mode": "UNAVAILABLE", "reason": "not_run"}
+
+
+def get_last_provenance() -> dict:
+    """返回最近一次转写来源，供 AnalysisAgent 写入报告。"""
+    return dict(_last_provenance)
+
+
+def _set_provenance(mode: str, **details) -> None:
+    _last_provenance.clear()
+    _last_provenance.update({"mode": mode, **details})
+
+
+def _safe_report(progress_cb, progress: int, step: str) -> None:
+    """安全上报进度：回调异常绝不允许影响转写主流程。"""
+    if progress_cb is None:
+        return
+    try:
+        progress_cb(progress, step)
+    except Exception:  # pragma: no cover - 进度上报失败不影响主流程
+        pass
+
 # ASR 输出中的音乐标记（部分 ASR 模型对背景音乐片段输出这些符号，需清理）
 _MUSIC_MARKS = ("🎼", "🎵", "🎶")
 
@@ -95,11 +120,18 @@ def _simulate_transcript(scenes: Sequence[TimeRange]) -> List[TranscriptSegment]
     return segs
 
 
-def _transcribe_via_api(video_path: str, scenes: Sequence[TimeRange]) -> List[TranscriptSegment]:
+def _transcribe_via_api(
+    video_path: str,
+    scenes: Sequence[TimeRange],
+    progress_cb=None,
+) -> List[TranscriptSegment]:
     """用 SiliconFlow ASR + VAD 预分割 + 合并转写，返回带真实时间戳的文本段。
 
     流程：FFmpeg 抽音频 → VAD 检测语音段 → 合并相邻段（每块 ≤ 30s）→ 逐块调 ASR → 组装带时间戳段。
     VAD 保证精确时间戳 + 跳过静音；合并避免调用过多 & 长音频 Connection error。
+
+    progress_cb(percent, step)：可选的细粒度进度回调，逐音频块上报（ASR 是流水线中最慢的一环，
+    这里是唯一天然的细粒度观测点）。percent 为该子阶段的相对百分比 0~100，由上层映射到全局区间。
     """
     import shutil
     import subprocess
@@ -112,27 +144,31 @@ def _transcribe_via_api(video_path: str, scenes: Sequence[TimeRange]) -> List[Tr
     tmpdir = tempfile.mkdtemp(prefix="agentcut_asr_")
     try:
         # 1. FFmpeg 抽音频（16kHz 16bit 单声道 wav）
+        _safe_report(progress_cb, 2, "抽取音轨")
         audio_path = os.path.join(tmpdir, "full.wav")
         subprocess.run(
             ["ffmpeg", "-y", "-i", video_path, "-vn", "-ac", "1", "-ar", "16000",
              "-acodec", "pcm_s16le", audio_path],
-            check=True, capture_output=True,
+            check=True, capture_output=True, timeout=_FFMPEG_TIMEOUT_SECONDS,
         )
 
         # 2. VAD 检测语音段；无语音/失败则回退 30s 粗切
+        _safe_report(progress_cb, 6, "检测语音段")
         speech = _detect_speech_segments(audio_path)
         if not speech:
             duration = _audio_duration(audio_path) or 30.0
             speech = [(s, min(s + 30.0, duration)) for s in range(0, int(duration) + 1, 30)]
 
         # 3. 合并相邻段（每块 ≤ 30s），逐块转写
+        chunks = list(_merge_speech_segments(speech, max_chunk=30.0, gap=1.0))
+        total = max(len(chunks), 1)
         results: List[TranscriptSegment] = []
-        for idx, (start, end) in enumerate(_merge_speech_segments(speech, max_chunk=30.0, gap=1.0)):
+        for idx, (start, end) in enumerate(chunks):
             seg_path = os.path.join(tmpdir, f"seg_{idx}.wav")
             subprocess.run(
                 ["ffmpeg", "-y", "-ss", str(start), "-t", str(end - start), "-i", audio_path,
                  "-c", "copy", seg_path],
-                check=True, capture_output=True,
+                check=True, capture_output=True, timeout=_FFMPEG_TIMEOUT_SECONDS,
             )
             try:
                 text = _transcribe_audio_file(client, seg_path)
@@ -142,6 +178,8 @@ def _transcribe_via_api(video_path: str, scenes: Sequence[TimeRange]) -> List[Tr
                     ))
             except Exception as exc:
                 logger.warning("音频块 %.1fs~%.1fs 转写失败：%s", start, end, exc)
+            # 8% 起步（音频抽取+VAD），逐块推进到 100%
+            _safe_report(progress_cb, 8 + int((idx + 1) / total * 92), f"语音转写 {idx + 1}/{total}")
         return results
     finally:
         shutil.rmtree(tmpdir, ignore_errors=True)
@@ -224,7 +262,7 @@ def _audio_duration(audio_path: str) -> float:
     out = subprocess.run(
         ["ffprobe", "-v", "error", "-show_entries", "format=duration",
          "-of", "default=noprint_wrappers=1:nokey=1", audio_path],
-        capture_output=True, text=True,
+        capture_output=True, text=True, timeout=_FFMPEG_TIMEOUT_SECONDS,
     )
     try:
         return float(out.stdout.strip())
@@ -322,11 +360,14 @@ def transcribe(
     video_path: Optional[str],
     scenes: Optional[Sequence[TimeRange]] = None,
     lang: str = "zh",
+    progress_cb=None,
 ) -> List[TranscriptSegment]:
     """转写视频语音，返回带时间戳的文本段列表。
 
     真实路径优先级：SiliconFlow ASR API（需 VLM_API_KEY，无需本地 torch）
     → 本地 FunASR（需 torch）→ 模拟占位。
+
+    progress_cb(percent, step)：可选进度回调，尾部关键字参数，不传即与旧行为完全一致。
     """
     if not scenes:
         meta = probe_video(video_path)
@@ -335,35 +376,46 @@ def transcribe(
     # 文件缺失 → 占位转写
     if not video_path or not os.path.exists(video_path):
         logger.warning("transcribe 文件缺失，进入模拟（video_path=%s）", video_path)
+        _set_provenance("SIMULATED", reason="video_missing")
         return _simulate_transcript(scenes)
 
     # ① 优先：SiliconFlow ASR API（复用 VLM key，无需本地 torch）
+    api_error = "ASR API 未使用"
     if not config.SIMULATE_FORCED and config.VLM_API_KEY:
         try:
-            segs = _transcribe_via_api(video_path, scenes)
+            segs = _transcribe_via_api(video_path, scenes, progress_cb=progress_cb)
             if segs:
                 logger.info("SiliconFlow ASR 完成，共 %d 段", len(segs))
+                _set_provenance("REAL", provider="siliconflow", model=config.ASR_MODEL)
                 return segs
         except Exception as exc:
             logger.warning("SiliconFlow ASR 失败，降级本地/模拟：%s", exc)
+            api_error = str(exc)
+    else:
+        api_error = "模拟模式或缺少 ASR 配置"
 
     # ② 本地 FunASR（需 torch）→ ③ 模拟降级
     try:
         import funasr  # noqa: F401
     except Exception as exc:
         logger.warning("FunASR 未安装，转写进入模拟模式：%s", exc)
+        _set_provenance("SIMULATED", reason="local_asr_unavailable", fallbackFrom=api_error)
         return _simulate_transcript(scenes)
 
     try:
+        _safe_report(progress_cb, 20, "本地模型转写")
         model = _get_model()
         # batch_size_s 控制批处理时长；language 限定语言
         res = model.generate(input=video_path, batch_size_s=300, language=lang)
         segs = _parse_result(res)
         if not segs:  # 空结果兜底
             logger.warning("FunASR 未返回文本，转写进入模拟模式")
+            _set_provenance("SIMULATED", reason="local_asr_empty", fallbackFrom=api_error)
             return _simulate_transcript(scenes)
         logger.info("transcribe 完成，共 %d 段", len(segs))
+        _set_provenance("FALLBACK_LOCAL", provider="funasr", fallbackFrom=api_error)
         return segs
     except Exception as exc:
         logger.warning("transcribe 失败，降级为模拟转写：%s", exc)
+        _set_provenance("SIMULATED", reason="local_asr_failed", fallbackFrom=api_error)
         return _simulate_transcript(scenes)
