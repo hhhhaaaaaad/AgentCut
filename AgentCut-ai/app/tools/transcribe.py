@@ -124,7 +124,7 @@ def _transcribe_via_api(
     video_path: str,
     scenes: Sequence[TimeRange],
     progress_cb=None,
-) -> List[TranscriptSegment]:
+) -> tuple[List[TranscriptSegment], bool, bool]:
     """用 SiliconFlow ASR + VAD 预分割 + 合并转写，返回带真实时间戳的文本段。
 
     流程：FFmpeg 抽音频 → VAD 检测语音段 → 合并相邻段（每块 ≤ 30s）→ 逐块调 ASR → 组装带时间戳段。
@@ -163,6 +163,8 @@ def _transcribe_via_api(
         chunks = list(_merge_speech_segments(speech, max_chunk=30.0, gap=1.0))
         total = max(len(chunks), 1)
         results: List[TranscriptSegment] = []
+        had_response = False
+        had_error = False
         for idx, (start, end) in enumerate(chunks):
             seg_path = os.path.join(tmpdir, f"seg_{idx}.wav")
             subprocess.run(
@@ -172,15 +174,17 @@ def _transcribe_via_api(
             )
             try:
                 text = _transcribe_audio_file(client, seg_path)
+                had_response = True
                 if text:
                     results.append(TranscriptSegment(
                         index=idx, start=round(start, 3), end=round(end, 3), text=text,
                     ))
             except Exception as exc:
+                had_error = True
                 logger.warning("音频块 %.1fs~%.1fs 转写失败：%s", start, end, exc)
             # 8% 起步（音频抽取+VAD），逐块推进到 100%
             _safe_report(progress_cb, 8 + int((idx + 1) / total * 92), f"语音转写 {idx + 1}/{total}")
-        return results
+        return results, had_response, had_error
     finally:
         shutil.rmtree(tmpdir, ignore_errors=True)
 
@@ -387,11 +391,23 @@ def transcribe(
     api_error = "ASR API 未使用"
     if not config.SIMULATE_FORCED and config.VLM_API_KEY:
         try:
-            segs = _transcribe_via_api(video_path, scenes, progress_cb=progress_cb)
+            segs, had_response, had_error = _transcribe_via_api(
+                video_path, scenes, progress_cb=progress_cb
+            )
             if segs:
                 logger.info("SiliconFlow ASR 完成，共 %d 段", len(segs))
                 _set_provenance("REAL", provider="siliconflow", model=config.ASR_MODEL)
                 return segs
+            if had_response and not had_error:
+                logger.info("SiliconFlow ASR 返回空文本，判定为无可识别语音")
+                _set_provenance(
+                    "NO_SPEECH",
+                    provider="siliconflow",
+                    model=config.ASR_MODEL,
+                    reason="api_empty_text",
+                )
+                return []
+            api_error = "ASR API 未返回可用文本"
         except Exception as exc:
             logger.warning("SiliconFlow ASR 失败，降级本地/模拟：%s", exc)
             api_error = str(exc)

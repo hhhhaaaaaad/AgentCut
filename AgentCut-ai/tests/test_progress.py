@@ -140,6 +140,30 @@ def test_forced_simulation_skips_local_asr_import(tmp_path, monkeypatch):
     assert provenance["reason"] == "simulate_forced"
 
 
+def test_empty_api_transcript_is_marked_no_speech(tmp_path, monkeypatch):
+    from app import config
+
+    monkeypatch.setattr(config, "SIMULATE_FORCED", False)
+    monkeypatch.setattr(config, "VLM_API_KEY", "test-key")
+    video = tmp_path / "fixture.mp4"
+    video.write_bytes(b"fixture")
+    monkeypatch.setattr(
+        transcribe,
+        "_transcribe_via_api",
+        lambda *args, **kwargs: ([], True, False),
+    )
+
+    result = transcribe.transcribe(
+        str(video),
+        scenes=[TimeRange(start=0.0, end=1.0)],
+    )
+
+    assert result == []
+    provenance = transcribe.get_last_provenance()
+    assert provenance["mode"] == "NO_SPEECH"
+    assert provenance["reason"] == "api_empty_text"
+
+
 def test_simulated_vlm_supports_single_scene(monkeypatch):
     from app import config
 

@@ -60,11 +60,15 @@ class AnalysisAgent:
         # 进度回调：由 run() 注入。用实例属性而非逐层传参——_step_* 被顺序执行与
         # LangGraph 节点 lambda 共用，实例属性在两条路径下都可达，无需改动 PipelineState。
         self._progress_cb = None
+        self._last_reported_progress = -1
 
     def _report(self, progress: int, step: str) -> None:
         """上报相对进度。回调为 None 时静默跳过；异常一律吞掉，绝不影响分析主流程。"""
         if self._progress_cb is None:
             return
+        if progress < self._last_reported_progress:
+            return
+        self._last_reported_progress = progress
         try:
             self._progress_cb(progress, step)
         except Exception:  # pragma: no cover - 进度上报失败不影响主流程
@@ -302,6 +306,7 @@ class AnalysisAgent:
         不传即与旧行为完全一致。
         """
         self._progress_cb = progress_cb
+        self._last_reported_progress = -1
         if not asset_id:
             base = os.path.basename(video_path) if video_path else "mock"
             asset_id = "asset_" + base
