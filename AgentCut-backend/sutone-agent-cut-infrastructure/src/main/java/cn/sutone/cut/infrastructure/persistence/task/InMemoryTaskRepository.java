@@ -2,6 +2,7 @@ package cn.sutone.cut.infrastructure.persistence.task;
 
 import cn.sutone.cut.domain.task.adapter.repository.ITaskRepository;
 import cn.sutone.cut.domain.task.model.entity.TaskEntity;
+import cn.sutone.cut.domain.task.model.valobj.enums.TaskStatus;
 import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Repository;
 
@@ -44,6 +45,13 @@ public class InMemoryTaskRepository implements ITaskRepository {
                 .filter(t -> projectId.equals(t.getProjectId()))
                 .sorted((a, b) -> Long.compare(b.getTaskId(), a.getTaskId()))
                 .limit(limit)
+                .toList();
+    }
+
+    @Override
+    public List<TaskEntity> queryByStatus(TaskStatus status) {
+        return store.values().stream()
+                .filter(t -> status == t.getStatus())
                 .toList();
     }
 }

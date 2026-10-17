@@ -2,6 +2,7 @@ package cn.sutone.cut.infrastructure.persistence.task;
 
 import cn.sutone.cut.domain.task.adapter.repository.ITaskRepository;
 import cn.sutone.cut.domain.task.model.entity.TaskEntity;
+import cn.sutone.cut.domain.task.model.valobj.enums.TaskStatus;
 import cn.sutone.cut.infrastructure.persistence.mapper.TaskMapper;
 import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Repository;
@@ -39,5 +40,10 @@ public class MybatisTaskRepository implements ITaskRepository {
     @Override
     public List<TaskEntity> queryLatestByProjectId(Long projectId, int limit) {
         return taskMapper.selectLatestByProjectId(projectId, limit);
+    }
+
+    @Override
+    public List<TaskEntity> queryByStatus(TaskStatus status) {
+        return taskMapper.selectByStatus(status.name());
     }
 }

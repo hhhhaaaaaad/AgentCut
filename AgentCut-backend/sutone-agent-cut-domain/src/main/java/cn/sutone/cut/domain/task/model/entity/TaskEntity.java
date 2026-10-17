@@ -24,6 +24,8 @@ public class TaskEntity {
     private TaskStatus status;
     /** 进度 0~100 */
     private int progress;
+    /** 当前步骤描述（如「语音转写 3/8」），供前端展示 */
+    private String step;
     /** 入参 JSON（如 videoUrl、planId） */
     private String payloadJson;
     /** 结果 JSON（如成片 URL） */
@@ -35,7 +37,22 @@ public class TaskEntity {
 
     public void startRunning() {
         this.status = TaskStatus.RUNNING;
+        // 置 RUNNING 时立即打一次心跳：否则 heartbeatAt 为 null 的任务会被看门狗瞬间判为超时
+        this.heartbeatAt = LocalDateTime.now();
         this.updatedAt = LocalDateTime.now();
+    }
+
+    /** 更新进度与当前步骤，并刷新心跳（心跳是看门狗判活依据）。 */
+    public boolean updateProgress(int progress, String step) {
+        if (this.status == TaskStatus.SUCCESS || this.status == TaskStatus.FAILED) {
+            return false;
+        }
+        this.status = TaskStatus.RUNNING;
+        this.progress = Math.max(0, Math.min(100, progress));
+        this.step = step;
+        this.heartbeatAt = LocalDateTime.now();
+        this.updatedAt = LocalDateTime.now();
+        return true;
     }
 
     public void markSuccess(String resultJson) {

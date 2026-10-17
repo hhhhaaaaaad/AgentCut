@@ -1,6 +1,7 @@
 package cn.sutone.cut.app.service;
 
 import cn.sutone.cut.domain.adapter.port.IVideoAnalysisClient;
+import cn.sutone.cut.domain.adapter.port.VideoAnalysisSubmission;
 import cn.sutone.cut.domain.analysis.adapter.repository.IAnalysisReportRepository;
 import cn.sutone.cut.domain.analysis.model.entity.AnalysisReportEntity;
 import cn.sutone.cut.domain.asset.adapter.repository.IAssetRepository;
@@ -12,10 +13,13 @@ import cn.sutone.cut.domain.project.model.entity.ProjectEntity;
 import cn.sutone.cut.domain.project.service.ProjectDomainService;
 import cn.sutone.cut.domain.task.adapter.repository.ITaskRepository;
 import cn.sutone.cut.domain.task.model.entity.TaskEntity;
+import cn.sutone.cut.domain.task.model.valobj.enums.TaskStatus;
 import cn.sutone.cut.domain.task.model.valobj.enums.TaskType;
 import cn.sutone.cut.domain.task.service.TaskDomainService;
 import cn.sutone.cut.infrastructure.plan.PlanJsonMapper;
 import lombok.extern.slf4j.Slf4j;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
@@ -34,6 +38,7 @@ public class AnalyzeTaskService {
     private final IAnalysisReportRepository analysisReportRepository;
     private final PlanJsonMapper planJsonMapper;
     private final PlanDomainService planDomainService;
+    private final ObjectMapper objectMapper;
 
     @Value("${agentcut.callback.base-url:http://127.0.0.1:8080}")
     private String callbackBaseUrl;
@@ -51,6 +56,7 @@ public class AnalyzeTaskService {
         this.analysisReportRepository = analysisReportRepository;
         this.planJsonMapper = planJsonMapper;
         this.planDomainService = planDomainService;
+        this.objectMapper = new ObjectMapper();
     }
 
     /**
@@ -73,11 +79,54 @@ public class AnalyzeTaskService {
                 planJsonMapper.writeJson(payload));
 
         String callbackUrl = callbackBaseUrl + "/api/v1/analyze/callback?taskId=" + task.getTaskId();
+        // 提交前先置 RUNNING 并打心跳。此前缺少这一步，任务会全程停在 PENDING，
+        // 前端进度条既拿不到 RUNNING 状态，看门狗也因 heartbeatAt 为 null 无法判活。
+        taskDomainService.start(task.getTaskId());
         log.info("analyze 触发: taskId={}, callbackUrl={}", task.getTaskId(), callbackUrl);
-        String pyResp = videoAnalysisClient.submitAnalyze(source.getOssUrl(), callbackUrl, targetJson);
-        log.info("analyze Python 响应: {}", pyResp);
+        try {
+            VideoAnalysisSubmission submission =
+                    videoAnalysisClient.submitAnalyze(source.getOssUrl(), callbackUrl, targetJson);
+            ObjectNode taskPayload = (ObjectNode) objectMapper.readTree(task.getPayloadJson());
+            taskPayload.put("pythonJobId", submission.jobId());
+            taskPayload.put("submissionStatus", submission.status());
+            task.setPayloadJson(objectMapper.writeValueAsString(taskPayload));
+            taskRepository.update(task);
+            log.info("analyze Python 已受理: taskId={}, jobId={}, status={}",
+                    task.getTaskId(), submission.jobId(), submission.status());
+        } catch (Exception e) {
+            taskDomainService.markFailed(task.getTaskId(), "Python 受理失败: " + e.getMessage());
+            if (e instanceof RuntimeException runtimeException) {
+                throw runtimeException;
+            }
+            throw new IllegalStateException("保存 Python 受理结果失败: " + e.getMessage(), e);
+        }
 
         return task.getTaskId();
+    }
+
+    /**
+     * Python 进度回调：更新任务进度与当前步骤（不落库方案）。
+     */
+    public void updateProgress(Long taskId, int progress, String step) {
+        taskDomainService.updateProgress(taskId, progress, step);
+    }
+
+    /**
+     * Python 明确失败回调：只更新任务失败原因，不创建报告或方案。
+     */
+    public void handleFailure(Long taskId, String errorCode, String errorMessage) {
+        TaskEntity task = taskRepository.queryById(taskId);
+        if (task == null) {
+            throw new IllegalArgumentException("任务不存在: " + taskId);
+        }
+        if (task.getStatus() == TaskStatus.SUCCESS || task.getStatus() == TaskStatus.FAILED) {
+            log.warn("任务 {} 已是终态 {}，忽略迟到的失败回调", taskId, task.getStatus());
+            return;
+        }
+        String detail = (errorCode == null || errorCode.isBlank())
+                ? errorMessage
+                : errorCode + ": " + errorMessage;
+        taskDomainService.markFailed(taskId, detail == null || detail.isBlank() ? "Python 分析失败" : detail);
     }
 
     /**
@@ -87,6 +136,13 @@ public class AnalyzeTaskService {
         TaskEntity task = taskRepository.queryById(taskId);
         if (task == null) {
             throw new IllegalArgumentException("任务不存在: " + taskId);
+        }
+
+        // 终态守卫：看门狗可能已因心跳超时把任务判为 FAILED，而那个僵死的 Python 进程
+        // 最终仍会发来 "completed" 回调。若不挡住，会把已失败的任务复活成 SUCCESS。
+        if (task.getStatus() == TaskStatus.SUCCESS || task.getStatus() == TaskStatus.FAILED) {
+            log.warn("任务 {} 已是终态 {}，忽略迟到的完成回调", taskId, task.getStatus());
+            return;
         }
 
         AnalysisReportEntity report = AnalysisReportEntity.builder()

@@ -14,21 +14,25 @@ import java.util.List;
  */
 public interface TaskMapper {
 
-    @Insert("INSERT INTO task (project_id, type, status, progress, payload_json, result_json, error_msg, heartbeat_at) "
-            + "VALUES (#{projectId}, #{type}, #{status}, #{progress}, #{payloadJson}, #{resultJson}, #{errorMsg}, #{heartbeatAt})")
+    @Insert("INSERT INTO task (project_id, type, status, progress, step, payload_json, result_json, error_msg, heartbeat_at) "
+            + "VALUES (#{projectId}, #{type}, #{status}, #{progress}, #{step}, #{payloadJson}, #{resultJson}, #{errorMsg}, #{heartbeatAt})")
     @Options(useGeneratedKeys = true, keyProperty = "taskId")
     int insert(TaskEntity task);
 
-    @Select("SELECT id AS taskId, project_id, type, status, progress, payload_json, result_json, error_msg, heartbeat_at, created_at, updated_at "
+    @Select("SELECT id AS taskId, project_id, type, status, progress, step, payload_json, result_json, error_msg, heartbeat_at, created_at, updated_at "
             + "FROM task WHERE id = #{taskId}")
     TaskEntity selectById(@Param("taskId") Long taskId);
 
-    @Update("UPDATE task SET status = #{status}, progress = #{progress}, result_json = #{resultJson}, "
+    @Update("UPDATE task SET status = #{status}, progress = #{progress}, step = #{step}, result_json = #{resultJson}, "
             + "error_msg = #{errorMsg}, heartbeat_at = #{heartbeatAt}, updated_at = #{updatedAt} "
             + "WHERE id = #{taskId}")
     int update(TaskEntity task);
 
-    @Select("SELECT id AS taskId, project_id, type, status, progress, payload_json, result_json, error_msg, heartbeat_at, created_at, updated_at "
+    @Select("SELECT id AS taskId, project_id, type, status, progress, step, payload_json, result_json, error_msg, heartbeat_at, created_at, updated_at "
             + "FROM task WHERE project_id = #{projectId} ORDER BY id DESC LIMIT #{limit}")
     List<TaskEntity> selectLatestByProjectId(@Param("projectId") Long projectId, @Param("limit") int limit);
+
+    @Select("SELECT id AS taskId, project_id, type, status, progress, step, payload_json, result_json, error_msg, heartbeat_at, created_at, updated_at "
+            + "FROM task WHERE status = #{status}")
+    List<TaskEntity> selectByStatus(@Param("status") String status);
 }

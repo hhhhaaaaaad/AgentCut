@@ -33,6 +33,21 @@ public class TaskDomainService {
         taskRepository.update(task);
     }
 
+    /**
+     * 更新任务进度与当前步骤（由 Python 的进度回调驱动），同时刷新心跳。
+     *
+     * <p>进度来自外部回调，任务可能已不存在（如已被清理），故做空值兜底。</p>
+     */
+    public void updateProgress(Long taskId, int progress, String step) {
+        TaskEntity task = taskRepository.queryById(taskId);
+        if (task == null) {
+            return;
+        }
+        if (task.updateProgress(progress, step)) {
+            taskRepository.update(task);
+        }
+    }
+
     public void markSuccess(Long taskId, String resultJson) {
         TaskEntity task = taskRepository.queryById(taskId);
         task.markSuccess(resultJson);

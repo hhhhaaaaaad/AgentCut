@@ -2,6 +2,7 @@ package cn.sutone.cut.trigger.http;
 
 import cn.sutone.cut.app.service.AnalysisReportService;
 import cn.sutone.cut.domain.analysis.model.entity.AnalysisReportEntity;
+import cn.sutone.cut.domain.analysis.model.valobj.AnalysisFlags;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -28,5 +29,16 @@ public class AnalysisReportController {
     @GetMapping("/analysis/{reportId}")
     public AnalysisReportEntity queryById(@PathVariable Long reportId) {
         return analysisReportService.queryById(reportId);
+    }
+
+    /**
+     * 分析可信度标志（降级 / 质量），供前端展示告警横幅。
+     *
+     * <p>单独开一个轻量端点：报告正文 contentJson 是原始 JSON 字符串，让前端自己去 parse
+     * 会把解析失败风险留在 UI 层；这里在服务端统一解析一次。</p>
+     */
+    @GetMapping("/projects/{projectId}/analysis/flags")
+    public AnalysisFlags queryFlags(@PathVariable Long projectId) {
+        return analysisReportService.queryFlags(projectId);
     }
 }

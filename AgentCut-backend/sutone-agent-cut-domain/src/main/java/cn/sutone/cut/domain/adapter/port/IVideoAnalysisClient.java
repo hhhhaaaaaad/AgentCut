@@ -11,15 +11,7 @@ public interface IVideoAnalysisClient {
      * @param videoUrl   源视频 URL（OSS/http）
      * @param callbackUrl 分析完成回调地址（Java 侧）
      * @param targetJson 用户意图约束 JSON（画幅/时长/字幕/风格）
-     * @return Python 侧 jobId
+     * @return Python 侧受理结果（包含 jobId）
      */
-    String submitAnalyze(String videoUrl, String callbackUrl, String targetJson);
-
-    /**
-     * 查询 Python 侧分析任务状态。
-     *
-     * @param jobId Python 侧 jobId
-     * @return 状态 JSON
-     */
-    String queryStatus(String jobId);
+    VideoAnalysisSubmission submitAnalyze(String videoUrl, String callbackUrl, String targetJson);
 }

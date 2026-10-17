@@ -18,5 +18,7 @@ public class TaskDTO {
     private String type;
     private String status;
     private int progress;
+    /** 当前步骤描述（如「语音转写 3/8」） */
+    private String step;
     private String resultJson;
 }
