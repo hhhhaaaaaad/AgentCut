@@ -3,8 +3,9 @@ import {
   Alert, App, Button, Card, Collapse, Divider, Empty, Form, Input, InputNumber, Popconfirm,
   Row, Col, Select, Space, Spin, Switch, Tag, Typography,
 } from 'antd';
-import { getPlan, savePlan } from '../api';
+import { getAnalysisFlags, getPlan, savePlan } from '../api';
 import { useProjectStore } from '../stores/projectStore';
+import AnalysisWarning from '../components/AnalysisWarning';
 import type { Bgm, Global, Operation, OperationType, OutputConfig, Plan, Segment, SubtitleStyle, TimeRange } from '../types/plan';
 import { OPERATION_LABELS, createOperation } from '../types/plan';
 import type { PageKey } from '../types/nav';
@@ -33,7 +34,7 @@ interface Props {
  */
 export default function EditPage({ onNavigate }: Props) {
   const { message } = App.useApp();
-  const { project, plan, setPlan } = useProjectStore();
+  const { project, plan, setPlan, analysisFlags, setAnalysisFlags } = useProjectStore();
 
   const [loading, setLoading] = useState(false);
   const [jsonText, setJsonText] = useState('');
@@ -53,6 +54,10 @@ export default function EditPage({ onNavigate }: Props) {
       })
       .catch((err) => message.error(`加载方案失败：${err instanceof Error ? err.message : String(err)}`))
       .finally(() => setLoading(false));
+    // 顺带拉取可信度标志（降级/质量），用于顶部告警横幅；失败静默忽略，不干扰主流程
+    getAnalysisFlags(project.projectId)
+      .then(setAnalysisFlags)
+      .catch(() => setAnalysisFlags(null));
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [project?.projectId]);
 
@@ -168,6 +173,7 @@ export default function EditPage({ onNavigate }: Props) {
     <Spin spinning={loading}>
       {plan ? (
         <Space direction="vertical" style={{ width: '100%' }} size="large">
+          <AnalysisWarning flags={analysisFlags} />
           <Card
             size="small"
             title={`剪辑方案 v${plan.planVersion}`}

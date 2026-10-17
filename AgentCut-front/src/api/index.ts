@@ -44,6 +44,19 @@ export interface Task {
   resultJson?: string;
 }
 
+/** 分析可信度标志（降级 / 质量），驱动告警横幅 */
+export interface AnalysisFlags {
+  projectId: number;
+  /** 本次分析是否使用了模拟 / 降级数据 */
+  simulated: boolean;
+  /** 是否存在质量评审结果 */
+  qualityAvailable: boolean;
+  /** 质量评审是否通过；无评审时为 null */
+  qualityPassed?: boolean | null;
+  /** 质量总分 0~1；无评审时为 null */
+  overallScore?: number | null;
+}
+
 /** 应用方案的结果（成片元信息） */
 export interface ApplyResult {
   taskId?: string;
@@ -91,6 +104,11 @@ export function getTask(taskId: string): Promise<Task> {
 /** 获取剪辑方案（对齐 plan-schema.json） */
 export function getPlan(projectId: string): Promise<Plan> {
   return client.get<Plan>(`/plans/${projectId}`).then((r) => r.data);
+}
+
+/** 查询分析可信度标志（降级 / 质量）；无报告时后端返回全 false，不抛错 */
+export function getAnalysisFlags(projectId: string): Promise<AnalysisFlags> {
+  return client.get<AnalysisFlags>(`/projects/${projectId}/analysis/flags`).then((r) => r.data);
 }
 
 /** 获取方案版本列表 */

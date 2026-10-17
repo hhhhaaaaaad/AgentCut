@@ -97,6 +97,7 @@ CREATE TABLE IF NOT EXISTS task (
     type         VARCHAR(16)  NOT NULL COMMENT 'ANALYZE/RENDER',
     status       VARCHAR(16)  NOT NULL DEFAULT 'PENDING' COMMENT 'PENDING/RUNNING/SUCCESS/FAILED/RETRYING',
     progress     INT          NOT NULL DEFAULT 0 COMMENT '进度 0-100',
+    step         VARCHAR(64)  NULL COMMENT '当前步骤描述，如「语音转写 3/8」',
     payload_json JSON         NULL COMMENT '入参',
     result_json  JSON         NULL COMMENT '结果',
     error_msg    VARCHAR(1024) NULL,

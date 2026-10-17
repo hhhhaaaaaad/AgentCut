@@ -2,8 +2,9 @@ import { useEffect, useRef, useState } from 'react';
 import {
   App, Button, Card, Empty, Form, Input, InputNumber, Progress, Select, Space, Switch, Tag, Typography,
 } from 'antd';
-import { analyzeProject, getPlan, getTask, type AnalyzeRequest, type Task } from '../api';
+import { analyzeProject, getAnalysisFlags, getPlan, getTask, type AnalyzeRequest, type Task } from '../api';
 import { useProjectStore } from '../stores/projectStore';
+import AnalysisWarning from '../components/AnalysisWarning';
 import type { PageKey } from '../types/nav';
 
 /** 任务状态 → Tag 颜色 */
@@ -26,7 +27,7 @@ interface Props {
  */
 export default function AnalyzePage({ onNavigate }: Props) {
   const { message } = App.useApp();
-  const { project, task, setTask, setPlan } = useProjectStore();
+  const { project, task, setTask, setPlan, analysisFlags, setAnalysisFlags } = useProjectStore();
   const [form] = Form.useForm<AnalyzeRequest>();
   const [starting, setStarting] = useState(false);
   const [polling, setPolling] = useState(false);
@@ -46,6 +47,8 @@ export default function AnalyzePage({ onNavigate }: Props) {
     if (!project) return;
     const values = await form.validateFields();
     setStarting(true);
+    // 清掉上一轮的可信度告警，避免新任务开始后还挂着旧提示
+    setAnalysisFlags(null);
     try {
       const res = await analyzeProject(project.projectId, {
         aspectRatio: values.aspectRatio,
@@ -79,6 +82,12 @@ export default function AnalyzePage({ onNavigate }: Props) {
               setPlan(await getPlan(project!.projectId));
             } catch {
               /* 方案接口暂不可用时忽略，编辑页会自行加载 */
+            }
+            // 拉取可信度标志：分析虽「成功」，但可能走了降级/模拟数据，或质量评审未通过
+            try {
+              setAnalysisFlags(await getAnalysisFlags(project!.projectId));
+            } catch {
+              setAnalysisFlags(null);
             }
           } else {
             message.error('分析失败，请检查任务详情。');
@@ -155,6 +164,8 @@ export default function AnalyzePage({ onNavigate }: Props) {
           <Typography.Text type="secondary">尚未发起分析任务。</Typography.Text>
         )}
       </Card>
+
+      <AnalysisWarning flags={analysisFlags} />
     </Space>
   );
 }
