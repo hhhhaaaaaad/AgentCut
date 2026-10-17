@@ -122,12 +122,18 @@ def test_progress_cb_clamps_out_of_range():
     assert asyncio.run(main()) == analyze._ANALYZE_END
 
 
-def test_missing_video_is_marked_simulated():
+def test_forced_simulation_skips_local_asr_import(tmp_path, monkeypatch):
+    from app import config
+
+    monkeypatch.setattr(config, "SIMULATE_FORCED", True)
+    video = tmp_path / "fixture.mp4"
+    video.write_bytes(b"not a real video")
+
     transcribe.transcribe(
-        None,
+        str(video),
         scenes=[TimeRange(start=0.0, end=1.0)],
     )
 
     provenance = transcribe.get_last_provenance()
     assert provenance["mode"] == "SIMULATED"
-    assert provenance["reason"] == "video_missing"
+    assert provenance["reason"] == "simulate_forced"

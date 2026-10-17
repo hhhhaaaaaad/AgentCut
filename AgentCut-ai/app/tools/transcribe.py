@@ -379,6 +379,10 @@ def transcribe(
         _set_provenance("SIMULATED", reason="video_missing")
         return _simulate_transcript(scenes)
 
+    if config.SIMULATE_FORCED:
+        _set_provenance("SIMULATED", reason="simulate_forced")
+        return _simulate_transcript(scenes)
+
     # ① 优先：SiliconFlow ASR API（复用 VLM key，无需本地 torch）
     api_error = "ASR API 未使用"
     if not config.SIMULATE_FORCED and config.VLM_API_KEY:
