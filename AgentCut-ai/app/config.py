@@ -32,6 +32,17 @@ _load_dotenv()
 VLM_BASE_URL = os.getenv("AGENTCUT_VLM_BASE_URL", "https://api.siliconflow.cn/v1")
 VLM_API_KEY = os.getenv("AGENTCUT_VLM_API_KEY", "")
 VLM_MODEL = os.getenv("AGENTCUT_VLM_MODEL", "Qwen/Qwen3-VL-8B-Instruct")
+VLM_MAX_IMAGES_PER_BATCH = int(os.getenv("AGENTCUT_VLM_MAX_IMAGES_PER_BATCH", "6"))
+VLM_CONCURRENCY = int(os.getenv("AGENTCUT_VLM_CONCURRENCY", "2"))
+VLM_IMAGE_DETAIL = os.getenv("AGENTCUT_VLM_IMAGE_DETAIL", "low")
+VLM_BATCH_TIMEOUT_SECONDS = float(
+    os.getenv("AGENTCUT_VLM_BATCH_TIMEOUT_SECONDS", "120")
+)
+VLM_BATCH_MAX_RETRIES = int(os.getenv("AGENTCUT_VLM_BATCH_MAX_RETRIES", "1"))
+VLM_FALLBACK_IMAGES_PER_BATCH = int(
+    os.getenv("AGENTCUT_VLM_FALLBACK_IMAGES_PER_BATCH", "3")
+)
+VLM_BATCH_MAX_TOKENS = int(os.getenv("AGENTCUT_VLM_BATCH_MAX_TOKENS", "4096"))
 
 # ---------- ASR：语音转写（SiliconFlow，复用 VLM 端点与 key） ----------
 ASR_MODEL = os.getenv("AGENTCUT_ASR_MODEL", "Qwen/Qwen3-ASR-1.7B")
