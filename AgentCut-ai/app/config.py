@@ -52,8 +52,17 @@ LLM_BASE_URL = os.getenv("AGENTCUT_LLM_BASE_URL", "https://api.deepseek.com")
 LLM_API_KEY = os.getenv("AGENTCUT_LLM_API_KEY", "")
 LLM_MODEL = os.getenv("AGENTCUT_LLM_MODEL", "deepseek-v4-pro")
 
-# 分析任务超时（秒），可通过环境变量覆盖
+# 分析任务超时（秒），可通过环境变量覆盖（保留作兼容；模型调用见下方）
 TIMEOUT_SECONDS = int(os.getenv("AGENTCUT_AI_TIMEOUT", "300"))
+
+# 单次模型调用超时（秒）与重试次数。
+# 必须收紧：此前 timeout=300s × max_retries=3 意味着单次调用最长可静默阻塞约 20 分钟，
+# 期间不产生任何进度/心跳，会把后端看门狗拖到误判边缘。
+# 约束：Java 侧 agentcut.task.watchdog.timeout-seconds 必须大于
+#       MODEL_TIMEOUT_SECONDS × (MODEL_MAX_RETRIES + 1)。
+MODEL_TIMEOUT_SECONDS = int(os.getenv("AGENTCUT_AI_MODEL_TIMEOUT", "120"))
+MODEL_MAX_RETRIES = int(os.getenv("AGENTCUT_AI_MODEL_MAX_RETRIES", "1"))
+QA_TIME_BUDGET_SECONDS = float(os.getenv("AGENTCUT_AI_QA_BUDGET", "600"))
 
 # 工作目录（帧图 / 临时文件），默认 AgentCut-ai/work
 WORK_DIR = os.getenv(
@@ -86,7 +95,12 @@ def get_openai_client():
         return None
     from openai import OpenAI
 
-    return OpenAI(base_url=VLM_BASE_URL, api_key=VLM_API_KEY, timeout=TIMEOUT_SECONDS, max_retries=3)
+    return OpenAI(
+        base_url=VLM_BASE_URL,
+        api_key=VLM_API_KEY,
+        timeout=MODEL_TIMEOUT_SECONDS,
+        max_retries=MODEL_MAX_RETRIES,
+    )
 
 
 def get_langchain_chat_model(temperature: float = 0.2):
@@ -104,7 +118,8 @@ def get_langchain_chat_model(temperature: float = 0.2):
             api_key=LLM_API_KEY,
             model=LLM_MODEL,
             temperature=temperature,
-            timeout=TIMEOUT_SECONDS,
+            timeout=MODEL_TIMEOUT_SECONDS,
+            max_retries=MODEL_MAX_RETRIES,
         )
     except Exception:
         return None

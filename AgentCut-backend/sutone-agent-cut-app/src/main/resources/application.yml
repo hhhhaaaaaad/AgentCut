@@ -17,9 +17,23 @@ spring:
       - org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration
 
 agentcut:
+  python:
+    connect-timeout-seconds: 10
+    accept-timeout-seconds: 30
   render:
     # 字幕中文字体路径（drawtext 渲染用）；按操作系统调整
     subtitle-font: C:/Windows/Fonts/msyh.ttc
+  task:
+    watchdog:
+      # 心跳超时（秒）：超过该时长未收到进度心跳，即把任务标记为 FAILED。
+      # 必须大于 Python 侧的最坏静默窗口：
+      #   AGENTCUT_AI_MODEL_TIMEOUT(默认 120s) × (AGENTCUT_AI_MODEL_MAX_RETRIES(默认 1) + 1) = 240s
+      # （方案生成的 QA 循环每轮都会上报进度，故 600s 的预算不构成整段静默）
+      # 取 600s：留 2.5 倍余量，既不误杀慢任务，又能让真卡死的任务在 10 分钟内失败。
+      timeout-seconds: 600
+      # 扫描间隔 / 首次扫描延迟（毫秒）
+      delay-ms: 60000
+      initial-delay-ms: 60000
 
 # 日志、数据源、Redis、RocketMQ、MinIO 等中间件配置由后续 worker 补充
 logging:
