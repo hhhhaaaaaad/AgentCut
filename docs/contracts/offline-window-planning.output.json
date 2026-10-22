@@ -1,0 +1,219 @@
+{
+  "planningSchemaVersion": "offline-window-plan-0.1",
+  "status": "PLANNED",
+  "sourceIndex": {
+    "indexSchemaVersion": "source-index-0.1",
+    "indexId": "source_83729b55c82dc9ab64a0a320ab934de7b0964d6e31dce8545518e61e15af03a8",
+    "assetRef": {
+      "assetId": "offline_sample",
+      "assetHash": "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "durationMs": 140000,
+      "displayName": "synthetic-fixture-no-media.mp4"
+    },
+    "detector": {
+      "name": "hand-authored-offline-fixture",
+      "version": "1",
+      "settingsHash": "sha256:bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"
+    },
+    "detectorSource": {
+      "mode": "SIMULATED",
+      "provider": "hand-authored-offline-fixture",
+      "model": null,
+      "reason": "Synthetic ranges for deterministic offline planning; no detector or model executed"
+    },
+    "scenes": [
+      {
+        "sceneId": "scene_aec997ccde6b565ddc3eb1561e3085910a1cf35e0f957d9071963ca0d593bdb8",
+        "sourceRange": {
+          "startMs": 0,
+          "endMs": 15000
+        },
+        "origin": "DETECTED",
+        "source": {
+          "mode": "SIMULATED",
+          "provider": "hand-authored-offline-fixture",
+          "model": null,
+          "reason": "Synthetic ranges for deterministic offline planning; no detector or model executed"
+        }
+      },
+      {
+        "sceneId": "scene_ed103a193e4878df1c85de6333fbc307fb9820a8014a2ea4f19d084a6a6d8e6b",
+        "sourceRange": {
+          "startMs": 15000,
+          "endMs": 30000
+        },
+        "origin": "DETECTED",
+        "source": {
+          "mode": "SIMULATED",
+          "provider": "hand-authored-offline-fixture",
+          "model": null,
+          "reason": "Synthetic ranges for deterministic offline planning; no detector or model executed"
+        }
+      },
+      {
+        "sceneId": "scene_edbad00365a3a4c36a1910613c6fc4db56a91644d52bc9cfc3e547206639758a",
+        "sourceRange": {
+          "startMs": 30000,
+          "endMs": 60000
+        },
+        "origin": "DETECTED",
+        "source": {
+          "mode": "SIMULATED",
+          "provider": "hand-authored-offline-fixture",
+          "model": null,
+          "reason": "Synthetic ranges for deterministic offline planning; no detector or model executed"
+        }
+      },
+      {
+        "sceneId": "scene_bea683e02cb277dafea6b8a3e42446663dfbb377923aadef442a09276822bb73",
+        "sourceRange": {
+          "startMs": 60000,
+          "endMs": 80000
+        },
+        "origin": "DETECTED",
+        "source": {
+          "mode": "SIMULATED",
+          "provider": "hand-authored-offline-fixture",
+          "model": null,
+          "reason": "Synthetic ranges for deterministic offline planning; no detector or model executed"
+        }
+      },
+      {
+        "sceneId": "scene_2ec75d4f301577b2fc89d1aad7d553d20800ed6fb8ee75e502d42ce06e3e3039",
+        "sourceRange": {
+          "startMs": 80000,
+          "endMs": 110000
+        },
+        "origin": "DETECTED",
+        "source": {
+          "mode": "SIMULATED",
+          "provider": "hand-authored-offline-fixture",
+          "model": null,
+          "reason": "Synthetic ranges for deterministic offline planning; no detector or model executed"
+        }
+      },
+      {
+        "sceneId": "scene_5dcb36b964a7fc2368ab88002e3f5699a4effb3d70182222bd94135be27632f5",
+        "sourceRange": {
+          "startMs": 110000,
+          "endMs": 140000
+        },
+        "origin": "DETECTED",
+        "source": {
+          "mode": "SIMULATED",
+          "provider": "hand-authored-offline-fixture",
+          "model": null,
+          "reason": "Synthetic ranges for deterministic offline planning; no detector or model executed"
+        }
+      }
+    ],
+    "indexedCoverageMs": 140000,
+    "observedCoverageMs": 0,
+    "detectionStatus": "SIMULATED"
+  },
+  "profileConfig": {
+    "configVersion": "offline-example-1",
+    "requestedType": "TUTORIAL_INTERVIEW",
+    "autoFallbackType": "VLOG_DOCUMENTARY",
+    "novelSceneIds": null,
+    "frameBudgetCap": 24
+  },
+  "profile": {
+    "profileVersion": "technical-profile-0.1",
+    "configVersion": "offline-example-1",
+    "requestedType": "TUTORIAL_INTERVIEW",
+    "effectiveType": "TUTORIAL_INTERVIEW",
+    "detectedPace": "SLOW",
+    "shotCountPerMinute": 0.0,
+    "novelShotCountPerMinute": 0.0,
+    "confidence": 0.0,
+    "adjustmentReason": "Manual content type TUTORIAL_INTERVIEW is preserved. Detection is SIMULATED; density is a lower bound and pace is provisional. Deduplication pending; novel density is only a raw-count upper bound.",
+    "windowTargetMs": 60000,
+    "frameBudget": 8,
+    "vlmBatchSize": 6,
+    "vlmConcurrency": 2
+  },
+  "policy": {
+    "minMs": 45000,
+    "targetMs": 60000,
+    "maxMs": 75000,
+    "contextMs": 1000,
+    "minTailMs": 15000,
+    "maxWindows": 4096
+  },
+  "silenceCues": [],
+  "windows": [
+    {
+      "windowId": "window_a33fab6c46af042f82730d5e316ef8995d958feeb2b5670a7f71a0435fe0b86c",
+      "assetHash": "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "startMs": 0,
+      "endMs": 60000,
+      "contextStartMs": 0,
+      "contextEndMs": 61000,
+      "sceneIds": [
+        "scene_aec997ccde6b565ddc3eb1561e3085910a1cf35e0f957d9071963ca0d593bdb8",
+        "scene_ed103a193e4878df1c85de6333fbc307fb9820a8014a2ea4f19d084a6a6d8e6b",
+        "scene_edbad00365a3a4c36a1910613c6fc4db56a91644d52bc9cfc3e547206639758a",
+        "scene_bea683e02cb277dafea6b8a3e42446663dfbb377923aadef442a09276822bb73"
+      ],
+      "selectedFrameIds": [],
+      "profileVersion": "technical-profile-0.1",
+      "plannerVersion": "window-planner-0.1"
+    },
+    {
+      "windowId": "window_de43079b74a4bbed8bef9edff35e3211c8cd866ed9e05274bf4b0c4649ba6651",
+      "assetHash": "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "startMs": 60000,
+      "endMs": 120000,
+      "contextStartMs": 59000,
+      "contextEndMs": 121000,
+      "sceneIds": [
+        "scene_edbad00365a3a4c36a1910613c6fc4db56a91644d52bc9cfc3e547206639758a",
+        "scene_bea683e02cb277dafea6b8a3e42446663dfbb377923aadef442a09276822bb73",
+        "scene_2ec75d4f301577b2fc89d1aad7d553d20800ed6fb8ee75e502d42ce06e3e3039",
+        "scene_5dcb36b964a7fc2368ab88002e3f5699a4effb3d70182222bd94135be27632f5"
+      ],
+      "selectedFrameIds": [],
+      "profileVersion": "technical-profile-0.1",
+      "plannerVersion": "window-planner-0.1"
+    },
+    {
+      "windowId": "window_295d41e605a72d6b659bd87edd870a82abd9912d03416076a65485402ef30281",
+      "assetHash": "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "startMs": 120000,
+      "endMs": 140000,
+      "contextStartMs": 119000,
+      "contextEndMs": 140000,
+      "sceneIds": [
+        "scene_5dcb36b964a7fc2368ab88002e3f5699a4effb3d70182222bd94135be27632f5"
+      ],
+      "selectedFrameIds": [],
+      "profileVersion": "technical-profile-0.1",
+      "plannerVersion": "window-planner-0.1"
+    }
+  ],
+  "boundaries": [
+    {
+      "windowId": "window_a33fab6c46af042f82730d5e316ef8995d958feeb2b5670a7f71a0435fe0b86c",
+      "cutMs": 60000,
+      "kind": "TARGET",
+      "cueId": null,
+      "sceneId": null
+    },
+    {
+      "windowId": "window_de43079b74a4bbed8bef9edff35e3211c8cd866ed9e05274bf4b0c4649ba6651",
+      "cutMs": 120000,
+      "kind": "TARGET",
+      "cueId": null,
+      "sceneId": null
+    },
+    {
+      "windowId": "window_295d41e605a72d6b659bd87edd870a82abd9912d03416076a65485402ef30281",
+      "cutMs": 140000,
+      "kind": "FINAL",
+      "cueId": null,
+      "sceneId": null
+    }
+  ],
+  "plannedCoverageMs": 140000
+}

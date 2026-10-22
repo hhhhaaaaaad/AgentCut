@@ -1,0 +1,404 @@
+{
+  "config": {
+    "configVersion": "frame-selection-0.1",
+    "intervalMs": 10000,
+    "edgeOffsetMs": 500,
+    "coverageBins": 6,
+    "hammingThreshold": 6,
+    "maxTimestampDriftMs": 1000,
+    "maxCandidatesPerWindow": 2048,
+    "maxCandidatesTotal": 20000
+  },
+  "samples": [
+    {
+      "frameId": "frame_f35d71fa2cb3bc7bef506d4cb971c9308adf0c04eac62b78e3a7a49a49be8e9c",
+      "assetHash": "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "decodedTimestampMs": 500,
+      "perceptualHash": "067a4dca23e07fe0",
+      "hashVersion": "agentcut-phash-dct32-area8-v1",
+      "source": {
+        "mode": "SIMULATED",
+        "provider": "synthetic-pixel-fixture",
+        "model": null,
+        "reason": "Procedural grayscale pixels for offline testing; no video or model analyzed"
+      }
+    },
+    {
+      "frameId": "frame_f518544d3832ba3eafee87688f1132c1525258195fc8ddd571d3cb2ae92e607f",
+      "assetHash": "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "decodedTimestampMs": 5000,
+      "perceptualHash": "067a4dca23e07fe0",
+      "hashVersion": "agentcut-phash-dct32-area8-v1",
+      "source": {
+        "mode": "SIMULATED",
+        "provider": "synthetic-pixel-fixture",
+        "model": null,
+        "reason": "Procedural grayscale pixels for offline testing; no video or model analyzed"
+      }
+    },
+    {
+      "frameId": "frame_ec8dada0f85eba56ccdec86af9d73bcc4ef434f85baeda647e03f743c789e068",
+      "assetHash": "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "decodedTimestampMs": 7500,
+      "perceptualHash": "067a4dca23e07fe0",
+      "hashVersion": "agentcut-phash-dct32-area8-v1",
+      "source": {
+        "mode": "SIMULATED",
+        "provider": "synthetic-pixel-fixture",
+        "model": null,
+        "reason": "Procedural grayscale pixels for offline testing; no video or model analyzed"
+      }
+    },
+    {
+      "frameId": "frame_5e2b583497e2f8422ebacf48e4e192b26e20163fe72bad27631e556f12256815",
+      "assetHash": "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "decodedTimestampMs": 15000,
+      "perceptualHash": "067a4dca23e07fe0",
+      "hashVersion": "agentcut-phash-dct32-area8-v1",
+      "source": {
+        "mode": "SIMULATED",
+        "provider": "synthetic-pixel-fixture",
+        "model": null,
+        "reason": "Procedural grayscale pixels for offline testing; no video or model analyzed"
+      }
+    },
+    {
+      "frameId": "frame_d62ce5b668f60303ce00688a24245df364580fd0945823378665e57c8937aad1",
+      "assetHash": "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "decodedTimestampMs": 22500,
+      "perceptualHash": "2f43d10ef84d0f61",
+      "hashVersion": "agentcut-phash-dct32-area8-v1",
+      "source": {
+        "mode": "SIMULATED",
+        "provider": "synthetic-pixel-fixture",
+        "model": null,
+        "reason": "Procedural grayscale pixels for offline testing; no video or model analyzed"
+      }
+    },
+    {
+      "frameId": "frame_7e02769389c2ac361e4d4cbe09bb2435d3816ce35c903039e61ceec256e4f762",
+      "assetHash": "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "decodedTimestampMs": 25000,
+      "perceptualHash": "2f43d10ef84d0f61",
+      "hashVersion": "agentcut-phash-dct32-area8-v1",
+      "source": {
+        "mode": "SIMULATED",
+        "provider": "synthetic-pixel-fixture",
+        "model": null,
+        "reason": "Procedural grayscale pixels for offline testing; no video or model analyzed"
+      }
+    },
+    {
+      "frameId": "frame_96fba68ebaddd896b3ee1b6bee3d6d81f80a401b06f22417ca7d5364cbaab5e3",
+      "assetHash": "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "decodedTimestampMs": 30000,
+      "perceptualHash": "576dac646449ac53",
+      "hashVersion": "agentcut-phash-dct32-area8-v1",
+      "source": {
+        "mode": "SIMULATED",
+        "provider": "synthetic-pixel-fixture",
+        "model": null,
+        "reason": "Procedural grayscale pixels for offline testing; no video or model analyzed"
+      }
+    },
+    {
+      "frameId": "frame_90b0de78dc71366e8440854d804dc312e36e6d72ae535a05f1a3a74f0a33ab34",
+      "assetHash": "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "decodedTimestampMs": 35000,
+      "perceptualHash": "576dac646449ac53",
+      "hashVersion": "agentcut-phash-dct32-area8-v1",
+      "source": {
+        "mode": "SIMULATED",
+        "provider": "synthetic-pixel-fixture",
+        "model": null,
+        "reason": "Procedural grayscale pixels for offline testing; no video or model analyzed"
+      }
+    },
+    {
+      "frameId": "frame_de34a4a31b2c0cd0f45fdf3aab7aa2b7e0e92474d729a303ecad31820c1fdfe4",
+      "assetHash": "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "decodedTimestampMs": 45000,
+      "perceptualHash": "1d889678c8359e3b",
+      "hashVersion": "agentcut-phash-dct32-area8-v1",
+      "source": {
+        "mode": "SIMULATED",
+        "provider": "synthetic-pixel-fixture",
+        "model": null,
+        "reason": "Procedural grayscale pixels for offline testing; no video or model analyzed"
+      }
+    },
+    {
+      "frameId": "frame_18f0012e956f2e3d99567a61c42e49aef7f01599e6c66df544407cdc1fd909e8",
+      "assetHash": "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "decodedTimestampMs": 55000,
+      "perceptualHash": "291889e1c4eb5f2d",
+      "hashVersion": "agentcut-phash-dct32-area8-v1",
+      "source": {
+        "mode": "SIMULATED",
+        "provider": "synthetic-pixel-fixture",
+        "model": null,
+        "reason": "Procedural grayscale pixels for offline testing; no video or model analyzed"
+      }
+    },
+    {
+      "frameId": "frame_9ab2db81b4152f3a3527b9f329e7c677506682864b12cefc5d26b91a671bacc4",
+      "assetHash": "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "decodedTimestampMs": 59499,
+      "perceptualHash": "291889e1c4eb5f2d",
+      "hashVersion": "agentcut-phash-dct32-area8-v1",
+      "source": {
+        "mode": "SIMULATED",
+        "provider": "synthetic-pixel-fixture",
+        "model": null,
+        "reason": "Procedural grayscale pixels for offline testing; no video or model analyzed"
+      }
+    },
+    {
+      "frameId": "frame_da2430ef2ce892559e8a7ff70b2f953ec1b2f9e1bf8b16853ad865c50fb293f1",
+      "assetHash": "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "decodedTimestampMs": 60500,
+      "perceptualHash": "067a4dca23e07fe0",
+      "hashVersion": "agentcut-phash-dct32-area8-v1",
+      "source": {
+        "mode": "SIMULATED",
+        "provider": "synthetic-pixel-fixture",
+        "model": null,
+        "reason": "Procedural grayscale pixels for offline testing; no video or model analyzed"
+      }
+    },
+    {
+      "frameId": "frame_cfc1def99158f02dc3c11de876ff26b5dd5809186b61682632e926d47a18f439",
+      "assetHash": "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "decodedTimestampMs": 65000,
+      "perceptualHash": "067a4dca23e07fe0",
+      "hashVersion": "agentcut-phash-dct32-area8-v1",
+      "source": {
+        "mode": "SIMULATED",
+        "provider": "synthetic-pixel-fixture",
+        "model": null,
+        "reason": "Procedural grayscale pixels for offline testing; no video or model analyzed"
+      }
+    },
+    {
+      "frameId": "frame_5f67b48e430880a4f21a68d7430d2976d2e23b5962d1a1875fbd57495a705730",
+      "assetHash": "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "decodedTimestampMs": 70000,
+      "perceptualHash": "067a4dca23e07fe0",
+      "hashVersion": "agentcut-phash-dct32-area8-v1",
+      "source": {
+        "mode": "SIMULATED",
+        "provider": "synthetic-pixel-fixture",
+        "model": null,
+        "reason": "Procedural grayscale pixels for offline testing; no video or model analyzed"
+      }
+    },
+    {
+      "frameId": "frame_093c06b79b4c77bb9210d828eafddf069c511d2984d9fee2ae06131fa1ee2775",
+      "assetHash": "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "decodedTimestampMs": 75000,
+      "perceptualHash": "067a4dca23e07fe0",
+      "hashVersion": "agentcut-phash-dct32-area8-v1",
+      "source": {
+        "mode": "SIMULATED",
+        "provider": "synthetic-pixel-fixture",
+        "model": null,
+        "reason": "Procedural grayscale pixels for offline testing; no video or model analyzed"
+      }
+    },
+    {
+      "frameId": "frame_b0748f71624f86748acc55d6ea00ce1ec535a186805cfcd1fc6f088da492f1ed",
+      "assetHash": "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "decodedTimestampMs": 85000,
+      "perceptualHash": "2f43d10ef84d0f61",
+      "hashVersion": "agentcut-phash-dct32-area8-v1",
+      "source": {
+        "mode": "SIMULATED",
+        "provider": "synthetic-pixel-fixture",
+        "model": null,
+        "reason": "Procedural grayscale pixels for offline testing; no video or model analyzed"
+      }
+    },
+    {
+      "frameId": "frame_1e98bc9629389ffcdcc13a0d81f1b63d7e377d63fde4091a029ed938736116a5",
+      "assetHash": "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "decodedTimestampMs": 90000,
+      "perceptualHash": "576dac646449ac53",
+      "hashVersion": "agentcut-phash-dct32-area8-v1",
+      "source": {
+        "mode": "SIMULATED",
+        "provider": "synthetic-pixel-fixture",
+        "model": null,
+        "reason": "Procedural grayscale pixels for offline testing; no video or model analyzed"
+      }
+    },
+    {
+      "frameId": "frame_7a14c1f65694109c4a4a042b83e0939973649b7a3a9fff9238b44bb1dfd439bc",
+      "assetHash": "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "decodedTimestampMs": 95000,
+      "perceptualHash": "576dac646449ac53",
+      "hashVersion": "agentcut-phash-dct32-area8-v1",
+      "source": {
+        "mode": "SIMULATED",
+        "provider": "synthetic-pixel-fixture",
+        "model": null,
+        "reason": "Procedural grayscale pixels for offline testing; no video or model analyzed"
+      }
+    },
+    {
+      "frameId": "frame_d44131924218ad0b4423b324cbb23560d93647e015d6185fbb1bc6a9a9f92848",
+      "assetHash": "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "decodedTimestampMs": 105000,
+      "perceptualHash": "1d889678c8359e3b",
+      "hashVersion": "agentcut-phash-dct32-area8-v1",
+      "source": {
+        "mode": "SIMULATED",
+        "provider": "synthetic-pixel-fixture",
+        "model": null,
+        "reason": "Procedural grayscale pixels for offline testing; no video or model analyzed"
+      }
+    },
+    {
+      "frameId": "frame_a27b54521e647a363f472c9812639cd83a00c516c1fa85fb859ae77b4dc37a7f",
+      "assetHash": "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "decodedTimestampMs": 115000,
+      "perceptualHash": "291889e1c4eb5f2d",
+      "hashVersion": "agentcut-phash-dct32-area8-v1",
+      "source": {
+        "mode": "SIMULATED",
+        "provider": "synthetic-pixel-fixture",
+        "model": null,
+        "reason": "Procedural grayscale pixels for offline testing; no video or model analyzed"
+      }
+    },
+    {
+      "frameId": "frame_ff16ac15e5cf807328231d58c918650927be3ab27e832e2fe0a8265ab8a98322",
+      "assetHash": "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "decodedTimestampMs": 119499,
+      "perceptualHash": "291889e1c4eb5f2d",
+      "hashVersion": "agentcut-phash-dct32-area8-v1",
+      "source": {
+        "mode": "SIMULATED",
+        "provider": "synthetic-pixel-fixture",
+        "model": null,
+        "reason": "Procedural grayscale pixels for offline testing; no video or model analyzed"
+      }
+    },
+    {
+      "frameId": "frame_8fc59c65016466f34aa25c6aac41d4834c8c8444d99bb00320aca99043b20508",
+      "assetHash": "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "decodedTimestampMs": 120500,
+      "perceptualHash": "067a4dca23e07fe0",
+      "hashVersion": "agentcut-phash-dct32-area8-v1",
+      "source": {
+        "mode": "SIMULATED",
+        "provider": "synthetic-pixel-fixture",
+        "model": null,
+        "reason": "Procedural grayscale pixels for offline testing; no video or model analyzed"
+      }
+    },
+    {
+      "frameId": "frame_4945e8196a252760172ca99bfaa07f667ba1564d3f3f648372e7c9f05e46fb17",
+      "assetHash": "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "decodedTimestampMs": 121666,
+      "perceptualHash": "067a4dca23e07fe0",
+      "hashVersion": "agentcut-phash-dct32-area8-v1",
+      "source": {
+        "mode": "SIMULATED",
+        "provider": "synthetic-pixel-fixture",
+        "model": null,
+        "reason": "Procedural grayscale pixels for offline testing; no video or model analyzed"
+      }
+    },
+    {
+      "frameId": "frame_b2b59b462ea73dc6059d3396ad383cbc82255ee4fc0885840633d758834b9da2",
+      "assetHash": "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "decodedTimestampMs": 125000,
+      "perceptualHash": "067a4dca23e07fe0",
+      "hashVersion": "agentcut-phash-dct32-area8-v1",
+      "source": {
+        "mode": "SIMULATED",
+        "provider": "synthetic-pixel-fixture",
+        "model": null,
+        "reason": "Procedural grayscale pixels for offline testing; no video or model analyzed"
+      }
+    },
+    {
+      "frameId": "frame_827be93228f992abdfa7adb725f81b1d7e909013bed020a4ab9da238d3676278",
+      "assetHash": "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "decodedTimestampMs": 128333,
+      "perceptualHash": "2f43d10ef84d0f61",
+      "hashVersion": "agentcut-phash-dct32-area8-v1",
+      "source": {
+        "mode": "SIMULATED",
+        "provider": "synthetic-pixel-fixture",
+        "model": null,
+        "reason": "Procedural grayscale pixels for offline testing; no video or model analyzed"
+      }
+    },
+    {
+      "frameId": "frame_05869d9ceeb84f016e063b5cb56224da60b7bc119f2bbffd94ba1d72cc178373",
+      "assetHash": "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "decodedTimestampMs": 130000,
+      "perceptualHash": "576dac646449ac53",
+      "hashVersion": "agentcut-phash-dct32-area8-v1",
+      "source": {
+        "mode": "SIMULATED",
+        "provider": "synthetic-pixel-fixture",
+        "model": null,
+        "reason": "Procedural grayscale pixels for offline testing; no video or model analyzed"
+      }
+    },
+    {
+      "frameId": "frame_7c3e723744c4440196ee0001a8c54d674c41fe0625f661f1a1b180356a22f5bc",
+      "assetHash": "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "decodedTimestampMs": 131666,
+      "perceptualHash": "576dac646449ac53",
+      "hashVersion": "agentcut-phash-dct32-area8-v1",
+      "source": {
+        "mode": "SIMULATED",
+        "provider": "synthetic-pixel-fixture",
+        "model": null,
+        "reason": "Procedural grayscale pixels for offline testing; no video or model analyzed"
+      }
+    },
+    {
+      "frameId": "frame_828d30f476cd4f39c895e4362f232293c71407b57c4a94ec639be5785c2f28ba",
+      "assetHash": "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "decodedTimestampMs": 135000,
+      "perceptualHash": "1d889678c8359e3b",
+      "hashVersion": "agentcut-phash-dct32-area8-v1",
+      "source": {
+        "mode": "SIMULATED",
+        "provider": "synthetic-pixel-fixture",
+        "model": null,
+        "reason": "Procedural grayscale pixels for offline testing; no video or model analyzed"
+      }
+    },
+    {
+      "frameId": "frame_05ced5cdcbf75c98466716a8f84fc5965aa1549d15dc7bcae4e8a432f8913e98",
+      "assetHash": "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "decodedTimestampMs": 138333,
+      "perceptualHash": "291889e1c4eb5f2d",
+      "hashVersion": "agentcut-phash-dct32-area8-v1",
+      "source": {
+        "mode": "SIMULATED",
+        "provider": "synthetic-pixel-fixture",
+        "model": null,
+        "reason": "Procedural grayscale pixels for offline testing; no video or model analyzed"
+      }
+    },
+    {
+      "frameId": "frame_846052873a4b19862702ca4fdce232add32112e8122b0fc46304956a36eea235",
+      "assetHash": "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "decodedTimestampMs": 139499,
+      "perceptualHash": "291889e1c4eb5f2d",
+      "hashVersion": "agentcut-phash-dct32-area8-v1",
+      "source": {
+        "mode": "SIMULATED",
+        "provider": "synthetic-pixel-fixture",
+        "model": null,
+        "reason": "Procedural grayscale pixels for offline testing; no video or model analyzed"
+      }
+    }
+  ]
+}

@@ -6,8 +6,13 @@
 
 import logging
 import os
+import hashlib
+import math
+from importlib.metadata import PackageNotFoundError, version
 from typing import List, Optional
 
+from app.analysis.source_index import DetectorIdentity, SourceIndex, build_source_index, planning_hash, seconds_to_ms
+from app.schemas.script_contracts_v1 import AssetRef, Provenance, Range
 from app.schemas.plan import TimeRange
 from app.tools.frame_extract import probe_video
 
@@ -100,3 +105,67 @@ def detect_scenes(
     except Exception as exc:
         logger.warning("detect_scenes 失败，降级为模拟场景：%s", exc)
         return _simulate_scenes(duration)
+
+
+def detect_source_index(video_path: Optional[str], asset: AssetRef, threshold: float = 27.0) -> SourceIndex:
+    """New complete-index adapter; independent of the legacy VLM frame budget.
+
+    The caller supplies authoritative source duration/hash. Bytes are checked
+    before detection. Missing dependencies, missing files and detector errors
+    return an explicitly UNAVAILABLE index, never six fictional real scenes.
+    One-frame detector minimum preserves short shots; no range is sampled out.
+    """
+    asset = AssetRef.model_validate(asset.model_dump())
+    if isinstance(threshold, bool) or not isinstance(threshold, (int, float)) or not math.isfinite(threshold) or threshold <= 0:
+        raise ValueError("threshold must be finite and positive")
+    try:
+        detector_version = version("scenedetect")
+    except PackageNotFoundError:
+        detector_version = "unavailable"
+    detector = DetectorIdentity(
+        name="PySceneDetect.ContentDetector", version=detector_version,
+        settingsHash=planning_hash({"threshold": float(threshold), "minSceneFrames": 1,
+                                    "adapterVersion": "complete-source-0.1"}),
+    )
+
+    def unavailable(reason: str) -> SourceIndex:
+        return build_source_index(asset, [], detector, Provenance(
+            mode="UNAVAILABLE", provider=detector.name, model=None, reason=reason))
+
+    path = video_path.removeprefix("file://") if video_path else None
+    if not path or not os.path.isfile(path):
+        return unavailable("Source file is missing")
+    if not _HAS_SCENEDETECT:
+        return unavailable("PySceneDetect dependency is unavailable")
+    digest = hashlib.sha256()
+    try:
+        with open(path, "rb") as source_file:
+            for chunk in iter(lambda: source_file.read(1024 * 1024), b""):
+                digest.update(chunk)
+    except OSError:
+        return unavailable("Source file cannot be read")
+    if asset.assetHash != "sha256:" + digest.hexdigest():
+        raise ValueError("source bytes do not match assetHash")
+    video = None
+    try:
+        video = open_video(path)
+        manager = SceneManager()
+        manager.add_detector(ContentDetector(threshold=threshold, min_scene_len=1))
+        manager.auto_downscale = True
+        manager.detect_scenes(video)
+        raw_scenes = manager.get_scene_list()
+        ranges = [Range(startMs=seconds_to_ms(_to_seconds(start)), endMs=seconds_to_ms(_to_seconds(end)))
+                  for start, end in raw_scenes]
+        return build_source_index(asset, ranges, detector, Provenance(
+            mode="REAL", provider=detector.name, model=None, reason=None), no_cuts=not raw_scenes)
+    except Exception as exc:
+        # Keep diagnostic type, without leaking paths or arbitrary detector text.
+        logger.warning("Complete source detection failed (%s)", type(exc).__name__)
+        return unavailable("Complete source detection failed: " + type(exc).__name__)
+    finally:
+        close = getattr(video, "close", None)
+        if close:
+            try:
+                close()
+            except Exception:
+                logger.warning("Source detector stream close failed")

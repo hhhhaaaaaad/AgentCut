@@ -287,4 +287,3 @@ export interface ScriptContractBundleV1 {
   submission: TaskSubmissionV1;
   events: Array<TaskEventV1>;
 }
-

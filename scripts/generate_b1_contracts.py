@@ -67,7 +67,7 @@ def render_files():
         ROOT / "docs/contracts/script-contract-bundle-v1.schema.json": content(schema),
         ROOT / "AgentCut-backend/sutone-agent-cut-api/src/main/resources/contracts/script-contract-bundle-v1.schema.json": content(schema),
         ROOT / "AgentCut-backend/sutone-agent-cut-api/src/main/java/cn/sutone/cut/api/dto/script/B1TypesV1.java": java,
-        ROOT / "AgentCut-front/src/types/scriptContractsV1.ts": ts,
+        ROOT / "AgentCut-front/src/types/scriptContractsV1.ts": ts.rstrip() + "\n",
     }
     for name, model in {
         "material-index": MaterialIndexV1, "director-decision": DirectorDecisionV1,

@@ -1,0 +1,32 @@
+{
+  "assetRef": {
+    "assetId": "offline_sample",
+    "assetHash": "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+    "durationMs": 140000,
+    "displayName": "synthetic-fixture-no-media.mp4"
+  },
+  "detector": {
+    "name": "hand-authored-offline-fixture",
+    "version": "1",
+    "settingsHash": "sha256:bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"
+  },
+  "detectorSource": {
+    "mode": "SIMULATED",
+    "provider": "hand-authored-offline-fixture",
+    "model": null,
+    "reason": "Synthetic ranges for deterministic offline planning; no detector or model executed"
+  },
+  "detectedRanges": [
+    { "startMs": 0, "endMs": 15000 },
+    { "startMs": 15000, "endMs": 30000 },
+    { "startMs": 30000, "endMs": 60000 },
+    { "startMs": 60000, "endMs": 80000 },
+    { "startMs": 80000, "endMs": 110000 },
+    { "startMs": 110000, "endMs": 140000 }
+  ],
+  "profileConfig": {
+    "configVersion": "offline-example-1",
+    "requestedType": "TUTORIAL_INTERVIEW"
+  },
+  "silenceCues": []
+}
