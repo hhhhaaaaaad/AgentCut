@@ -3,6 +3,9 @@
   "private": true,
   "version": "0.1.0",
   "type": "module",
+  "engines": {
+    "node": ">=24"
+  },
   "description": "AgentCut 前端（React 18 + TypeScript + Vite + Ant Design）",
   "scripts": {
     "dev": "vite",

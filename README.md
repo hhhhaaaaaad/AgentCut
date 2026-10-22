@@ -1,5 +1,7 @@
 # AgentCut — 视频智能剪辑平台
 
+[![CI](https://github.com/hhhhaaaaaad/AgentCut/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/hhhhaaaaaad/AgentCut/actions/workflows/ci.yml)
+
 > 单仓库三子包：`AgentCut-backend`(Java) + `AgentCut-ai`(Python) + `AgentCut-front`(React)
 
 ## 项目概述
@@ -37,7 +39,15 @@ Maven 多模块（DDD 分层），`groupId=cn.sutone`，包名 `cn.sutone.cut.*`
 
 - **ffmpeg + ffprobe（必装）**：渲染引擎通过 ProcessBuilder 调用，需在 PATH 中。Windows 从 [ffmpeg.org](https://ffmpeg.org) 下载 static build 并加入 PATH；macOS `brew install ffmpeg`；Linux `apt install ffmpeg`。缺了它「应用方案」步骤会报错。
 - **Docker（可选）**：`docker-compose.yml` 提供 MySQL/Redis/RocketMQ/MinIO。但 MVP 骨架用**内存仓储 + 本地文件存储**，不起数据库也能跑通「分析→编辑→渲染」主流程。
-- Java 17、Python 3.11+、Node 18+。
+- Java 17、Python 3.11+、Node 24+（测试直接导入 TypeScript，CI 使用 Node 24）。
+
+## 持续集成
+
+PR、main 推送和合并队列自动运行 Python 3.11/3.14、Java 17、Node 24 的测试与构建，
+共享契约样例及生成文件漂移检查均纳入门禁。稳定汇总检查名为 **CI gate**。
+工作流进入默认分支后也可手动触发。测试不需要模型密钥或数据库。
+
+依赖安装、本地复现、测试产物及合并检查配置见 [CI 说明](docs/ci.md)。
 
 ## 快速开始
 
