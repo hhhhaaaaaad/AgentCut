@@ -1,0 +1,259 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:agentcut:task-event:v1",
+  "$defs": {
+    "ArtifactRef": {
+      "additionalProperties": false,
+      "properties": {
+        "artifactId": {
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Artifactid",
+          "type": "string"
+        },
+        "revision": {
+          "maximum": 9007199254740991,
+          "minimum": 1,
+          "title": "Revision",
+          "type": "integer"
+        },
+        "contentHash": {
+          "pattern": "^sha256:[0-9a-f]{64}$",
+          "title": "Contenthash",
+          "type": "string"
+        }
+      },
+      "required": [
+        "artifactId",
+        "revision",
+        "contentHash"
+      ],
+      "title": "ArtifactRef",
+      "type": "object"
+    },
+    "ResultRefs": {
+      "additionalProperties": false,
+      "properties": {
+        "analysis": {
+          "$ref": "#/$defs/ArtifactRef"
+        },
+        "materialIndex": {
+          "$ref": "#/$defs/ArtifactRef"
+        },
+        "script": {
+          "$ref": "#/$defs/ArtifactRef"
+        }
+      },
+      "required": [
+        "analysis",
+        "materialIndex",
+        "script"
+      ],
+      "title": "ResultRefs",
+      "type": "object"
+    },
+    "TaskError": {
+      "additionalProperties": false,
+      "properties": {
+        "code": {
+          "enum": [
+            "INVALID_INPUT",
+            "UNSUPPORTED_INPUT",
+            "CONSTRAINT_CONFLICT",
+            "NO_CANDIDATE",
+            "MODEL_TIMEOUT",
+            "MODEL_FAILED",
+            "VALIDATION_FAILED",
+            "CAPACITY_EXCEEDED",
+            "INTERNAL_ERROR",
+            "SUBMISSION_UNCERTAIN"
+          ],
+          "title": "Code",
+          "type": "string"
+        },
+        "message": {
+          "minLength": 1,
+          "pattern": "\\S",
+          "title": "Message",
+          "type": "string"
+        },
+        "retryable": {
+          "title": "Retryable",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "code",
+        "message",
+        "retryable"
+      ],
+      "title": "TaskError",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "protocolVersion": {
+      "const": "1.0",
+      "title": "Protocolversion",
+      "type": "string"
+    },
+    "event": {
+      "enum": [
+        "PROGRESS",
+        "COMPLETED"
+      ],
+      "title": "Event",
+      "type": "string"
+    },
+    "eventId": {
+      "pattern": "^[A-Za-z0-9_-]+$",
+      "title": "Eventid",
+      "type": "string"
+    },
+    "requestId": {
+      "pattern": "^[A-Za-z0-9_-]+$",
+      "title": "Requestid",
+      "type": "string"
+    },
+    "taskId": {
+      "pattern": "^[A-Za-z0-9_-]+$",
+      "title": "Taskid",
+      "type": "string"
+    },
+    "projectId": {
+      "pattern": "^[A-Za-z0-9_-]+$",
+      "title": "Projectid",
+      "type": "string"
+    },
+    "assetId": {
+      "pattern": "^[A-Za-z0-9_-]+$",
+      "title": "Assetid",
+      "type": "string"
+    },
+    "assetHash": {
+      "pattern": "^sha256:[0-9a-f]{64}$",
+      "title": "Assethash",
+      "type": "string"
+    },
+    "runId": {
+      "pattern": "^[A-Za-z0-9_-]+$",
+      "title": "Runid",
+      "type": "string"
+    },
+    "attempt": {
+      "maximum": 9007199254740991,
+      "minimum": 1,
+      "title": "Attempt",
+      "type": "integer"
+    },
+    "inputHash": {
+      "pattern": "^sha256:[0-9a-f]{64}$",
+      "title": "Inputhash",
+      "type": "string"
+    },
+    "sequence": {
+      "maximum": 9007199254740991,
+      "minimum": 1,
+      "title": "Sequence",
+      "type": "integer"
+    },
+    "heartbeatAt": {
+      "pattern": "^[1-9][0-9]{3}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}Z$",
+      "title": "Heartbeatat",
+      "type": "string"
+    },
+    "phase": {
+      "enum": [
+        "VALIDATING_INPUT",
+        "PROBING",
+        "TRANSCRIBING",
+        "VISUAL_ANALYZING",
+        "INDEXING",
+        "PLANNING",
+        "CHECKING",
+        "PERSISTING",
+        "COMPLETED",
+        "FAILED"
+      ],
+      "title": "Phase",
+      "type": "string"
+    },
+    "progress": {
+      "maximum": 100,
+      "minimum": 0,
+      "title": "Progress",
+      "type": "integer"
+    },
+    "executionStatus": {
+      "enum": [
+        "RUNNING",
+        "SUCCESS",
+        "FAILED"
+      ],
+      "title": "Executionstatus",
+      "type": "string"
+    },
+    "analysisOutcome": {
+      "enum": [
+        "NONE",
+        "COMPLETE",
+        "PARTIAL"
+      ],
+      "title": "Analysisoutcome",
+      "type": "string"
+    },
+    "reviewStatus": {
+      "enum": [
+        "NOT_AVAILABLE",
+        "READY",
+        "NEEDS_REVIEW"
+      ],
+      "title": "Reviewstatus",
+      "type": "string"
+    },
+    "resultRefs": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/ResultRefs"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "error": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/TaskError"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    }
+  },
+  "required": [
+    "protocolVersion",
+    "event",
+    "eventId",
+    "requestId",
+    "taskId",
+    "projectId",
+    "assetId",
+    "assetHash",
+    "runId",
+    "attempt",
+    "inputHash",
+    "sequence",
+    "heartbeatAt",
+    "phase",
+    "progress",
+    "executionStatus",
+    "analysisOutcome",
+    "reviewStatus",
+    "resultRefs",
+    "error"
+  ],
+  "title": "TaskEventV1",
+  "type": "object"
+}

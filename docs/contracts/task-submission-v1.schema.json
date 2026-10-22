@@ -1,0 +1,237 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:agentcut:task-submission:v1",
+  "$defs": {
+    "AnalyzeInputV1": {
+      "additionalProperties": false,
+      "properties": {
+        "inputSchemaVersion": {
+          "const": "1.0",
+          "title": "Inputschemaversion",
+          "type": "string"
+        },
+        "requestId": {
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Requestid",
+          "type": "string"
+        },
+        "assetId": {
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Assetid",
+          "type": "string"
+        },
+        "taskName": {
+          "minLength": 1,
+          "pattern": "\\S",
+          "title": "Taskname",
+          "type": "string"
+        },
+        "target": {
+          "$ref": "#/$defs/Target"
+        }
+      },
+      "required": [
+        "inputSchemaVersion",
+        "requestId",
+        "assetId",
+        "taskName",
+        "target"
+      ],
+      "title": "AnalyzeInputV1",
+      "type": "object"
+    },
+    "AssetRef": {
+      "additionalProperties": false,
+      "properties": {
+        "assetId": {
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Assetid",
+          "type": "string"
+        },
+        "assetHash": {
+          "pattern": "^sha256:[0-9a-f]{64}$",
+          "title": "Assethash",
+          "type": "string"
+        },
+        "durationMs": {
+          "maximum": 9007199254740991,
+          "minimum": 1,
+          "title": "Durationms",
+          "type": "integer"
+        },
+        "displayName": {
+          "minLength": 1,
+          "pattern": "\\S",
+          "title": "Displayname",
+          "type": "string"
+        }
+      },
+      "required": [
+        "assetId",
+        "assetHash",
+        "durationMs",
+        "displayName"
+      ],
+      "title": "AssetRef",
+      "type": "object"
+    },
+    "Target": {
+      "additionalProperties": false,
+      "properties": {
+        "mode": {
+          "const": "TOPIC_EXTRACT",
+          "title": "Mode",
+          "type": "string"
+        },
+        "topic": {
+          "minLength": 1,
+          "pattern": "\\S",
+          "title": "Topic",
+          "type": "string"
+        },
+        "maxDurationMs": {
+          "maximum": 9007199254740991,
+          "minimum": 1,
+          "title": "Maxdurationms",
+          "type": "integer"
+        },
+        "desiredDurationMs": {
+          "anyOf": [
+            {
+              "maximum": 9007199254740991,
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Desireddurationms"
+        },
+        "aspectRatio": {
+          "enum": [
+            "9:16",
+            "16:9",
+            "1:1",
+            "4:3"
+          ],
+          "title": "Aspectratio",
+          "type": "string"
+        },
+        "subtitleRequested": {
+          "title": "Subtitlerequested",
+          "type": "boolean"
+        },
+        "style": {
+          "title": "Style",
+          "type": "string"
+        },
+        "contentType": {
+          "enum": [
+            "AUTO",
+            "TUTORIAL_INTERVIEW",
+            "VLOG_DOCUMENTARY",
+            "FAST_SHORT_VIDEO"
+          ],
+          "title": "Contenttype",
+          "type": "string"
+        },
+        "editPolicy": {
+          "const": "ORIGINAL_ORDER_ORIGINAL_SPEED_HARD_CUT",
+          "title": "Editpolicy",
+          "type": "string"
+        }
+      },
+      "required": [
+        "mode",
+        "topic",
+        "maxDurationMs",
+        "desiredDurationMs",
+        "aspectRatio",
+        "subtitleRequested",
+        "style",
+        "contentType",
+        "editPolicy"
+      ],
+      "title": "Target",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "protocolVersion": {
+      "const": "1.0",
+      "title": "Protocolversion",
+      "type": "string"
+    },
+    "messageType": {
+      "const": "ANALYZE_REQUEST",
+      "title": "Messagetype",
+      "type": "string"
+    },
+    "taskId": {
+      "pattern": "^[A-Za-z0-9_-]+$",
+      "title": "Taskid",
+      "type": "string"
+    },
+    "projectId": {
+      "pattern": "^[A-Za-z0-9_-]+$",
+      "title": "Projectid",
+      "type": "string"
+    },
+    "runId": {
+      "pattern": "^[A-Za-z0-9_-]+$",
+      "title": "Runid",
+      "type": "string"
+    },
+    "attempt": {
+      "maximum": 9007199254740991,
+      "minimum": 1,
+      "title": "Attempt",
+      "type": "integer"
+    },
+    "inputHash": {
+      "pattern": "^sha256:[0-9a-f]{64}$",
+      "title": "Inputhash",
+      "type": "string"
+    },
+    "configVersion": {
+      "minLength": 1,
+      "pattern": "\\S",
+      "title": "Configversion",
+      "type": "string"
+    },
+    "input": {
+      "$ref": "#/$defs/AnalyzeInputV1"
+    },
+    "assetRef": {
+      "$ref": "#/$defs/AssetRef"
+    },
+    "mediaObjectKey": {
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9_./-]*$",
+      "title": "Mediaobjectkey",
+      "type": "string"
+    },
+    "callbackUrl": {
+      "pattern": "^https?://[^\\s]+$",
+      "title": "Callbackurl",
+      "type": "string"
+    }
+  },
+  "required": [
+    "protocolVersion",
+    "messageType",
+    "taskId",
+    "projectId",
+    "runId",
+    "attempt",
+    "inputHash",
+    "configVersion",
+    "input",
+    "assetRef",
+    "mediaObjectKey",
+    "callbackUrl"
+  ],
+  "title": "TaskSubmissionV1",
+  "type": "object"
+}

@@ -1,0 +1,160 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:agentcut:director-decision:v1",
+  "$defs": {
+    "DecisionRow": {
+      "additionalProperties": false,
+      "properties": {
+        "rowId": {
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Rowid",
+          "type": "string"
+        },
+        "sourceUnitRefs": {
+          "items": {
+            "pattern": "^[A-Za-z0-9_-]+$",
+            "type": "string"
+          },
+          "minItems": 1,
+          "title": "Sourceunitrefs",
+          "type": "array"
+        },
+        "narrativeRole": {
+          "enum": [
+            "HOOK",
+            "CONTEXT",
+            "EXPLANATION",
+            "EXAMPLE",
+            "CONCLUSION",
+            "OTHER"
+          ],
+          "title": "Narrativerole",
+          "type": "string"
+        },
+        "selectionReason": {
+          "minLength": 1,
+          "pattern": "\\S",
+          "title": "Selectionreason",
+          "type": "string"
+        },
+        "packagingSuggestions": {
+          "items": {
+            "$ref": "#/$defs/PackagingProposal"
+          },
+          "title": "Packagingsuggestions",
+          "type": "array"
+        }
+      },
+      "required": [
+        "rowId",
+        "sourceUnitRefs",
+        "narrativeRole",
+        "selectionReason",
+        "packagingSuggestions"
+      ],
+      "title": "DecisionRow",
+      "type": "object"
+    },
+    "IndexRef": {
+      "additionalProperties": false,
+      "properties": {
+        "indexId": {
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Indexid",
+          "type": "string"
+        },
+        "indexVersion": {
+          "maximum": 9007199254740991,
+          "minimum": 1,
+          "title": "Indexversion",
+          "type": "integer"
+        },
+        "indexHash": {
+          "pattern": "^sha256:[0-9a-f]{64}$",
+          "title": "Indexhash",
+          "type": "string"
+        }
+      },
+      "required": [
+        "indexId",
+        "indexVersion",
+        "indexHash"
+      ],
+      "title": "IndexRef",
+      "type": "object"
+    },
+    "PackagingProposal": {
+      "additionalProperties": false,
+      "properties": {
+        "suggestionId": {
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Suggestionid",
+          "type": "string"
+        },
+        "kind": {
+          "enum": [
+            "TITLE",
+            "EMPHASIS",
+            "B_ROLL",
+            "MUSIC",
+            "ANIMATION",
+            "CARD"
+          ],
+          "title": "Kind",
+          "type": "string"
+        },
+        "text": {
+          "minLength": 1,
+          "pattern": "\\S",
+          "title": "Text",
+          "type": "string"
+        }
+      },
+      "required": [
+        "suggestionId",
+        "kind",
+        "text"
+      ],
+      "title": "PackagingProposal",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "decisionSchemaVersion": {
+      "const": "1.0",
+      "title": "Decisionschemaversion",
+      "type": "string"
+    },
+    "decisionId": {
+      "pattern": "^[A-Za-z0-9_-]+$",
+      "title": "Decisionid",
+      "type": "string"
+    },
+    "indexRef": {
+      "$ref": "#/$defs/IndexRef"
+    },
+    "inputHash": {
+      "pattern": "^sha256:[0-9a-f]{64}$",
+      "title": "Inputhash",
+      "type": "string"
+    },
+    "rows": {
+      "items": {
+        "$ref": "#/$defs/DecisionRow"
+      },
+      "minItems": 1,
+      "title": "Rows",
+      "type": "array"
+    }
+  },
+  "required": [
+    "decisionSchemaVersion",
+    "decisionId",
+    "indexRef",
+    "inputHash",
+    "rows"
+  ],
+  "title": "DirectorDecisionV1",
+  "type": "object"
+}

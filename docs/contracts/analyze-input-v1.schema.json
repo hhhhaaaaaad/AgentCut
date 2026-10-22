@@ -1,0 +1,123 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:agentcut:analyze-input:v1",
+  "$defs": {
+    "Target": {
+      "additionalProperties": false,
+      "properties": {
+        "mode": {
+          "const": "TOPIC_EXTRACT",
+          "title": "Mode",
+          "type": "string"
+        },
+        "topic": {
+          "minLength": 1,
+          "pattern": "\\S",
+          "title": "Topic",
+          "type": "string"
+        },
+        "maxDurationMs": {
+          "maximum": 9007199254740991,
+          "minimum": 1,
+          "title": "Maxdurationms",
+          "type": "integer"
+        },
+        "desiredDurationMs": {
+          "anyOf": [
+            {
+              "maximum": 9007199254740991,
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Desireddurationms"
+        },
+        "aspectRatio": {
+          "enum": [
+            "9:16",
+            "16:9",
+            "1:1",
+            "4:3"
+          ],
+          "title": "Aspectratio",
+          "type": "string"
+        },
+        "subtitleRequested": {
+          "title": "Subtitlerequested",
+          "type": "boolean"
+        },
+        "style": {
+          "title": "Style",
+          "type": "string"
+        },
+        "contentType": {
+          "enum": [
+            "AUTO",
+            "TUTORIAL_INTERVIEW",
+            "VLOG_DOCUMENTARY",
+            "FAST_SHORT_VIDEO"
+          ],
+          "title": "Contenttype",
+          "type": "string"
+        },
+        "editPolicy": {
+          "const": "ORIGINAL_ORDER_ORIGINAL_SPEED_HARD_CUT",
+          "title": "Editpolicy",
+          "type": "string"
+        }
+      },
+      "required": [
+        "mode",
+        "topic",
+        "maxDurationMs",
+        "desiredDurationMs",
+        "aspectRatio",
+        "subtitleRequested",
+        "style",
+        "contentType",
+        "editPolicy"
+      ],
+      "title": "Target",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "inputSchemaVersion": {
+      "const": "1.0",
+      "title": "Inputschemaversion",
+      "type": "string"
+    },
+    "requestId": {
+      "pattern": "^[A-Za-z0-9_-]+$",
+      "title": "Requestid",
+      "type": "string"
+    },
+    "assetId": {
+      "pattern": "^[A-Za-z0-9_-]+$",
+      "title": "Assetid",
+      "type": "string"
+    },
+    "taskName": {
+      "minLength": 1,
+      "pattern": "\\S",
+      "title": "Taskname",
+      "type": "string"
+    },
+    "target": {
+      "$ref": "#/$defs/Target"
+    }
+  },
+  "required": [
+    "inputSchemaVersion",
+    "requestId",
+    "assetId",
+    "taskName",
+    "target"
+  ],
+  "title": "AnalyzeInputV1",
+  "type": "object"
+}

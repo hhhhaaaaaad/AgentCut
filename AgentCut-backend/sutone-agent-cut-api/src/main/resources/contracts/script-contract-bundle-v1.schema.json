@@ -1,0 +1,1686 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:agentcut:script-contract-bundle:v1",
+  "$defs": {
+    "Action": {
+      "additionalProperties": false,
+      "properties": {
+        "actionId": {
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Actionid",
+          "type": "string"
+        },
+        "type": {
+          "enum": [
+            "ORIGINAL_AUDIO",
+            "CAPTION"
+          ],
+          "title": "Type",
+          "type": "string"
+        },
+        "rowId": {
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Rowid",
+          "type": "string"
+        },
+        "cueId": {
+          "anyOf": [
+            {
+              "pattern": "^[A-Za-z0-9_-]+$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Cueid"
+        }
+      },
+      "required": [
+        "actionId",
+        "type",
+        "rowId",
+        "cueId"
+      ],
+      "title": "Action",
+      "type": "object"
+    },
+    "AnalyzeInputV1": {
+      "additionalProperties": false,
+      "properties": {
+        "inputSchemaVersion": {
+          "const": "1.0",
+          "title": "Inputschemaversion",
+          "type": "string"
+        },
+        "requestId": {
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Requestid",
+          "type": "string"
+        },
+        "assetId": {
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Assetid",
+          "type": "string"
+        },
+        "taskName": {
+          "minLength": 1,
+          "pattern": "\\S",
+          "title": "Taskname",
+          "type": "string"
+        },
+        "target": {
+          "$ref": "#/$defs/Target"
+        }
+      },
+      "required": [
+        "inputSchemaVersion",
+        "requestId",
+        "assetId",
+        "taskName",
+        "target"
+      ],
+      "title": "AnalyzeInputV1",
+      "type": "object"
+    },
+    "ArtifactRef": {
+      "additionalProperties": false,
+      "properties": {
+        "artifactId": {
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Artifactid",
+          "type": "string"
+        },
+        "revision": {
+          "maximum": 9007199254740991,
+          "minimum": 1,
+          "title": "Revision",
+          "type": "integer"
+        },
+        "contentHash": {
+          "pattern": "^sha256:[0-9a-f]{64}$",
+          "title": "Contenthash",
+          "type": "string"
+        }
+      },
+      "required": [
+        "artifactId",
+        "revision",
+        "contentHash"
+      ],
+      "title": "ArtifactRef",
+      "type": "object"
+    },
+    "AssetRef": {
+      "additionalProperties": false,
+      "properties": {
+        "assetId": {
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Assetid",
+          "type": "string"
+        },
+        "assetHash": {
+          "pattern": "^sha256:[0-9a-f]{64}$",
+          "title": "Assethash",
+          "type": "string"
+        },
+        "durationMs": {
+          "maximum": 9007199254740991,
+          "minimum": 1,
+          "title": "Durationms",
+          "type": "integer"
+        },
+        "displayName": {
+          "minLength": 1,
+          "pattern": "\\S",
+          "title": "Displayname",
+          "type": "string"
+        }
+      },
+      "required": [
+        "assetId",
+        "assetHash",
+        "durationMs",
+        "displayName"
+      ],
+      "title": "AssetRef",
+      "type": "object"
+    },
+    "CaptionCue": {
+      "additionalProperties": false,
+      "properties": {
+        "cueId": {
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Cueid",
+          "type": "string"
+        },
+        "rowId": {
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Rowid",
+          "type": "string"
+        },
+        "unitId": {
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Unitid",
+          "type": "string"
+        },
+        "text": {
+          "minLength": 1,
+          "pattern": "\\S",
+          "title": "Text",
+          "type": "string"
+        },
+        "outputRange": {
+          "$ref": "#/$defs/Range"
+        },
+        "timingQuality": {
+          "enum": [
+            "SENTENCE",
+            "WORD",
+            "MANUAL"
+          ],
+          "title": "Timingquality",
+          "type": "string"
+        }
+      },
+      "required": [
+        "cueId",
+        "rowId",
+        "unitId",
+        "text",
+        "outputRange",
+        "timingQuality"
+      ],
+      "title": "CaptionCue",
+      "type": "object"
+    },
+    "DecisionRow": {
+      "additionalProperties": false,
+      "properties": {
+        "rowId": {
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Rowid",
+          "type": "string"
+        },
+        "sourceUnitRefs": {
+          "items": {
+            "pattern": "^[A-Za-z0-9_-]+$",
+            "type": "string"
+          },
+          "minItems": 1,
+          "title": "Sourceunitrefs",
+          "type": "array"
+        },
+        "narrativeRole": {
+          "enum": [
+            "HOOK",
+            "CONTEXT",
+            "EXPLANATION",
+            "EXAMPLE",
+            "CONCLUSION",
+            "OTHER"
+          ],
+          "title": "Narrativerole",
+          "type": "string"
+        },
+        "selectionReason": {
+          "minLength": 1,
+          "pattern": "\\S",
+          "title": "Selectionreason",
+          "type": "string"
+        },
+        "packagingSuggestions": {
+          "items": {
+            "$ref": "#/$defs/PackagingProposal"
+          },
+          "title": "Packagingsuggestions",
+          "type": "array"
+        }
+      },
+      "required": [
+        "rowId",
+        "sourceUnitRefs",
+        "narrativeRole",
+        "selectionReason",
+        "packagingSuggestions"
+      ],
+      "title": "DecisionRow",
+      "type": "object"
+    },
+    "Dependency": {
+      "additionalProperties": false,
+      "properties": {
+        "unitId": {
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Unitid",
+          "type": "string"
+        },
+        "kind": {
+          "enum": [
+            "DEFINITION",
+            "COREFERENCE",
+            "CONDITION",
+            "NEGATION",
+            "CAUSE",
+            "QUESTION_ANSWER"
+          ],
+          "title": "Kind",
+          "type": "string"
+        },
+        "level": {
+          "enum": [
+            "REQUIRED",
+            "REVIEW"
+          ],
+          "title": "Level",
+          "type": "string"
+        }
+      },
+      "required": [
+        "unitId",
+        "kind",
+        "level"
+      ],
+      "title": "Dependency",
+      "type": "object"
+    },
+    "DirectorDecisionV1": {
+      "additionalProperties": false,
+      "properties": {
+        "decisionSchemaVersion": {
+          "const": "1.0",
+          "title": "Decisionschemaversion",
+          "type": "string"
+        },
+        "decisionId": {
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Decisionid",
+          "type": "string"
+        },
+        "indexRef": {
+          "$ref": "#/$defs/IndexRef"
+        },
+        "inputHash": {
+          "pattern": "^sha256:[0-9a-f]{64}$",
+          "title": "Inputhash",
+          "type": "string"
+        },
+        "rows": {
+          "items": {
+            "$ref": "#/$defs/DecisionRow"
+          },
+          "minItems": 1,
+          "title": "Rows",
+          "type": "array"
+        }
+      },
+      "required": [
+        "decisionSchemaVersion",
+        "decisionId",
+        "indexRef",
+        "inputHash",
+        "rows"
+      ],
+      "title": "DirectorDecisionV1",
+      "type": "object"
+    },
+    "EditingScriptV1": {
+      "additionalProperties": false,
+      "properties": {
+        "scriptSchemaVersion": {
+          "const": "1.0",
+          "title": "Scriptschemaversion",
+          "type": "string"
+        },
+        "scriptId": {
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Scriptid",
+          "type": "string"
+        },
+        "revision": {
+          "maximum": 9007199254740991,
+          "minimum": 1,
+          "title": "Revision",
+          "type": "integer"
+        },
+        "projectId": {
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Projectid",
+          "type": "string"
+        },
+        "generationTaskId": {
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Generationtaskid",
+          "type": "string"
+        },
+        "assetRef": {
+          "$ref": "#/$defs/AssetRef"
+        },
+        "indexRef": {
+          "$ref": "#/$defs/IndexRef"
+        },
+        "inputHash": {
+          "pattern": "^sha256:[0-9a-f]{64}$",
+          "title": "Inputhash",
+          "type": "string"
+        },
+        "target": {
+          "$ref": "#/$defs/Target"
+        },
+        "title": {
+          "minLength": 1,
+          "pattern": "\\S",
+          "title": "Title",
+          "type": "string"
+        },
+        "rows": {
+          "items": {
+            "$ref": "#/$defs/ScriptRow"
+          },
+          "minItems": 1,
+          "title": "Rows",
+          "type": "array"
+        },
+        "estimatedDurationMs": {
+          "maximum": 9007199254740991,
+          "minimum": 1,
+          "title": "Estimateddurationms",
+          "type": "integer"
+        },
+        "captionCues": {
+          "items": {
+            "$ref": "#/$defs/CaptionCue"
+          },
+          "title": "Captioncues",
+          "type": "array"
+        },
+        "executableActions": {
+          "items": {
+            "$ref": "#/$defs/Action"
+          },
+          "title": "Executableactions",
+          "type": "array"
+        },
+        "packagingSuggestions": {
+          "items": {
+            "$ref": "#/$defs/PackagingSuggestion"
+          },
+          "title": "Packagingsuggestions",
+          "type": "array"
+        },
+        "manualNotes": {
+          "title": "Manualnotes",
+          "type": "string"
+        },
+        "riskItems": {
+          "items": {
+            "$ref": "#/$defs/Risk"
+          },
+          "title": "Riskitems",
+          "type": "array"
+        },
+        "scriptHash": {
+          "pattern": "^sha256:[0-9a-f]{64}$",
+          "title": "Scripthash",
+          "type": "string"
+        },
+        "validationReport": {
+          "$ref": "#/$defs/ValidationReport"
+        },
+        "quality": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/QualityReport"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "reviewStatus": {
+          "enum": [
+            "DRAFT",
+            "NEEDS_REVIEW",
+            "READY"
+          ],
+          "title": "Reviewstatus",
+          "type": "string"
+        }
+      },
+      "required": [
+        "scriptSchemaVersion",
+        "scriptId",
+        "revision",
+        "projectId",
+        "generationTaskId",
+        "assetRef",
+        "indexRef",
+        "inputHash",
+        "target",
+        "title",
+        "rows",
+        "estimatedDurationMs",
+        "captionCues",
+        "executableActions",
+        "packagingSuggestions",
+        "manualNotes",
+        "riskItems",
+        "scriptHash",
+        "validationReport",
+        "quality",
+        "reviewStatus"
+      ],
+      "title": "EditingScriptV1",
+      "type": "object"
+    },
+    "IndexRef": {
+      "additionalProperties": false,
+      "properties": {
+        "indexId": {
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Indexid",
+          "type": "string"
+        },
+        "indexVersion": {
+          "maximum": 9007199254740991,
+          "minimum": 1,
+          "title": "Indexversion",
+          "type": "integer"
+        },
+        "indexHash": {
+          "pattern": "^sha256:[0-9a-f]{64}$",
+          "title": "Indexhash",
+          "type": "string"
+        }
+      },
+      "required": [
+        "indexId",
+        "indexVersion",
+        "indexHash"
+      ],
+      "title": "IndexRef",
+      "type": "object"
+    },
+    "IndexTranscript": {
+      "additionalProperties": false,
+      "properties": {
+        "transcriptId": {
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Transcriptid",
+          "type": "string"
+        },
+        "sourceRange": {
+          "$ref": "#/$defs/Range"
+        },
+        "text": {
+          "minLength": 1,
+          "pattern": "\\S",
+          "title": "Text",
+          "type": "string"
+        },
+        "timingQuality": {
+          "enum": [
+            "COARSE_BLOCK",
+            "SENTENCE",
+            "WORD",
+            "MANUAL"
+          ],
+          "title": "Timingquality",
+          "type": "string"
+        },
+        "source": {
+          "$ref": "#/$defs/Provenance"
+        }
+      },
+      "required": [
+        "transcriptId",
+        "sourceRange",
+        "text",
+        "timingQuality",
+        "source"
+      ],
+      "title": "IndexTranscript",
+      "type": "object"
+    },
+    "MaterialIndexV1": {
+      "additionalProperties": false,
+      "properties": {
+        "indexSchemaVersion": {
+          "const": "1.0",
+          "title": "Indexschemaversion",
+          "type": "string"
+        },
+        "indexId": {
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Indexid",
+          "type": "string"
+        },
+        "indexVersion": {
+          "maximum": 9007199254740991,
+          "minimum": 1,
+          "title": "Indexversion",
+          "type": "integer"
+        },
+        "indexHash": {
+          "pattern": "^sha256:[0-9a-f]{64}$",
+          "title": "Indexhash",
+          "type": "string"
+        },
+        "assetRef": {
+          "$ref": "#/$defs/AssetRef"
+        },
+        "analysisRef": {
+          "$ref": "#/$defs/ArtifactRef"
+        },
+        "scenes": {
+          "items": {
+            "$ref": "#/$defs/Scene"
+          },
+          "minItems": 1,
+          "title": "Scenes",
+          "type": "array"
+        },
+        "observations": {
+          "items": {
+            "$ref": "#/$defs/Observation"
+          },
+          "title": "Observations",
+          "type": "array"
+        },
+        "transcripts": {
+          "items": {
+            "$ref": "#/$defs/IndexTranscript"
+          },
+          "title": "Transcripts",
+          "type": "array"
+        },
+        "units": {
+          "items": {
+            "$ref": "#/$defs/MaterialUnit"
+          },
+          "minItems": 1,
+          "title": "Units",
+          "type": "array"
+        }
+      },
+      "required": [
+        "indexSchemaVersion",
+        "indexId",
+        "indexVersion",
+        "indexHash",
+        "assetRef",
+        "analysisRef",
+        "scenes",
+        "observations",
+        "transcripts",
+        "units"
+      ],
+      "title": "MaterialIndexV1",
+      "type": "object"
+    },
+    "MaterialUnit": {
+      "additionalProperties": false,
+      "properties": {
+        "unitId": {
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Unitid",
+          "type": "string"
+        },
+        "kind": {
+          "enum": [
+            "SPEECH",
+            "VISUAL_ONLY"
+          ],
+          "title": "Kind",
+          "type": "string"
+        },
+        "sourceRange": {
+          "$ref": "#/$defs/Range"
+        },
+        "originalText": {
+          "title": "Originaltext",
+          "type": "string"
+        },
+        "timingQuality": {
+          "enum": [
+            "NONE",
+            "COARSE_BLOCK",
+            "SENTENCE",
+            "WORD",
+            "MANUAL"
+          ],
+          "title": "Timingquality",
+          "type": "string"
+        },
+        "transcriptRefs": {
+          "items": {
+            "pattern": "^[A-Za-z0-9_-]+$",
+            "type": "string"
+          },
+          "title": "Transcriptrefs",
+          "type": "array"
+        },
+        "sceneRefs": {
+          "items": {
+            "pattern": "^[A-Za-z0-9_-]+$",
+            "type": "string"
+          },
+          "minItems": 1,
+          "title": "Scenerefs",
+          "type": "array"
+        },
+        "frameRefs": {
+          "items": {
+            "pattern": "^[A-Za-z0-9_-]+$",
+            "type": "string"
+          },
+          "title": "Framerefs",
+          "type": "array"
+        },
+        "asrSource": {
+          "$ref": "#/$defs/Provenance"
+        },
+        "dependencies": {
+          "items": {
+            "$ref": "#/$defs/Dependency"
+          },
+          "title": "Dependencies",
+          "type": "array"
+        }
+      },
+      "required": [
+        "unitId",
+        "kind",
+        "sourceRange",
+        "originalText",
+        "timingQuality",
+        "transcriptRefs",
+        "sceneRefs",
+        "frameRefs",
+        "asrSource",
+        "dependencies"
+      ],
+      "title": "MaterialUnit",
+      "type": "object"
+    },
+    "Observation": {
+      "additionalProperties": false,
+      "properties": {
+        "frameId": {
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Frameid",
+          "type": "string"
+        },
+        "sceneId": {
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Sceneid",
+          "type": "string"
+        },
+        "timestampMs": {
+          "maximum": 9007199254740991,
+          "minimum": 0,
+          "title": "Timestampms",
+          "type": "integer"
+        },
+        "description": {
+          "title": "Description",
+          "type": "string"
+        },
+        "source": {
+          "$ref": "#/$defs/Provenance"
+        }
+      },
+      "required": [
+        "frameId",
+        "sceneId",
+        "timestampMs",
+        "description",
+        "source"
+      ],
+      "title": "Observation",
+      "type": "object"
+    },
+    "PackagingProposal": {
+      "additionalProperties": false,
+      "properties": {
+        "suggestionId": {
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Suggestionid",
+          "type": "string"
+        },
+        "kind": {
+          "enum": [
+            "TITLE",
+            "EMPHASIS",
+            "B_ROLL",
+            "MUSIC",
+            "ANIMATION",
+            "CARD"
+          ],
+          "title": "Kind",
+          "type": "string"
+        },
+        "text": {
+          "minLength": 1,
+          "pattern": "\\S",
+          "title": "Text",
+          "type": "string"
+        }
+      },
+      "required": [
+        "suggestionId",
+        "kind",
+        "text"
+      ],
+      "title": "PackagingProposal",
+      "type": "object"
+    },
+    "PackagingSuggestion": {
+      "additionalProperties": false,
+      "properties": {
+        "suggestionId": {
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Suggestionid",
+          "type": "string"
+        },
+        "kind": {
+          "enum": [
+            "TITLE",
+            "EMPHASIS",
+            "B_ROLL",
+            "MUSIC",
+            "ANIMATION",
+            "CARD"
+          ],
+          "title": "Kind",
+          "type": "string"
+        },
+        "text": {
+          "minLength": 1,
+          "pattern": "\\S",
+          "title": "Text",
+          "type": "string"
+        },
+        "rowId": {
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Rowid",
+          "type": "string"
+        },
+        "status": {
+          "enum": [
+            "PROPOSED",
+            "ACCEPTED_MANUAL",
+            "REJECTED"
+          ],
+          "title": "Status",
+          "type": "string"
+        }
+      },
+      "required": [
+        "suggestionId",
+        "kind",
+        "text",
+        "rowId",
+        "status"
+      ],
+      "title": "PackagingSuggestion",
+      "type": "object"
+    },
+    "Provenance": {
+      "additionalProperties": false,
+      "properties": {
+        "mode": {
+          "enum": [
+            "REAL",
+            "SIMULATED",
+            "MIXED",
+            "NO_SPEECH",
+            "UNAVAILABLE"
+          ],
+          "title": "Mode",
+          "type": "string"
+        },
+        "provider": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "pattern": "\\S",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Provider"
+        },
+        "model": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "pattern": "\\S",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Model"
+        },
+        "reason": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "pattern": "\\S",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Reason"
+        }
+      },
+      "required": [
+        "mode",
+        "provider",
+        "model",
+        "reason"
+      ],
+      "title": "Provenance",
+      "type": "object"
+    },
+    "QualityReport": {
+      "additionalProperties": false,
+      "properties": {
+        "candidateHash": {
+          "pattern": "^sha256:[0-9a-f]{64}$",
+          "title": "Candidatehash",
+          "type": "string"
+        },
+        "passed": {
+          "title": "Passed",
+          "type": "boolean"
+        },
+        "overallScore": {
+          "maximum": 1,
+          "minimum": 0,
+          "title": "Overallscore",
+          "type": "number"
+        },
+        "issueRefs": {
+          "items": {
+            "pattern": "^[A-Za-z0-9_-]+$",
+            "type": "string"
+          },
+          "title": "Issuerefs",
+          "type": "array"
+        }
+      },
+      "required": [
+        "candidateHash",
+        "passed",
+        "overallScore",
+        "issueRefs"
+      ],
+      "title": "QualityReport",
+      "type": "object"
+    },
+    "Range": {
+      "additionalProperties": false,
+      "properties": {
+        "startMs": {
+          "maximum": 9007199254740991,
+          "minimum": 0,
+          "title": "Startms",
+          "type": "integer"
+        },
+        "endMs": {
+          "maximum": 9007199254740991,
+          "minimum": 1,
+          "title": "Endms",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "startMs",
+        "endMs"
+      ],
+      "title": "Range",
+      "type": "object"
+    },
+    "ResultRefs": {
+      "additionalProperties": false,
+      "properties": {
+        "analysis": {
+          "$ref": "#/$defs/ArtifactRef"
+        },
+        "materialIndex": {
+          "$ref": "#/$defs/ArtifactRef"
+        },
+        "script": {
+          "$ref": "#/$defs/ArtifactRef"
+        }
+      },
+      "required": [
+        "analysis",
+        "materialIndex",
+        "script"
+      ],
+      "title": "ResultRefs",
+      "type": "object"
+    },
+    "Risk": {
+      "additionalProperties": false,
+      "properties": {
+        "riskId": {
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Riskid",
+          "type": "string"
+        },
+        "code": {
+          "enum": [
+            "COARSE_ALIGNMENT",
+            "UNTRUSTED_SOURCE",
+            "VISUAL_UNVERIFIED",
+            "MISSING_DEPENDENCY",
+            "SUBTITLE_UNAVAILABLE",
+            "SEMANTIC_REVIEW",
+            "QA_UNAVAILABLE"
+          ],
+          "title": "Code",
+          "type": "string"
+        },
+        "level": {
+          "enum": [
+            "REVIEW",
+            "HARD"
+          ],
+          "title": "Level",
+          "type": "string"
+        },
+        "rowRefs": {
+          "items": {
+            "pattern": "^[A-Za-z0-9_-]+$",
+            "type": "string"
+          },
+          "title": "Rowrefs",
+          "type": "array"
+        },
+        "unitRefs": {
+          "items": {
+            "pattern": "^[A-Za-z0-9_-]+$",
+            "type": "string"
+          },
+          "title": "Unitrefs",
+          "type": "array"
+        },
+        "message": {
+          "minLength": 1,
+          "pattern": "\\S",
+          "title": "Message",
+          "type": "string"
+        }
+      },
+      "required": [
+        "riskId",
+        "code",
+        "level",
+        "rowRefs",
+        "unitRefs",
+        "message"
+      ],
+      "title": "Risk",
+      "type": "object"
+    },
+    "Scene": {
+      "additionalProperties": false,
+      "properties": {
+        "sceneId": {
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Sceneid",
+          "type": "string"
+        },
+        "sourceRange": {
+          "$ref": "#/$defs/Range"
+        }
+      },
+      "required": [
+        "sceneId",
+        "sourceRange"
+      ],
+      "title": "Scene",
+      "type": "object"
+    },
+    "ScriptRow": {
+      "additionalProperties": false,
+      "properties": {
+        "rowId": {
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Rowid",
+          "type": "string"
+        },
+        "shotNo": {
+          "maximum": 9007199254740991,
+          "minimum": 1,
+          "title": "Shotno",
+          "type": "integer"
+        },
+        "sourceUnitRefs": {
+          "items": {
+            "pattern": "^[A-Za-z0-9_-]+$",
+            "type": "string"
+          },
+          "minItems": 1,
+          "title": "Sourceunitrefs",
+          "type": "array"
+        },
+        "sourceParts": {
+          "items": {
+            "$ref": "#/$defs/SourcePart"
+          },
+          "minItems": 1,
+          "title": "Sourceparts",
+          "type": "array"
+        },
+        "outputRange": {
+          "$ref": "#/$defs/Range"
+        },
+        "spokenQuotes": {
+          "items": {
+            "$ref": "#/$defs/SpokenQuote"
+          },
+          "title": "Spokenquotes",
+          "type": "array"
+        },
+        "visualEvidence": {
+          "items": {
+            "$ref": "#/$defs/VisualEvidence"
+          },
+          "title": "Visualevidence",
+          "type": "array"
+        },
+        "narrativeRole": {
+          "enum": [
+            "HOOK",
+            "CONTEXT",
+            "EXPLANATION",
+            "EXAMPLE",
+            "CONCLUSION",
+            "OTHER"
+          ],
+          "title": "Narrativerole",
+          "type": "string"
+        },
+        "selectionReason": {
+          "minLength": 1,
+          "pattern": "\\S",
+          "title": "Selectionreason",
+          "type": "string"
+        },
+        "dependencyRefs": {
+          "items": {
+            "pattern": "^[A-Za-z0-9_-]+$",
+            "type": "string"
+          },
+          "title": "Dependencyrefs",
+          "type": "array"
+        },
+        "riskRefs": {
+          "items": {
+            "pattern": "^[A-Za-z0-9_-]+$",
+            "type": "string"
+          },
+          "title": "Riskrefs",
+          "type": "array"
+        },
+        "treatmentNote": {
+          "title": "Treatmentnote",
+          "type": "string"
+        },
+        "audioTreatment": {
+          "const": "ORIGINAL",
+          "title": "Audiotreatment",
+          "type": "string"
+        },
+        "cutNotes": {
+          "title": "Cutnotes",
+          "type": "string"
+        }
+      },
+      "required": [
+        "rowId",
+        "shotNo",
+        "sourceUnitRefs",
+        "sourceParts",
+        "outputRange",
+        "spokenQuotes",
+        "visualEvidence",
+        "narrativeRole",
+        "selectionReason",
+        "dependencyRefs",
+        "riskRefs",
+        "treatmentNote",
+        "audioTreatment",
+        "cutNotes"
+      ],
+      "title": "ScriptRow",
+      "type": "object"
+    },
+    "SourcePart": {
+      "additionalProperties": false,
+      "properties": {
+        "unitId": {
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Unitid",
+          "type": "string"
+        },
+        "sourceRange": {
+          "$ref": "#/$defs/Range"
+        }
+      },
+      "required": [
+        "unitId",
+        "sourceRange"
+      ],
+      "title": "SourcePart",
+      "type": "object"
+    },
+    "SpokenQuote": {
+      "additionalProperties": false,
+      "properties": {
+        "unitId": {
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Unitid",
+          "type": "string"
+        },
+        "text": {
+          "minLength": 1,
+          "pattern": "\\S",
+          "title": "Text",
+          "type": "string"
+        }
+      },
+      "required": [
+        "unitId",
+        "text"
+      ],
+      "title": "SpokenQuote",
+      "type": "object"
+    },
+    "Target": {
+      "additionalProperties": false,
+      "properties": {
+        "mode": {
+          "const": "TOPIC_EXTRACT",
+          "title": "Mode",
+          "type": "string"
+        },
+        "topic": {
+          "minLength": 1,
+          "pattern": "\\S",
+          "title": "Topic",
+          "type": "string"
+        },
+        "maxDurationMs": {
+          "maximum": 9007199254740991,
+          "minimum": 1,
+          "title": "Maxdurationms",
+          "type": "integer"
+        },
+        "desiredDurationMs": {
+          "anyOf": [
+            {
+              "maximum": 9007199254740991,
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Desireddurationms"
+        },
+        "aspectRatio": {
+          "enum": [
+            "9:16",
+            "16:9",
+            "1:1",
+            "4:3"
+          ],
+          "title": "Aspectratio",
+          "type": "string"
+        },
+        "subtitleRequested": {
+          "title": "Subtitlerequested",
+          "type": "boolean"
+        },
+        "style": {
+          "title": "Style",
+          "type": "string"
+        },
+        "contentType": {
+          "enum": [
+            "AUTO",
+            "TUTORIAL_INTERVIEW",
+            "VLOG_DOCUMENTARY",
+            "FAST_SHORT_VIDEO"
+          ],
+          "title": "Contenttype",
+          "type": "string"
+        },
+        "editPolicy": {
+          "const": "ORIGINAL_ORDER_ORIGINAL_SPEED_HARD_CUT",
+          "title": "Editpolicy",
+          "type": "string"
+        }
+      },
+      "required": [
+        "mode",
+        "topic",
+        "maxDurationMs",
+        "desiredDurationMs",
+        "aspectRatio",
+        "subtitleRequested",
+        "style",
+        "contentType",
+        "editPolicy"
+      ],
+      "title": "Target",
+      "type": "object"
+    },
+    "TaskError": {
+      "additionalProperties": false,
+      "properties": {
+        "code": {
+          "enum": [
+            "INVALID_INPUT",
+            "UNSUPPORTED_INPUT",
+            "CONSTRAINT_CONFLICT",
+            "NO_CANDIDATE",
+            "MODEL_TIMEOUT",
+            "MODEL_FAILED",
+            "VALIDATION_FAILED",
+            "CAPACITY_EXCEEDED",
+            "INTERNAL_ERROR",
+            "SUBMISSION_UNCERTAIN"
+          ],
+          "title": "Code",
+          "type": "string"
+        },
+        "message": {
+          "minLength": 1,
+          "pattern": "\\S",
+          "title": "Message",
+          "type": "string"
+        },
+        "retryable": {
+          "title": "Retryable",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "code",
+        "message",
+        "retryable"
+      ],
+      "title": "TaskError",
+      "type": "object"
+    },
+    "TaskEventV1": {
+      "additionalProperties": false,
+      "properties": {
+        "protocolVersion": {
+          "const": "1.0",
+          "title": "Protocolversion",
+          "type": "string"
+        },
+        "event": {
+          "enum": [
+            "PROGRESS",
+            "COMPLETED"
+          ],
+          "title": "Event",
+          "type": "string"
+        },
+        "eventId": {
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Eventid",
+          "type": "string"
+        },
+        "requestId": {
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Requestid",
+          "type": "string"
+        },
+        "taskId": {
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Taskid",
+          "type": "string"
+        },
+        "projectId": {
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Projectid",
+          "type": "string"
+        },
+        "assetId": {
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Assetid",
+          "type": "string"
+        },
+        "assetHash": {
+          "pattern": "^sha256:[0-9a-f]{64}$",
+          "title": "Assethash",
+          "type": "string"
+        },
+        "runId": {
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Runid",
+          "type": "string"
+        },
+        "attempt": {
+          "maximum": 9007199254740991,
+          "minimum": 1,
+          "title": "Attempt",
+          "type": "integer"
+        },
+        "inputHash": {
+          "pattern": "^sha256:[0-9a-f]{64}$",
+          "title": "Inputhash",
+          "type": "string"
+        },
+        "sequence": {
+          "maximum": 9007199254740991,
+          "minimum": 1,
+          "title": "Sequence",
+          "type": "integer"
+        },
+        "heartbeatAt": {
+          "pattern": "^[1-9][0-9]{3}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}Z$",
+          "title": "Heartbeatat",
+          "type": "string"
+        },
+        "phase": {
+          "enum": [
+            "VALIDATING_INPUT",
+            "PROBING",
+            "TRANSCRIBING",
+            "VISUAL_ANALYZING",
+            "INDEXING",
+            "PLANNING",
+            "CHECKING",
+            "PERSISTING",
+            "COMPLETED",
+            "FAILED"
+          ],
+          "title": "Phase",
+          "type": "string"
+        },
+        "progress": {
+          "maximum": 100,
+          "minimum": 0,
+          "title": "Progress",
+          "type": "integer"
+        },
+        "executionStatus": {
+          "enum": [
+            "RUNNING",
+            "SUCCESS",
+            "FAILED"
+          ],
+          "title": "Executionstatus",
+          "type": "string"
+        },
+        "analysisOutcome": {
+          "enum": [
+            "NONE",
+            "COMPLETE",
+            "PARTIAL"
+          ],
+          "title": "Analysisoutcome",
+          "type": "string"
+        },
+        "reviewStatus": {
+          "enum": [
+            "NOT_AVAILABLE",
+            "READY",
+            "NEEDS_REVIEW"
+          ],
+          "title": "Reviewstatus",
+          "type": "string"
+        },
+        "resultRefs": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/ResultRefs"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "error": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/TaskError"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      },
+      "required": [
+        "protocolVersion",
+        "event",
+        "eventId",
+        "requestId",
+        "taskId",
+        "projectId",
+        "assetId",
+        "assetHash",
+        "runId",
+        "attempt",
+        "inputHash",
+        "sequence",
+        "heartbeatAt",
+        "phase",
+        "progress",
+        "executionStatus",
+        "analysisOutcome",
+        "reviewStatus",
+        "resultRefs",
+        "error"
+      ],
+      "title": "TaskEventV1",
+      "type": "object"
+    },
+    "TaskSubmissionV1": {
+      "additionalProperties": false,
+      "properties": {
+        "protocolVersion": {
+          "const": "1.0",
+          "title": "Protocolversion",
+          "type": "string"
+        },
+        "messageType": {
+          "const": "ANALYZE_REQUEST",
+          "title": "Messagetype",
+          "type": "string"
+        },
+        "taskId": {
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Taskid",
+          "type": "string"
+        },
+        "projectId": {
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Projectid",
+          "type": "string"
+        },
+        "runId": {
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Runid",
+          "type": "string"
+        },
+        "attempt": {
+          "maximum": 9007199254740991,
+          "minimum": 1,
+          "title": "Attempt",
+          "type": "integer"
+        },
+        "inputHash": {
+          "pattern": "^sha256:[0-9a-f]{64}$",
+          "title": "Inputhash",
+          "type": "string"
+        },
+        "configVersion": {
+          "minLength": 1,
+          "pattern": "\\S",
+          "title": "Configversion",
+          "type": "string"
+        },
+        "input": {
+          "$ref": "#/$defs/AnalyzeInputV1"
+        },
+        "assetRef": {
+          "$ref": "#/$defs/AssetRef"
+        },
+        "mediaObjectKey": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_./-]*$",
+          "title": "Mediaobjectkey",
+          "type": "string"
+        },
+        "callbackUrl": {
+          "pattern": "^https?://[^\\s]+$",
+          "title": "Callbackurl",
+          "type": "string"
+        }
+      },
+      "required": [
+        "protocolVersion",
+        "messageType",
+        "taskId",
+        "projectId",
+        "runId",
+        "attempt",
+        "inputHash",
+        "configVersion",
+        "input",
+        "assetRef",
+        "mediaObjectKey",
+        "callbackUrl"
+      ],
+      "title": "TaskSubmissionV1",
+      "type": "object"
+    },
+    "ValidationReport": {
+      "additionalProperties": false,
+      "properties": {
+        "validationVersion": {
+          "minLength": 1,
+          "pattern": "\\S",
+          "title": "Validationversion",
+          "type": "string"
+        },
+        "candidateHash": {
+          "pattern": "^sha256:[0-9a-f]{64}$",
+          "title": "Candidatehash",
+          "type": "string"
+        },
+        "hardPassed": {
+          "title": "Hardpassed",
+          "type": "boolean"
+        },
+        "issueRefs": {
+          "items": {
+            "pattern": "^[A-Za-z0-9_-]+$",
+            "type": "string"
+          },
+          "title": "Issuerefs",
+          "type": "array"
+        }
+      },
+      "required": [
+        "validationVersion",
+        "candidateHash",
+        "hardPassed",
+        "issueRefs"
+      ],
+      "title": "ValidationReport",
+      "type": "object"
+    },
+    "VisualEvidence": {
+      "additionalProperties": false,
+      "properties": {
+        "frameId": {
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Frameid",
+          "type": "string"
+        },
+        "observedDescription": {
+          "title": "Observeddescription",
+          "type": "string"
+        }
+      },
+      "required": [
+        "frameId",
+        "observedDescription"
+      ],
+      "title": "VisualEvidence",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "description": "Conformance bundle supplies the immutable context needed for reference checks.",
+  "properties": {
+    "materialIndex": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/MaterialIndexV1"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "decision": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/DirectorDecisionV1"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "script": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/EditingScriptV1"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "submission": {
+      "$ref": "#/$defs/TaskSubmissionV1"
+    },
+    "events": {
+      "items": {
+        "$ref": "#/$defs/TaskEventV1"
+      },
+      "title": "Events",
+      "type": "array"
+    }
+  },
+  "required": [
+    "materialIndex",
+    "decision",
+    "script",
+    "submission",
+    "events"
+  ],
+  "title": "ScriptContractBundleV1",
+  "type": "object"
+}

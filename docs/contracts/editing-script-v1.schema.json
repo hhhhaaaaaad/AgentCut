@@ -1,0 +1,773 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:agentcut:editing-script:v1",
+  "$defs": {
+    "Action": {
+      "additionalProperties": false,
+      "properties": {
+        "actionId": {
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Actionid",
+          "type": "string"
+        },
+        "type": {
+          "enum": [
+            "ORIGINAL_AUDIO",
+            "CAPTION"
+          ],
+          "title": "Type",
+          "type": "string"
+        },
+        "rowId": {
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Rowid",
+          "type": "string"
+        },
+        "cueId": {
+          "anyOf": [
+            {
+              "pattern": "^[A-Za-z0-9_-]+$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Cueid"
+        }
+      },
+      "required": [
+        "actionId",
+        "type",
+        "rowId",
+        "cueId"
+      ],
+      "title": "Action",
+      "type": "object"
+    },
+    "AssetRef": {
+      "additionalProperties": false,
+      "properties": {
+        "assetId": {
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Assetid",
+          "type": "string"
+        },
+        "assetHash": {
+          "pattern": "^sha256:[0-9a-f]{64}$",
+          "title": "Assethash",
+          "type": "string"
+        },
+        "durationMs": {
+          "maximum": 9007199254740991,
+          "minimum": 1,
+          "title": "Durationms",
+          "type": "integer"
+        },
+        "displayName": {
+          "minLength": 1,
+          "pattern": "\\S",
+          "title": "Displayname",
+          "type": "string"
+        }
+      },
+      "required": [
+        "assetId",
+        "assetHash",
+        "durationMs",
+        "displayName"
+      ],
+      "title": "AssetRef",
+      "type": "object"
+    },
+    "CaptionCue": {
+      "additionalProperties": false,
+      "properties": {
+        "cueId": {
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Cueid",
+          "type": "string"
+        },
+        "rowId": {
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Rowid",
+          "type": "string"
+        },
+        "unitId": {
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Unitid",
+          "type": "string"
+        },
+        "text": {
+          "minLength": 1,
+          "pattern": "\\S",
+          "title": "Text",
+          "type": "string"
+        },
+        "outputRange": {
+          "$ref": "#/$defs/Range"
+        },
+        "timingQuality": {
+          "enum": [
+            "SENTENCE",
+            "WORD",
+            "MANUAL"
+          ],
+          "title": "Timingquality",
+          "type": "string"
+        }
+      },
+      "required": [
+        "cueId",
+        "rowId",
+        "unitId",
+        "text",
+        "outputRange",
+        "timingQuality"
+      ],
+      "title": "CaptionCue",
+      "type": "object"
+    },
+    "IndexRef": {
+      "additionalProperties": false,
+      "properties": {
+        "indexId": {
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Indexid",
+          "type": "string"
+        },
+        "indexVersion": {
+          "maximum": 9007199254740991,
+          "minimum": 1,
+          "title": "Indexversion",
+          "type": "integer"
+        },
+        "indexHash": {
+          "pattern": "^sha256:[0-9a-f]{64}$",
+          "title": "Indexhash",
+          "type": "string"
+        }
+      },
+      "required": [
+        "indexId",
+        "indexVersion",
+        "indexHash"
+      ],
+      "title": "IndexRef",
+      "type": "object"
+    },
+    "PackagingSuggestion": {
+      "additionalProperties": false,
+      "properties": {
+        "suggestionId": {
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Suggestionid",
+          "type": "string"
+        },
+        "kind": {
+          "enum": [
+            "TITLE",
+            "EMPHASIS",
+            "B_ROLL",
+            "MUSIC",
+            "ANIMATION",
+            "CARD"
+          ],
+          "title": "Kind",
+          "type": "string"
+        },
+        "text": {
+          "minLength": 1,
+          "pattern": "\\S",
+          "title": "Text",
+          "type": "string"
+        },
+        "rowId": {
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Rowid",
+          "type": "string"
+        },
+        "status": {
+          "enum": [
+            "PROPOSED",
+            "ACCEPTED_MANUAL",
+            "REJECTED"
+          ],
+          "title": "Status",
+          "type": "string"
+        }
+      },
+      "required": [
+        "suggestionId",
+        "kind",
+        "text",
+        "rowId",
+        "status"
+      ],
+      "title": "PackagingSuggestion",
+      "type": "object"
+    },
+    "QualityReport": {
+      "additionalProperties": false,
+      "properties": {
+        "candidateHash": {
+          "pattern": "^sha256:[0-9a-f]{64}$",
+          "title": "Candidatehash",
+          "type": "string"
+        },
+        "passed": {
+          "title": "Passed",
+          "type": "boolean"
+        },
+        "overallScore": {
+          "maximum": 1,
+          "minimum": 0,
+          "title": "Overallscore",
+          "type": "number"
+        },
+        "issueRefs": {
+          "items": {
+            "pattern": "^[A-Za-z0-9_-]+$",
+            "type": "string"
+          },
+          "title": "Issuerefs",
+          "type": "array"
+        }
+      },
+      "required": [
+        "candidateHash",
+        "passed",
+        "overallScore",
+        "issueRefs"
+      ],
+      "title": "QualityReport",
+      "type": "object"
+    },
+    "Range": {
+      "additionalProperties": false,
+      "properties": {
+        "startMs": {
+          "maximum": 9007199254740991,
+          "minimum": 0,
+          "title": "Startms",
+          "type": "integer"
+        },
+        "endMs": {
+          "maximum": 9007199254740991,
+          "minimum": 1,
+          "title": "Endms",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "startMs",
+        "endMs"
+      ],
+      "title": "Range",
+      "type": "object"
+    },
+    "Risk": {
+      "additionalProperties": false,
+      "properties": {
+        "riskId": {
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Riskid",
+          "type": "string"
+        },
+        "code": {
+          "enum": [
+            "COARSE_ALIGNMENT",
+            "UNTRUSTED_SOURCE",
+            "VISUAL_UNVERIFIED",
+            "MISSING_DEPENDENCY",
+            "SUBTITLE_UNAVAILABLE",
+            "SEMANTIC_REVIEW",
+            "QA_UNAVAILABLE"
+          ],
+          "title": "Code",
+          "type": "string"
+        },
+        "level": {
+          "enum": [
+            "REVIEW",
+            "HARD"
+          ],
+          "title": "Level",
+          "type": "string"
+        },
+        "rowRefs": {
+          "items": {
+            "pattern": "^[A-Za-z0-9_-]+$",
+            "type": "string"
+          },
+          "title": "Rowrefs",
+          "type": "array"
+        },
+        "unitRefs": {
+          "items": {
+            "pattern": "^[A-Za-z0-9_-]+$",
+            "type": "string"
+          },
+          "title": "Unitrefs",
+          "type": "array"
+        },
+        "message": {
+          "minLength": 1,
+          "pattern": "\\S",
+          "title": "Message",
+          "type": "string"
+        }
+      },
+      "required": [
+        "riskId",
+        "code",
+        "level",
+        "rowRefs",
+        "unitRefs",
+        "message"
+      ],
+      "title": "Risk",
+      "type": "object"
+    },
+    "ScriptRow": {
+      "additionalProperties": false,
+      "properties": {
+        "rowId": {
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Rowid",
+          "type": "string"
+        },
+        "shotNo": {
+          "maximum": 9007199254740991,
+          "minimum": 1,
+          "title": "Shotno",
+          "type": "integer"
+        },
+        "sourceUnitRefs": {
+          "items": {
+            "pattern": "^[A-Za-z0-9_-]+$",
+            "type": "string"
+          },
+          "minItems": 1,
+          "title": "Sourceunitrefs",
+          "type": "array"
+        },
+        "sourceParts": {
+          "items": {
+            "$ref": "#/$defs/SourcePart"
+          },
+          "minItems": 1,
+          "title": "Sourceparts",
+          "type": "array"
+        },
+        "outputRange": {
+          "$ref": "#/$defs/Range"
+        },
+        "spokenQuotes": {
+          "items": {
+            "$ref": "#/$defs/SpokenQuote"
+          },
+          "title": "Spokenquotes",
+          "type": "array"
+        },
+        "visualEvidence": {
+          "items": {
+            "$ref": "#/$defs/VisualEvidence"
+          },
+          "title": "Visualevidence",
+          "type": "array"
+        },
+        "narrativeRole": {
+          "enum": [
+            "HOOK",
+            "CONTEXT",
+            "EXPLANATION",
+            "EXAMPLE",
+            "CONCLUSION",
+            "OTHER"
+          ],
+          "title": "Narrativerole",
+          "type": "string"
+        },
+        "selectionReason": {
+          "minLength": 1,
+          "pattern": "\\S",
+          "title": "Selectionreason",
+          "type": "string"
+        },
+        "dependencyRefs": {
+          "items": {
+            "pattern": "^[A-Za-z0-9_-]+$",
+            "type": "string"
+          },
+          "title": "Dependencyrefs",
+          "type": "array"
+        },
+        "riskRefs": {
+          "items": {
+            "pattern": "^[A-Za-z0-9_-]+$",
+            "type": "string"
+          },
+          "title": "Riskrefs",
+          "type": "array"
+        },
+        "treatmentNote": {
+          "title": "Treatmentnote",
+          "type": "string"
+        },
+        "audioTreatment": {
+          "const": "ORIGINAL",
+          "title": "Audiotreatment",
+          "type": "string"
+        },
+        "cutNotes": {
+          "title": "Cutnotes",
+          "type": "string"
+        }
+      },
+      "required": [
+        "rowId",
+        "shotNo",
+        "sourceUnitRefs",
+        "sourceParts",
+        "outputRange",
+        "spokenQuotes",
+        "visualEvidence",
+        "narrativeRole",
+        "selectionReason",
+        "dependencyRefs",
+        "riskRefs",
+        "treatmentNote",
+        "audioTreatment",
+        "cutNotes"
+      ],
+      "title": "ScriptRow",
+      "type": "object"
+    },
+    "SourcePart": {
+      "additionalProperties": false,
+      "properties": {
+        "unitId": {
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Unitid",
+          "type": "string"
+        },
+        "sourceRange": {
+          "$ref": "#/$defs/Range"
+        }
+      },
+      "required": [
+        "unitId",
+        "sourceRange"
+      ],
+      "title": "SourcePart",
+      "type": "object"
+    },
+    "SpokenQuote": {
+      "additionalProperties": false,
+      "properties": {
+        "unitId": {
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Unitid",
+          "type": "string"
+        },
+        "text": {
+          "minLength": 1,
+          "pattern": "\\S",
+          "title": "Text",
+          "type": "string"
+        }
+      },
+      "required": [
+        "unitId",
+        "text"
+      ],
+      "title": "SpokenQuote",
+      "type": "object"
+    },
+    "Target": {
+      "additionalProperties": false,
+      "properties": {
+        "mode": {
+          "const": "TOPIC_EXTRACT",
+          "title": "Mode",
+          "type": "string"
+        },
+        "topic": {
+          "minLength": 1,
+          "pattern": "\\S",
+          "title": "Topic",
+          "type": "string"
+        },
+        "maxDurationMs": {
+          "maximum": 9007199254740991,
+          "minimum": 1,
+          "title": "Maxdurationms",
+          "type": "integer"
+        },
+        "desiredDurationMs": {
+          "anyOf": [
+            {
+              "maximum": 9007199254740991,
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Desireddurationms"
+        },
+        "aspectRatio": {
+          "enum": [
+            "9:16",
+            "16:9",
+            "1:1",
+            "4:3"
+          ],
+          "title": "Aspectratio",
+          "type": "string"
+        },
+        "subtitleRequested": {
+          "title": "Subtitlerequested",
+          "type": "boolean"
+        },
+        "style": {
+          "title": "Style",
+          "type": "string"
+        },
+        "contentType": {
+          "enum": [
+            "AUTO",
+            "TUTORIAL_INTERVIEW",
+            "VLOG_DOCUMENTARY",
+            "FAST_SHORT_VIDEO"
+          ],
+          "title": "Contenttype",
+          "type": "string"
+        },
+        "editPolicy": {
+          "const": "ORIGINAL_ORDER_ORIGINAL_SPEED_HARD_CUT",
+          "title": "Editpolicy",
+          "type": "string"
+        }
+      },
+      "required": [
+        "mode",
+        "topic",
+        "maxDurationMs",
+        "desiredDurationMs",
+        "aspectRatio",
+        "subtitleRequested",
+        "style",
+        "contentType",
+        "editPolicy"
+      ],
+      "title": "Target",
+      "type": "object"
+    },
+    "ValidationReport": {
+      "additionalProperties": false,
+      "properties": {
+        "validationVersion": {
+          "minLength": 1,
+          "pattern": "\\S",
+          "title": "Validationversion",
+          "type": "string"
+        },
+        "candidateHash": {
+          "pattern": "^sha256:[0-9a-f]{64}$",
+          "title": "Candidatehash",
+          "type": "string"
+        },
+        "hardPassed": {
+          "title": "Hardpassed",
+          "type": "boolean"
+        },
+        "issueRefs": {
+          "items": {
+            "pattern": "^[A-Za-z0-9_-]+$",
+            "type": "string"
+          },
+          "title": "Issuerefs",
+          "type": "array"
+        }
+      },
+      "required": [
+        "validationVersion",
+        "candidateHash",
+        "hardPassed",
+        "issueRefs"
+      ],
+      "title": "ValidationReport",
+      "type": "object"
+    },
+    "VisualEvidence": {
+      "additionalProperties": false,
+      "properties": {
+        "frameId": {
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Frameid",
+          "type": "string"
+        },
+        "observedDescription": {
+          "title": "Observeddescription",
+          "type": "string"
+        }
+      },
+      "required": [
+        "frameId",
+        "observedDescription"
+      ],
+      "title": "VisualEvidence",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "scriptSchemaVersion": {
+      "const": "1.0",
+      "title": "Scriptschemaversion",
+      "type": "string"
+    },
+    "scriptId": {
+      "pattern": "^[A-Za-z0-9_-]+$",
+      "title": "Scriptid",
+      "type": "string"
+    },
+    "revision": {
+      "maximum": 9007199254740991,
+      "minimum": 1,
+      "title": "Revision",
+      "type": "integer"
+    },
+    "projectId": {
+      "pattern": "^[A-Za-z0-9_-]+$",
+      "title": "Projectid",
+      "type": "string"
+    },
+    "generationTaskId": {
+      "pattern": "^[A-Za-z0-9_-]+$",
+      "title": "Generationtaskid",
+      "type": "string"
+    },
+    "assetRef": {
+      "$ref": "#/$defs/AssetRef"
+    },
+    "indexRef": {
+      "$ref": "#/$defs/IndexRef"
+    },
+    "inputHash": {
+      "pattern": "^sha256:[0-9a-f]{64}$",
+      "title": "Inputhash",
+      "type": "string"
+    },
+    "target": {
+      "$ref": "#/$defs/Target"
+    },
+    "title": {
+      "minLength": 1,
+      "pattern": "\\S",
+      "title": "Title",
+      "type": "string"
+    },
+    "rows": {
+      "items": {
+        "$ref": "#/$defs/ScriptRow"
+      },
+      "minItems": 1,
+      "title": "Rows",
+      "type": "array"
+    },
+    "estimatedDurationMs": {
+      "maximum": 9007199254740991,
+      "minimum": 1,
+      "title": "Estimateddurationms",
+      "type": "integer"
+    },
+    "captionCues": {
+      "items": {
+        "$ref": "#/$defs/CaptionCue"
+      },
+      "title": "Captioncues",
+      "type": "array"
+    },
+    "executableActions": {
+      "items": {
+        "$ref": "#/$defs/Action"
+      },
+      "title": "Executableactions",
+      "type": "array"
+    },
+    "packagingSuggestions": {
+      "items": {
+        "$ref": "#/$defs/PackagingSuggestion"
+      },
+      "title": "Packagingsuggestions",
+      "type": "array"
+    },
+    "manualNotes": {
+      "title": "Manualnotes",
+      "type": "string"
+    },
+    "riskItems": {
+      "items": {
+        "$ref": "#/$defs/Risk"
+      },
+      "title": "Riskitems",
+      "type": "array"
+    },
+    "scriptHash": {
+      "pattern": "^sha256:[0-9a-f]{64}$",
+      "title": "Scripthash",
+      "type": "string"
+    },
+    "validationReport": {
+      "$ref": "#/$defs/ValidationReport"
+    },
+    "quality": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/QualityReport"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "reviewStatus": {
+      "enum": [
+        "DRAFT",
+        "NEEDS_REVIEW",
+        "READY"
+      ],
+      "title": "Reviewstatus",
+      "type": "string"
+    }
+  },
+  "required": [
+    "scriptSchemaVersion",
+    "scriptId",
+    "revision",
+    "projectId",
+    "generationTaskId",
+    "assetRef",
+    "indexRef",
+    "inputHash",
+    "target",
+    "title",
+    "rows",
+    "estimatedDurationMs",
+    "captionCues",
+    "executableActions",
+    "packagingSuggestions",
+    "manualNotes",
+    "riskItems",
+    "scriptHash",
+    "validationReport",
+    "quality",
+    "reviewStatus"
+  ],
+  "title": "EditingScriptV1",
+  "type": "object"
+}
