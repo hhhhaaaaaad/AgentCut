@@ -69,6 +69,8 @@ public class PythonClient implements IVideoAnalysisClient {
     private HttpResponse<String> post(String path, String body) {
         try {
             HttpClient httpClient = HttpClient.newBuilder()
+                    // Uvicorn serves HTTP/1.1; avoid h2c upgrade requests losing the JSON body.
+                    .version(HttpClient.Version.HTTP_1_1)
                     .connectTimeout(Duration.ofSeconds(connectTimeoutSeconds))
                     .build();
             HttpRequest request = HttpRequest.newBuilder()

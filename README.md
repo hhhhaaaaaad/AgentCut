@@ -62,8 +62,10 @@ mvn -pl sutone-agent-cut-app -am spring-boot:run
 ```bash
 cd AgentCut-ai
 pip install -r requirements.txt
-# 未设置 DASHSCOPE_API_KEY 时走模拟模式（SIMULATE=true，工具返回占位数据，服务可端到端跑通）
-export DASHSCOPE_API_KEY=<你的密钥>
+# 真实分析需要同时配置 VLM 与 LLM 密钥；ASR 复用 VLM 密钥
+# 未配置任一密钥时自动进入模拟模式，服务仍可本地启动
+export AGENTCUT_VLM_API_KEY="填入你的 SiliconFlow 密钥"
+export AGENTCUT_LLM_API_KEY="填入你的 DeepSeek 密钥"
 uvicorn app.main:app --reload --port 8000
 # 健康检查：GET http://localhost:8000/health
 ```
