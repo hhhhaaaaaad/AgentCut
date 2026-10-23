@@ -1,0 +1,213 @@
+{
+  "schemaVersion": "1.0",
+  "assetId": "asset_demo",
+  "assetHash": "sha256_demo",
+  "durationMs": 120000,
+  "configVersion": "1.0",
+  "profile": {
+    "profileVersion": "1.0",
+    "configVersion": "1.0",
+    "requestedType": "TUTORIAL_INTERVIEW",
+    "effectiveType": "TUTORIAL_INTERVIEW",
+    "detectedPace": "NORMAL",
+    "shotCountPerMinute": 8.0,
+    "novelShotCountPerMinute": 6.0,
+    "confidence": 0.82,
+    "adjustmentReason": "fixture baseline",
+    "windowTargetMs": 60000,
+    "frameBudget": 2,
+    "vlmBatchSize": 2,
+    "vlmConcurrency": 2
+  },
+  "windows": [
+    {
+      "windowId": "window_001",
+      "assetHash": "sha256_demo",
+      "startMs": 0,
+      "endMs": 60000,
+      "contextStartMs": 0,
+      "contextEndMs": 61000,
+      "sceneIds": [
+        "scene_001"
+      ],
+      "selectedFrameIds": [
+        "frame_w001_001"
+      ],
+      "profileVersion": "1.0",
+      "plannerVersion": "1.0"
+    },
+    {
+      "windowId": "window_002",
+      "assetHash": "sha256_demo",
+      "startMs": 60000,
+      "endMs": 120000,
+      "contextStartMs": 59000,
+      "contextEndMs": 120000,
+      "sceneIds": [
+        "scene_002"
+      ],
+      "selectedFrameIds": [
+        "frame_w002_001"
+      ],
+      "profileVersion": "1.0",
+      "plannerVersion": "1.0"
+    }
+  ],
+  "frameObservations": [
+    {
+      "frameId": "frame_w001_001",
+      "windowId": "window_001",
+      "sceneId": "scene_001",
+      "timestampMs": 20000,
+      "description": "speaker introduces the topic",
+      "tags": [
+        "speaker"
+      ],
+      "importance": 0.7,
+      "source": {
+        "mode": "REAL",
+        "provider": "fixture",
+        "model": "fixture-vlm"
+      }
+    },
+    {
+      "frameId": "frame_w002_001",
+      "windowId": "window_002",
+      "sceneId": "scene_002",
+      "timestampMs": 80000,
+      "description": "speaker demonstrates the workflow",
+      "tags": [
+        "demo"
+      ],
+      "importance": 0.8,
+      "source": {
+        "mode": "SIMULATED",
+        "reason": "VLM output unavailable; placeholder description."
+      }
+    }
+  ],
+  "transcripts": [
+    {
+      "transcriptId": "asr_001",
+      "startMs": 55000,
+      "endMs": 65000,
+      "text": "Now I will demonstrate the workflow.",
+      "timingQuality": "COARSE_BLOCK",
+      "source": {
+        "mode": "REAL",
+        "provider": "fixture",
+        "model": "fixture-asr"
+      }
+    }
+  ],
+  "windowAnalyses": [
+    {
+      "windowId": "window_001",
+      "startMs": 0,
+      "endMs": 60000,
+      "frameObservationRefs": [
+        "frame_w001_001"
+      ],
+      "transcriptRefs": [
+        "asr_001"
+      ],
+      "summary": "Introduces the workflow.",
+      "topics": [
+        "workflow"
+      ],
+      "events": [],
+      "coverage": {
+        "selectedFrames": 1,
+        "successfulFrames": 1,
+        "asrOverlapMs": 5000,
+        "visualComplete": true,
+        "audioComplete": true
+      },
+      "provenance": {
+        "vlm": {
+          "mode": "REAL",
+          "provider": "fixture",
+          "model": "fixture-vlm"
+        }
+      }
+    },
+    {
+      "windowId": "window_002",
+      "startMs": 60000,
+      "endMs": 120000,
+      "frameObservationRefs": [
+        "frame_w002_001"
+      ],
+      "transcriptRefs": [
+        "asr_001"
+      ],
+      "summary": "Demonstrates the workflow.",
+      "topics": [
+        "workflow"
+      ],
+      "events": [],
+      "coverage": {
+        "selectedFrames": 1,
+        "successfulFrames": 1,
+        "asrOverlapMs": 5000,
+        "visualComplete": true,
+        "audioComplete": true
+      },
+      "provenance": {
+        "vlm": {
+          "mode": "MIXED",
+          "reason": "One frame used a placeholder description."
+        }
+      }
+    }
+  ],
+  "globalAnalysis": {
+    "windowRefs": [
+      "window_001",
+      "window_002"
+    ],
+    "summary": "A two-part workflow explanation.",
+    "topics": [
+      "workflow"
+    ],
+    "findings": [
+      {
+        "findingId": "finding_001",
+        "kind": "ARGUMENT",
+        "startMs": 55000,
+        "endMs": 65000,
+        "text": "The speaker introduces a demonstration.",
+        "evidenceRefs": [
+          "asr_001"
+        ]
+      }
+    ],
+    "provenance": {
+      "fusion": {
+        "mode": "MIXED",
+        "reason": "Visual evidence includes a placeholder."
+      }
+    }
+  },
+  "coverage": {
+    "totalWindows": 2,
+    "completeWindows": 2,
+    "coveredMs": 120000,
+    "failedWindowIds": []
+  },
+  "failureRanges": [],
+  "executionStatus": "SUCCESS",
+  "analysisOutcome": "COMPLETE",
+  "reviewStatus": "NEEDS_REVIEW",
+  "provenance": {
+    "asr": {
+      "mode": "REAL",
+      "provider": "fixture",
+      "model": "fixture-asr"
+    },
+    "vlm": {
+      "mode": "MIXED",
+      "reason": "One frame used a placeholder description."
+    }
+  }
+}

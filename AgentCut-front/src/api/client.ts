@@ -1,11 +1,12 @@
 import axios from 'axios';
+import { apiErrorMessage } from '../lib/apiError';
 
 /**
  * axios 实例：AgentCut 后端 REST API（v1）
  * baseURL 对齐后端 Controller 前缀 /api/v1
  */
 const client = axios.create({
-  baseURL: 'http://127.0.0.1:8080/api/v1',
+  baseURL: import.meta.env.VITE_API_BASE_URL || 'http://127.0.0.1:8080/api/v1',
   timeout: 15000,
   headers: { 'Content-Type': 'application/json' },
 });
@@ -14,8 +15,8 @@ const client = axios.create({
 client.interceptors.response.use(
   (response) => response,
   (error) => {
-    const message =
-      error?.response?.data?.message ?? error?.response?.data?.error ?? error?.message ?? '网络请求失败';
+    const message = apiErrorMessage(error);
+    error.message = message;
     console.error('[AgentCut] 请求失败:', message);
     return Promise.reject(error);
   },

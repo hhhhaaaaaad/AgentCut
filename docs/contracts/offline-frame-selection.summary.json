@@ -1,0 +1,121 @@
+{
+  "status": "PARTIAL",
+  "candidates": 30,
+  "selectedFrames": 15,
+  "windows": [
+    {
+      "startMs": 0,
+      "endMs": 60000,
+      "selectedFrames": 5,
+      "budget": 8,
+      "duplicateGroups": 5,
+      "decodedBins": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5
+      ],
+      "selectedBins": [
+        0,
+        2,
+        3,
+        4,
+        5
+      ],
+      "equivalentBins": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5
+      ],
+      "missingSelectedBins": [
+        1
+      ],
+      "reviewReasons": [
+        "SELECTED_TIME_BINS_MISSING",
+        "SIMULATED_FRAME_SAMPLES",
+        "SOURCE_DETECTION_INCOMPLETE_OR_SIMULATED"
+      ]
+    },
+    {
+      "startMs": 60000,
+      "endMs": 120000,
+      "selectedFrames": 5,
+      "budget": 8,
+      "duplicateGroups": 5,
+      "decodedBins": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5
+      ],
+      "selectedBins": [
+        0,
+        2,
+        3,
+        4,
+        5
+      ],
+      "equivalentBins": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5
+      ],
+      "missingSelectedBins": [
+        1
+      ],
+      "reviewReasons": [
+        "SELECTED_TIME_BINS_MISSING",
+        "SIMULATED_FRAME_SAMPLES",
+        "SOURCE_DETECTION_INCOMPLETE_OR_SIMULATED"
+      ]
+    },
+    {
+      "startMs": 120000,
+      "endMs": 140000,
+      "selectedFrames": 5,
+      "budget": 6,
+      "duplicateGroups": 5,
+      "decodedBins": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5
+      ],
+      "selectedBins": [
+        0,
+        2,
+        3,
+        4,
+        5
+      ],
+      "equivalentBins": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5
+      ],
+      "missingSelectedBins": [
+        1
+      ],
+      "reviewReasons": [
+        "SELECTED_TIME_BINS_MISSING",
+        "SIMULATED_FRAME_SAMPLES",
+        "SOURCE_DETECTION_INCOMPLETE_OR_SIMULATED"
+      ]
+    }
+  ]
+}

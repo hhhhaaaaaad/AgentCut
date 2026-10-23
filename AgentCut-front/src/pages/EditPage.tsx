@@ -1,465 +1,174 @@
-import { useEffect, useState, type ChangeEvent } from 'react';
-import {
-  Alert, App, Button, Card, Collapse, Divider, Empty, Form, Input, InputNumber, Popconfirm,
-  Row, Col, Select, Space, Spin, Switch, Tag, Typography,
-} from 'antd';
-import { getAnalysisFlags, getPlan, savePlan } from '../api';
-import { useProjectStore } from '../stores/projectStore';
+import { useEffect, useRef, useState } from 'react';
+import { Alert, App, Button, Drawer, Dropdown, Input, InputNumber, Select, Spin, Switch } from 'antd';
+import { getAnalysisFlags, getSavedPlan, savePlan } from '../api';
 import AnalysisWarning from '../components/AnalysisWarning';
-import type { Bgm, Global, Operation, OperationType, OutputConfig, Plan, Segment, SubtitleStyle, TimeRange } from '../types/plan';
-import { OPERATION_LABELS, createOperation } from '../types/plan';
+import { MediaPreview } from '../components/MediaPreview';
+import { Banner, EmptyState, PageHeading, Panel } from '../components/StudioUI';
+import { aspectRatio, fileName, formatTime, mediaUrl, parseTime } from '../lib/format';
+import { outputDuration, savedPlanVersion, validatePlan } from '../lib/plan';
+import { useProjectStore } from '../stores/projectStore';
 import type { PageKey } from '../types/nav';
+import { createOperation, OPERATION_LABELS, type Global, type Operation, type OperationType, type Plan, type Segment } from '../types/plan';
 
-/** 操作类型下拉选项 */
-const OPERATION_TYPE_OPTIONS = (Object.keys(OPERATION_LABELS) as OperationType[]).map((t) => ({
-  value: t,
-  label: OPERATION_LABELS[t],
-}));
-
-const SUBTITLE_POSITION_OPTIONS = [
-  { value: 'top', label: '顶部' },
-  { value: 'bottom', label: '底部' },
-  { value: 'center', label: '居中' },
-];
-
-interface Props {
-  onNavigate?: (page: PageKey) => void;
-}
-
-/**
- * 编辑页：方案编辑器。
- * 左侧结构化表单（global.output 宽高、timeline 片段 keep/start/end、段内 operations）
- * 右侧 JSON 编辑器（textarea，不引 Monaco）。
- * 读方案 → 改 → 展示双向同步；保存走 PUT /api/v1/plans/{id} 生成新版本。
- */
-export default function EditPage({ onNavigate }: Props) {
-  const { message } = App.useApp();
-  const { project, plan, setPlan, analysisFlags, setAnalysisFlags } = useProjectStore();
-
+export default function EditPage({ onNavigate }: { onNavigate: (page: PageKey) => void }) {
+  const { message, modal } = App.useApp();
+  const { project, plan, planVersions, planDirty, analysisFlags, asset, sourcePreviewUrl, demo, task, setPlan, setPlanVersions, editPlan, setAnalysisFlags } = useProjectStore();
   const [loading, setLoading] = useState(false);
-  const [jsonText, setJsonText] = useState('');
-  const [jsonError, setJsonError] = useState<string | null>(null);
   const [saving, setSaving] = useState(false);
-  /** 每个片段待添加的操作类型（按片段 id 记忆） */
-  const [pendingTypes, setPendingTypes] = useState<Record<string, OperationType>>({});
+  const [savedNeedsRefresh, setSavedNeedsRefresh] = useState(false);
+  const removedOperations = useRef(new Map<string, Operation[]>());
+  const [error, setError] = useState<string | null>(null);
+  const [retry, setRetry] = useState(0);
+  const [selectedId, setSelectedId] = useState(demo ? 'seg_002' : '');
+  const [time, setTime] = useState(demo ? 21.4 : 0);
+  const [globalOpen, setGlobalOpen] = useState(false);
+  const [jsonOpen, setJsonOpen] = useState(false);
+  const [jsonText, setJsonText] = useState('');
+  const selected = plan?.timeline.find((segment) => segment.id === selectedId) || plan?.timeline[0];
+  const issue = plan ? validatePlan(plan) : null;
+  const review = task?.status === 'NEEDS_REVIEW' || !!analysisFlags?.simulated || analysisFlags?.qualityPassed === false;
 
-  // 进入页面即从后端拉取当前方案
   useEffect(() => {
-    if (!project) return;
-    setLoading(true);
-    getPlan(project.projectId)
-      .then((data) => {
-        setPlan(data);
-        setJsonText(JSON.stringify(data, null, 2));
-      })
-      .catch((err) => message.error(`加载方案失败：${err instanceof Error ? err.message : String(err)}`))
-      .finally(() => setLoading(false));
-    // 顺带拉取可信度标志（降级/质量），用于顶部告警横幅；失败静默忽略，不干扰主流程
-    getAnalysisFlags(project.projectId)
-      .then(setAnalysisFlags)
-      .catch(() => setAnalysisFlags(null));
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [project?.projectId]);
-
-  /** 结构化编辑 → 更新 plan 并同步 JSON 文本 */
-  const commitPlan = (next: Plan) => {
-    setPlan(next);
-    setJsonText(JSON.stringify(next, null, 2));
-  };
-
-  /* ============ JSON 编辑 ============ */
-  const onJsonChange = (e: ChangeEvent<HTMLTextAreaElement>) => {
-    const text = e.target.value;
-    setJsonText(text);
-    try {
-      const parsed = JSON.parse(text) as Plan;
-      setPlan(parsed);
-      setJsonError(null);
-    } catch (err) {
-      setJsonError(err instanceof Error ? err.message : 'JSON 格式错误');
+    if (!project || demo) return;
+    let cancelled = false;
+    if (!plan) {
+      setLoading(true);
+      getSavedPlan(project.projectId).then(({ plan: value, versions }) => {
+        if (cancelled) return;
+        const invalid = validatePlan(value);
+        if (invalid) setError(invalid); else { setPlan(value); setPlanVersions(versions); setError(null); }
+      }).catch((err) => { if (!cancelled) setError(`加载方案失败：${err instanceof Error ? err.message : String(err)}`); })
+        .finally(() => { if (!cancelled) setLoading(false); });
     }
-  };
+    if (!analysisFlags) getAnalysisFlags(project.projectId).then((flags) => { if (!cancelled) setAnalysisFlags(flags); }).catch(() => {});
+    return () => { cancelled = true; };
+  }, [project?.projectId, demo, retry, setPlan, setAnalysisFlags]);
 
-  const formatJson = () => {
-    if (plan) setJsonText(JSON.stringify(plan, null, 2));
+  const updateSegment = (patch: Partial<Segment>) => {
+    if (!plan || !selected) return;
+    editPlan({ ...plan, timeline: plan.timeline.map((segment) => segment.id === selected.id ? { ...segment, ...patch } : segment) });
   };
-
-  /* ============ 全局设置 ============ */
-  const updateGlobal = (patch: Partial<Global>) => {
-    if (!plan) return;
-    commitPlan({ ...plan, global: { ...plan.global, ...patch } });
+  const updateOperation = (index: number, operation: Operation) => updateSegment({ operations: selected?.operations?.map((value, i) => i === index ? operation : value) });
+  const addOperation = (type: OperationType) => {
+    if (!selected || !selected.keep || !plan) return;
+    const operation = createOperation(type);
+    if (operation.type === 'subtitle') { operation.start = 0; operation.end = outputDuration([selected]); }
+    if (operation.type === 'crop') { operation.width = Math.min(plan.global.output.width, plan.source.width); operation.height = Math.min(plan.global.output.height, plan.source.height); }
+    const operations = [...(selected.operations || [])];
+    const speedIndex = operations.findIndex((value) => value.type === 'speed');
+    operations.splice(operation.type !== 'speed' && speedIndex >= 0 ? speedIndex : operations.length, 0, operation);
+    updateSegment({ operations });
   };
-  const updateOutput = (patch: Partial<OutputConfig>) => {
-    if (!plan) return;
-    commitPlan({ ...plan, global: { ...plan.global, output: { ...plan.global.output, ...patch } } });
-  };
-  const updateSubtitleStyle = (patch: Partial<SubtitleStyle>) => {
-    if (!plan) return;
-    updateGlobal({ subtitleStyle: { ...plan.global.subtitleStyle, ...patch } });
-  };
-  /** 基于当前 bgm（可能不存在）构造新 bgm，供回调内安全调用 */
-  const patchBgm = (patch: Partial<Bgm>) => {
-    if (!plan) return;
-    const base: Bgm = plan.global.bgm ?? { url: '', volume: 0.3, loop: true };
-    updateGlobal({ bgm: { ...base, ...patch } });
-  };
-
-  /* ============ 时间线片段 ============ */
-  const updateSegment = (index: number, patch: Partial<Segment>) => {
-    if (!plan) return;
-    const next = { ...plan, timeline: plan.timeline.map((s, i) => (i === index ? { ...s, ...patch } : s)) };
-    commitPlan(next);
-  };
-  const updateSegmentRange = (index: number, field: keyof TimeRange, value: number) => {
-    if (!plan) return;
-    const seg = plan.timeline[index];
-    updateSegment(index, { sourceRange: { ...seg.sourceRange, [field]: value } });
-  };
-  const updateOperationField = (segIndex: number, opIndex: number, field: string, value: number | string | boolean) => {
-    if (!plan) return;
-    const seg = plan.timeline[segIndex];
-    const ops = seg.operations ?? [];
-    const nextOp = { ...ops[opIndex], [field]: value } as Operation;
-    updateSegment(segIndex, { operations: ops.map((o, i) => (i === opIndex ? nextOp : o)) });
-  };
-  const addOperation = (segIndex: number, type: OperationType) => {
-    if (!plan) return;
-    const seg = plan.timeline[segIndex];
-    updateSegment(segIndex, { operations: [...(seg.operations ?? []), createOperation(type)] });
-  };
-  const removeOperation = (segIndex: number, opIndex: number) => {
-    if (!plan) return;
-    const seg = plan.timeline[segIndex];
-    updateSegment(segIndex, { operations: (seg.operations ?? []).filter((_, i) => i !== opIndex) });
+  const toggleKeep = (keep: boolean) => {
+    if (!selected) return;
+    if (!keep) removedOperations.current.set(selected.id, selected.operations || []);
+    updateSegment({ keep, operations: keep ? removedOperations.current.get(selected.id) || [] : [] });
   };
   const addSegment = () => {
     if (!plan) return;
-    const seg: Segment = {
-      id: `seg_${String(plan.timeline.length + 1).padStart(3, '0')}`,
-      keep: true,
-      sourceRange: { start: 0, end: 0 },
-      operations: [],
-    };
-    commitPlan({ ...plan, timeline: [...plan.timeline, seg] });
+    const lastEnd = plan.timeline[plan.timeline.length - 1]?.sourceRange.end || 0;
+    const start = lastEnd >= plan.source.duration ? 0 : lastEnd;
+    const end = plan.source.duration > 0 ? Math.min(start + 5, plan.source.duration) : start + 5;
+    const segment: Segment = { id: `seg_${crypto.randomUUID().replace(/-/g, '').slice(0, 8)}`, keep: true, sourceRange: { start, end }, operations: [] };
+    editPlan({ ...plan, timeline: [...plan.timeline, segment] });
+    setSelectedId(segment.id); setTime(start);
   };
-  const removeSegment = (index: number) => {
-    if (!plan) return;
-    commitPlan({ ...plan, timeline: plan.timeline.filter((_, i) => i !== index) });
+  const removeSegment = () => {
+    if (!plan || !selected) return;
+    editPlan({ ...plan, timeline: plan.timeline.filter((value) => value.id !== selected.id), transitions: plan.transitions?.filter((value) => value.from !== selected.id && value.to !== selected.id) });
   };
-
-  /* ============ 保存 ============ */
+  const moveSegment = (direction: number) => {
+    if (!plan || !selected) return;
+    const from = plan.timeline.indexOf(selected), to = from + direction;
+    if (to < 0 || to >= plan.timeline.length) return;
+    const timeline = [...plan.timeline];
+    [timeline[from], timeline[to]] = [timeline[to], timeline[from]];
+    editPlan({ ...plan, timeline });
+  };
   const handleSave = async () => {
-    if (!project || !plan) return;
-    setSaving(true);
+    if (!plan || !project) return;
+    if (issue) { setError(issue); return; }
+    setSaving(true); setError(null);
     try {
-      await savePlan(project.projectId, plan);
-      message.success('方案已保存');
-    } catch (err) {
-      message.error(`保存失败：${err instanceof Error ? err.message : String(err)}`);
-    } finally {
-      setSaving(false);
-    }
+      if (demo) {
+        const version = (savedPlanVersion(plan, planVersions) || 0) + 1;
+        setPlan({ ...plan, planVersion: version });
+        setPlanVersions([...planVersions, String(version)]);
+      }
+      else {
+        await savePlan(project.projectId, plan);
+        if (useProjectStore.getState().project?.projectId !== project.projectId) return;
+        setPlan(plan);
+        try {
+          const { plan: refreshed, versions } = await getSavedPlan(project.projectId);
+          if (useProjectStore.getState().project?.projectId !== project.projectId) return;
+          const invalid = validatePlan(refreshed);
+          if (invalid) throw new Error(invalid);
+          setPlan(refreshed);
+          setPlanVersions(versions);
+        } catch {
+          setSavedNeedsRefresh(true);
+          setError('方案已保存，但刷新版本失败。请先重新加载方案。');
+          return;
+        }
+      }
+      message.success(demo ? '示例方案已在当前页面保存' : '方案已保存为新版本');
+    } catch (err) { setError(`保存方案失败：${err instanceof Error ? err.message : String(err)}`); }
+    finally { setSaving(false); }
   };
+  let jsonIssue: string | null = null;
+  try { const parsed = JSON.parse(jsonText || '{}'); jsonIssue = validatePlan(parsed); if (!jsonIssue && parsed.projectId !== project?.projectId) jsonIssue = 'JSON 中的 projectId 必须与当前项目一致'; }
+  catch (err) { jsonIssue = err instanceof Error ? err.message : 'JSON 格式有误'; }
 
-  if (!project) {
-    return (
-      <Card size="small">
-        <Empty description="请先在「上传项目」页创建项目并完成分析，再编辑方案。" />
-      </Card>
-    );
-  }
-
-  return (
-    <Spin spinning={loading}>
-      {plan ? (
-        <Space direction="vertical" style={{ width: '100%' }} size="large">
-          <AnalysisWarning flags={analysisFlags} />
-          <Card
-            size="small"
-            title={`剪辑方案 v${plan.planVersion}`}
-            extra={
-              <Space>
-                <Button onClick={formatJson}>重新格式化</Button>
-                <Button type="primary" loading={saving} onClick={handleSave}>
-                  保存方案
-                </Button>
-              </Space>
-            }
-          >
-            <Space wrap size="large">
-              <Typography.Text type="secondary">Schema 版本：{plan.schemaVersion}</Typography.Text>
-              <Typography.Text type="secondary">项目 ID：{plan.projectId}</Typography.Text>
-              <Typography.Text type="secondary">
-                源视频：{plan.source.url ? plan.source.url.split('/').pop() : '未配置'}（{plan.source.duration}s）
-              </Typography.Text>
-              <Typography.Text type="secondary">片段数：{plan.timeline.length}</Typography.Text>
-            </Space>
-          </Card>
-
-          <Row gutter={16}>
-            <Col span={12}>
-              <Space direction="vertical" style={{ width: '100%' }} size="middle">
-                {/* 全局设置 */}
-                <Card title="全局设置（Global）" size="small">
-                  <Typography.Text strong>输出配置（Output）</Typography.Text>
-                  <Row gutter={12} style={{ marginTop: 8 }}>
-                    <Col span={8}>
-                      <Form.Item label="宽" style={{ marginBottom: 8 }}>
-                        <InputNumber min={1} style={{ width: '100%' }} value={plan.global.output.width}
-                          onChange={(v) => updateOutput({ width: v ?? 1080 })} />
-                      </Form.Item>
-                    </Col>
-                    <Col span={8}>
-                      <Form.Item label="高" style={{ marginBottom: 8 }}>
-                        <InputNumber min={1} style={{ width: '100%' }} value={plan.global.output.height}
-                          onChange={(v) => updateOutput({ height: v ?? 1920 })} />
-                      </Form.Item>
-                    </Col>
-                    <Col span={8}>
-                      <Form.Item label="帧率" style={{ marginBottom: 8 }}>
-                        <InputNumber min={1} style={{ width: '100%' }} value={plan.global.output.fps}
-                          onChange={(v) => updateOutput({ fps: v ?? 30 })} />
-                      </Form.Item>
-                    </Col>
-                  </Row>
-
-                  <Divider style={{ margin: '8px 0' }} />
-                  {plan.global.bgm ? (
-                    <>
-                      <Typography.Text strong>背景音乐（Bgm）</Typography.Text>
-                      <Row gutter={12} style={{ marginTop: 8 }}>
-                        <Col span={14}>
-                          <Form.Item label="URL" style={{ marginBottom: 8 }}>
-                            <Input value={plan.global.bgm.url}
-                              onChange={(e) => patchBgm({ url: e.target.value })} />
-                          </Form.Item>
-                        </Col>
-                        <Col span={5}>
-                          <Form.Item label="音量" style={{ marginBottom: 8 }}>
-                            <InputNumber min={0} max={1} step={0.1} style={{ width: '100%' }} value={plan.global.bgm.volume}
-                              onChange={(v) => patchBgm({ volume: v ?? 0.3 })} />
-                          </Form.Item>
-                        </Col>
-                        <Col span={5}>
-                          <Form.Item label="循环" style={{ marginBottom: 8 }}>
-                            <Switch checked={plan.global.bgm.loop} style={{ marginTop: 4 }}
-                              onChange={(v) => patchBgm({ loop: v })} />
-                          </Form.Item>
-                        </Col>
-                      </Row>
-                      <Button size="small" danger onClick={() => updateGlobal({ bgm: undefined })}>
-                        移除背景音乐
-                      </Button>
-                    </>
-                  ) : (
-                    <Button size="small" onClick={() => updateGlobal({ bgm: { url: '', volume: 0.3, loop: true } })}>
-                      添加背景音乐
-                    </Button>
-                  )}
-
-                  <Divider style={{ margin: '8px 0' }} />
-                  {plan.global.subtitleStyle ? (
-                    <>
-                      <Typography.Text strong>字幕样式（SubtitleStyle）</Typography.Text>
-                      <Row gutter={12} style={{ marginTop: 8 }}>
-                        <Col span={6}>
-                          <Form.Item label="字号" style={{ marginBottom: 8 }}>
-                            <InputNumber min={1} style={{ width: '100%' }} value={plan.global.subtitleStyle.fontSize}
-                              onChange={(v) => updateSubtitleStyle({ fontSize: v ?? 48 })} />
-                          </Form.Item>
-                        </Col>
-                        <Col span={9}>
-                          <Form.Item label="颜色" style={{ marginBottom: 8 }}>
-                            <Input value={plan.global.subtitleStyle.color}
-                              onChange={(e) => updateSubtitleStyle({ color: e.target.value })} />
-                          </Form.Item>
-                        </Col>
-                        <Col span={9}>
-                          <Form.Item label="位置" style={{ marginBottom: 8 }}>
-                            <Select style={{ width: '100%' }} value={plan.global.subtitleStyle.position}
-                              options={SUBTITLE_POSITION_OPTIONS}
-                              onChange={(v) => updateSubtitleStyle({ position: v })} />
-                          </Form.Item>
-                        </Col>
-                      </Row>
-                      <Button size="small" danger onClick={() => updateGlobal({ subtitleStyle: undefined })}>
-                        移除字幕样式
-                      </Button>
-                    </>
-                  ) : (
-                    <Button size="small" onClick={() => updateGlobal({ subtitleStyle: { fontSize: 48, color: '#FFFFFF', position: 'bottom' } })}>
-                      添加字幕样式
-                    </Button>
-                  )}
-                </Card>
-
-                {/* 时间线 */}
-                <Card
-                  title={`时间线（Timeline）`}
-                  size="small"
-                  extra={<Button size="small" onClick={addSegment}>新增片段</Button>}
-                >
-                  {plan.timeline.length === 0 ? (
-                    <Empty description="暂无片段，点击「新增片段」添加" />
-                  ) : (
-                    <Collapse
-                      size="small"
-                      defaultActiveKey={[0]}
-                      items={plan.timeline.map((seg, segIndex) => ({
-                        key: segIndex,
-                        label: (
-                          <Space>
-                            <Tag color={seg.keep ? 'green' : 'red'}>{seg.keep ? '保留' : '删除'}</Tag>
-                            <Typography.Text code>{seg.id}</Typography.Text>
-                            <Typography.Text type="secondary">
-                              {seg.sourceRange.start.toFixed(1)}s → {seg.sourceRange.end.toFixed(1)}s
-                            </Typography.Text>
-                          </Space>
-                        ),
-                        children: (
-                          <Space direction="vertical" style={{ width: '100%' }}>
-                            <Space>
-                              <span>保留此片段</span>
-                              <Switch checked={seg.keep} onChange={(v) => updateSegment(segIndex, { keep: v })} />
-                              <Popconfirm title="删除该片段？" onConfirm={() => removeSegment(segIndex)}>
-                                <Button size="small" danger>删除片段</Button>
-                              </Popconfirm>
-                            </Space>
-                            <Space>
-                              <span>源区间</span>
-                              <InputNumber addonBefore="开始" min={0} step={0.5} style={{ width: 130 }}
-                                value={seg.sourceRange.start}
-                                onChange={(v) => updateSegmentRange(segIndex, 'start', v ?? 0)} />
-                              <InputNumber addonBefore="结束" min={0} step={0.5} style={{ width: 130 }}
-                                value={seg.sourceRange.end}
-                                onChange={(v) => updateSegmentRange(segIndex, 'end', v ?? 0)} />
-                            </Space>
-                            <Divider orientation="left" plain style={{ margin: '4px 0' }}>
-                              段内操作（Operations）
-                            </Divider>
-                            {(seg.operations ?? []).map((op, opIndex) => (
-                              <Card key={opIndex} size="small">
-                                <Space direction="vertical" style={{ width: '100%' }}>
-                                  <Space>
-                                    <Tag color="blue">{OPERATION_LABELS[op.type]}</Tag>
-                                    <Popconfirm title="删除该操作？" onConfirm={() => removeOperation(segIndex, opIndex)}>
-                                      <Button size="small" danger>删除</Button>
-                                    </Popconfirm>
-                                  </Space>
-                                  <OperationFields
-                                    op={op}
-                                    onChange={(field, value) => updateOperationField(segIndex, opIndex, field, value)}
-                                  />
-                                </Space>
-                              </Card>
-                            ))}
-                            <Space>
-                              <Select
-                                style={{ width: 120 }}
-                                value={pendingTypes[seg.id] ?? 'speed'}
-                                options={OPERATION_TYPE_OPTIONS}
-                                onChange={(t) => setPendingTypes((prev) => ({ ...prev, [seg.id]: t }))}
-                              />
-                              <Button size="small" onClick={() => addOperation(segIndex, pendingTypes[seg.id] ?? 'speed')}>
-                                添加操作
-                              </Button>
-                            </Space>
-                          </Space>
-                        ),
-                      }))}
-                    />
-                  )}
-                </Card>
-              </Space>
-            </Col>
-
-            <Col span={12}>
-              <Card title="方案 JSON（可直接编辑）" size="small">
-                <textarea
-                  value={jsonText}
-                  onChange={onJsonChange}
-                  spellCheck={false}
-                  style={{
-                    width: '100%',
-                    height: 560,
-                    fontFamily: 'Consolas, Monaco, "Courier New", monospace',
-                    fontSize: 12,
-                    lineHeight: 1.6,
-                    padding: 12,
-                    border: jsonError ? '1px solid #ff4d4f' : '1px solid #d9d9d9',
-                    borderRadius: 6,
-                    resize: 'vertical',
-                    background: '#fafafa',
-                  }}
-                />
-                {jsonError ? (
-                  <Alert style={{ marginTop: 8 }} type="error" showIcon message="JSON 有误，左侧表单暂不同步" description={jsonError} />
-                ) : (
-                  <Typography.Text type="secondary" style={{ marginTop: 8, display: 'block' }}>
-                    JSON 合法：编辑将实时同步到左侧结构化表单。点击「保存方案」PUT 到后端生成新版本。
-                  </Typography.Text>
-                )}
-              </Card>
-            </Col>
-          </Row>
-        </Space>
-      ) : (
-        <Card size="small">
-          <Empty description="暂无方案。请先在「AI 分析」页发起分析生成初稿方案。" />
-          {onNavigate && (
-            <div style={{ textAlign: 'center', marginTop: 8 }}>
-              <Button onClick={() => onNavigate('analyze')}>去发起分析</Button>
-            </div>
-          )}
-        </Card>
-      )}
+  return <>
+    {review ? <AnalysisWarning flags={analysisFlags} needsReview={review} onDetails={() => onNavigate('analyze')}/> : <Banner title={planDirty ? '方案有未保存修改' : '方案已就绪，可以开始编辑'} description="核对原视频时间，调整保留片段与操作，保存后生成新版本。" trailing="步骤 3 / 4"/>}
+    <PageHeading title="方案编辑" badge={plan && <span className="version-badge mono">v{savedPlanVersion(plan, planVersions)}</span>} description="将分析结果整理成可回查、可编辑的剪辑方案" actions={<><Button disabled={!plan || saving} onClick={() => { setJsonText(JSON.stringify(plan, null, 2)); setJsonOpen(true); }}>查看 JSON</Button><Button type="primary" disabled={!plan || !!issue || loading || savedNeedsRefresh} loading={saving} onClick={() => void handleSave()}>保存方案{planDirty ? ' ·' : ''}</Button></>}/>
+    {(error || issue) && <Alert className="page-error" type="error" showIcon message={error || issue} action={(!plan || savedNeedsRefresh) && project ? <Button size="small" onClick={() => { setPlan(null); setSavedNeedsRefresh(false); setRetry(retry + 1); }}>重新加载</Button> : undefined}/>}
+    <Spin spinning={loading || saving}>
+      {!project || !plan ? <EmptyState title={project ? '还没有可编辑的方案' : '还没有当前项目'} description={project ? '在 AI 分析页发起分析，生成初稿后在这里编辑。' : '先创建项目并上传源视频，再生成剪辑方案。'} action={project ? '去 AI 分析' : '去上传项目'} onAction={() => onNavigate(project ? 'analyze' : 'upload')}/> : <div className="editor-layout"><div className="editor-main-column">
+        <MediaPreview src={demo ? undefined : sourcePreviewUrl || mediaUrl(asset?.ossUrl) || mediaUrl(plan.source.url)} demo={demo} fileName={asset?.fileName || fileName(plan.source.url)} segmentId={selected?.id} duration={plan.source.duration || asset?.duration || 0} currentTime={time} onTimeChange={setTime} ratio={aspectRatio(plan.global.output.width, plan.global.output.height)}/>
+        <Timeline plan={plan} selectedId={selected?.id} currentTime={time} demo={demo} onSelect={(segment) => { setSelectedId(segment.id); setTime(segment.sourceRange.start); }} onAdd={addSegment}/>
+      </div><Panel className="segment-inspector" title="片段属性" extra={<div className="inspector-extra"><span className="mono subtle">{selected?.id || '—'}</span><Dropdown trigger={['click']} menu={{ items: [{ key: 'previous', label: '前移片段', disabled: !selected || plan.timeline.indexOf(selected) === 0, onClick: () => moveSegment(-1) }, { key: 'next', label: '后移片段', disabled: !selected || plan.timeline.indexOf(selected) === plan.timeline.length - 1, onClick: () => moveSegment(1) }, { key: 'delete', label: '删除片段', danger: true, disabled: !selected, onClick: () => modal.confirm({ title: '删除该片段？', content: '保存方案前可通过重新加载撤销此修改。', onOk: removeSegment }) }] }}><Button type="text" size="small" aria-label="片段更多操作">···</Button></Dropdown></div>}>
+        {selected ? <div className="inspector-content"><div className="keep-control"><strong>保留此片段</strong><Switch aria-label="保留此片段" checked={selected.keep} onChange={toggleKeep}/></div>
+          <section className="range-section"><h3>源时间区间</h3><p>全部使用原视频全局时间 · 秒</p><div className="range-inputs"><label>开始<InputNumber aria-label="片段开始时间" formatter={(value, info) => info.userTyping ? info.input : formatTime(Number(value), true)} parser={parseTime} min={0} max={plan.source.duration || undefined} step={.1} value={selected.sourceRange.start} onChange={(value) => { if (value != null) updateSegment({ sourceRange: { ...selected.sourceRange, start: value } }); }}/></label><label>结束<InputNumber aria-label="片段结束时间" formatter={(value, info) => info.userTyping ? info.input : formatTime(Number(value), true)} parser={parseTime} min={0} max={plan.source.duration || undefined} step={.1} value={selected.sourceRange.end} onChange={(value) => { if (value != null) updateSegment({ sourceRange: { ...selected.sourceRange, end: value } }); }}/></label></div></section>
+          <section className="operations-section"><div className="inspector-section-heading"><h3>段内操作</h3><span className="mono">{String(selected.operations?.length || 0).padStart(2, '0')}</span></div><div className="operations-list">{(selected.operations || []).map((operation, index) => <OperationEditor key={`${selected.id}-${index}-${operation.type}`} operation={operation} onChange={(value) => updateOperation(index, value)} onRemove={() => updateSegment({ operations: selected.operations?.filter((_, i) => i !== index) })}/>)}{!selected.operations?.length && <p className="subtle operation-empty">尚未添加段内操作</p>}</div><Dropdown trigger={['click']} menu={{ items: (Object.keys(OPERATION_LABELS) as OperationType[]).map((type) => ({ key: type, label: OPERATION_LABELS[type], onClick: () => addOperation(type) })) }}><Button disabled={!selected.keep} className="soft-button add-operation">+ 添加操作</Button></Dropdown></section>
+          <button className="global-summary" onClick={() => setGlobalOpen(true)}><h3>全局输出 <span>↗</span></h3><p className="mono">{aspectRatio(plan.global.output.width, plan.global.output.height)} · {plan.global.output.width} × {plan.global.output.height} · {plan.global.output.fps} fps</p><p>字幕 {plan.global.subtitleStyle ? '开启' : '未设置'}　背景音乐 {plan.global.bgm ? '已设置' : '未设置'}</p></button>
+          <p className="inspector-note">修改后请保存方案，生成新版本。</p>
+        </div> : <EmptyState title="暂无片段" description="点击“新增片段”开始编辑。"/>}
+      </Panel></div>}
     </Spin>
-  );
+    <Drawer title="方案 JSON" width={660} open={jsonOpen} onClose={() => setJsonOpen(false)} extra={<Button onClick={() => { try { setJsonText(JSON.stringify(JSON.parse(jsonText), null, 2)); } catch { message.error('请先修正 JSON 格式'); } }}>格式化</Button>} footer={<div className="drawer-actions"><Button onClick={() => setJsonOpen(false)}>取消</Button><Button type="primary" disabled={!!jsonIssue} onClick={() => { editPlan(JSON.parse(jsonText) as Plan); setJsonOpen(false); }}>应用到编辑器</Button></div>}>
+      <p className="drawer-description">编辑完整 Plan 文档，通过校验后应用到编辑器，再点击保存方案。</p><textarea className={`json-editor ${jsonIssue ? 'invalid' : ''}`} value={jsonText} onChange={(event) => setJsonText(event.target.value)} spellCheck={false} aria-label="方案 JSON"/>{jsonIssue ? <Alert type="error" showIcon message="JSON 尚不可应用" description={jsonIssue}/> : <Alert type="success" showIcon message="结构校验通过，可应用到编辑器"/>}
+    </Drawer>
+    {plan && <GlobalSettings open={globalOpen} onClose={() => setGlobalOpen(false)} value={plan.global} onChange={(global) => editPlan({ ...plan, global })}/>}
+  </>;
 }
 
-/** 按操作类型渲染可编辑参数（判别联合分发） */
-function OperationFields({
-  op,
-  onChange,
-}: {
-  op: Operation;
-  onChange: (field: string, value: number | string | boolean) => void;
-}) {
-  switch (op.type) {
-    case 'speed':
-      return (
-        <Space wrap>
-          <span>倍速</span>
-          <InputNumber min={0.1} step={0.1} value={op.rate} onChange={(v) => onChange('rate', v ?? 1)} />
-        </Space>
-      );
-    case 'crop':
-      return (
-        <Space wrap>
-          <InputNumber addonBefore="x" min={0} value={op.x} onChange={(v) => onChange('x', v ?? 0)} />
-          <InputNumber addonBefore="y" min={0} value={op.y} onChange={(v) => onChange('y', v ?? 0)} />
-          <InputNumber addonBefore="宽" min={1} value={op.width} onChange={(v) => onChange('width', v ?? 0)} />
-          <InputNumber addonBefore="高" min={1} value={op.height} onChange={(v) => onChange('height', v ?? 0)} />
-        </Space>
-      );
-    case 'subtitle':
-      return (
-        <Space direction="vertical" style={{ width: '100%' }}>
-          <Input addonBefore="文案" value={op.text} onChange={(e) => onChange('text', e.target.value)} />
-          <Space>
-            <InputNumber addonBefore="开始" min={0} value={op.start} onChange={(v) => onChange('start', v ?? 0)} />
-            <InputNumber addonBefore="结束" min={0} value={op.end} onChange={(v) => onChange('end', v ?? 0)} />
-          </Space>
-        </Space>
-      );
-    case 'volume':
-      return (
-        <Space wrap>
-          <span>音量</span>
-          <InputNumber min={0} max={1} step={0.1} value={op.volume} onChange={(v) => onChange('volume', v ?? 1)} />
-        </Space>
-      );
-    case 'mute':
-      return <Typography.Text type="secondary">静音操作，无参数。</Typography.Text>;
+function Timeline({ plan, selectedId, currentTime, demo, onSelect, onAdd }: { plan: Plan; selectedId?: string; currentTime: number; demo: boolean; onSelect: (segment: Segment) => void; onAdd: () => void }) {
+  const total = plan.timeline.reduce((sum, segment) => sum + Math.max(.1, segment.sourceRange.end - segment.sourceRange.start), 0);
+  let before = 0, playhead = 0;
+  for (const segment of plan.timeline) {
+    const length = Math.max(.1, segment.sourceRange.end - segment.sourceRange.start);
+    if (segment.id === selectedId) playhead = (before + Math.min(length, Math.max(0, currentTime - segment.sourceRange.start))) / total * 100;
+    before += length;
   }
+  return <Panel className="timeline-panel"><div className="timeline-heading"><h2>剪辑时间线</h2><span>{plan.timeline.length} 段 · 保留 {plan.timeline.filter((segment) => segment.keep).length} 段 · 预计 {formatTime(outputDuration(plan.timeline))}</span><Button size="small" className="soft-button" onClick={onAdd}>+ 新增片段</Button></div>
+    <div className="timeline-content"><div className="timeline-ruler">{[0, .25, .5, .75, 1].map((fraction) => <span key={fraction}>{formatTime(plan.source.duration * fraction)}<i/></span>)}</div><small className="track-label">VIDEO 01</small><div className="timeline-scroll"><div className="timeline-lane">{plan.timeline.map((segment) => <button className={`timeline-segment ${segment.id === selectedId ? 'selected' : ''} ${!segment.keep ? 'removed' : ''}`} key={segment.id} aria-pressed={segment.id === selectedId} aria-label={`${segment.id}，${segment.keep ? '保留' : '删除'}，${formatTime(segment.sourceRange.start, true)}至${formatTime(segment.sourceRange.end, true)}`} style={{ flexGrow: Math.max(.1, segment.sourceRange.end - segment.sourceRange.start) }} onClick={() => onSelect(segment)}><strong className="mono">{segment.id}</strong><span className="mono">{formatTime(segment.sourceRange.start, true)}—{formatTime(segment.sourceRange.end, true)}</span></button>)}{plan.timeline.length > 0 && <div className="timeline-playhead" style={{ left: `${playhead}%` }}><i/></div>}</div></div><small className="track-label audio-label">AUDIO 01{demo ? ' · 示例音轨' : ''}</small><div className={`audio-track ${demo ? '' : 'audio-pending'}`}>{demo ? Array.from({ length: 78 }, (_, index) => <i key={index} style={{ height: `${4 + ((index * 19 + index * index * 3) % 17)}px` }}/>) : <span>音频波形尚未生成 · 可在上方预览源视频</span>}</div><p className="timeline-note">片段按输出顺序排列 · 标签显示原视频全局时间</p></div>
+  </Panel>;
+}
+
+function OperationEditor({ operation, onChange, onRemove }: { operation: Operation; onChange: (operation: Operation) => void; onRemove: () => void }) {
+  const summary = operation.type === 'subtitle' ? operation.text || '尚未填写字幕' : operation.type === 'speed' ? `${operation.rate}× 变速` : operation.type === 'volume' ? `音量 ${Math.round(operation.volume * 100)}%` : operation.type === 'crop' ? `${operation.width} × ${operation.height}` : '关闭此片段声音';
+  return <details className="operation-item"><summary><strong>{OPERATION_LABELS[operation.type]}</strong><span>{summary}</span></summary><div className="operation-fields">
+    {operation.type === 'subtitle' && <><label>字幕文本<Input.TextArea aria-label="字幕文本" autoSize={{ minRows: 2, maxRows: 5 }} value={operation.text} onChange={(event) => onChange({ ...operation, text: event.target.value })}/></label><div className="two-fields"><label>段内开始（秒）<InputNumber min={0} value={operation.start} onChange={(value) => value != null && onChange({ ...operation, start: value })}/></label><label>段内结束（秒）<InputNumber min={0} value={operation.end} onChange={(value) => value != null && onChange({ ...operation, end: value })}/></label></div></>}
+    {operation.type === 'speed' && <label>播放倍速<InputNumber min={.1} max={16} step={.1} value={operation.rate} onChange={(value) => value != null && onChange({ ...operation, rate: value })}/></label>}
+    {operation.type === 'volume' && <label>音量（0—1）<InputNumber min={0} max={1} step={.1} value={operation.volume} onChange={(value) => value != null && onChange({ ...operation, volume: value })}/></label>}
+    {operation.type === 'crop' && <div className="two-fields">{(['x', 'y', 'width', 'height'] as const).map((field) => <label key={field}>{({ x: '左侧', y: '顶部', width: '宽度', height: '高度' })[field]}<InputNumber min={field === 'x' || field === 'y' ? 0 : 1} value={operation[field]} onChange={(value) => value != null && onChange({ ...operation, [field]: value })}/></label>)}</div>}
+    {operation.type === 'mute' && <p className="subtle">此片段的原始声音将静音。</p>}
+    <Button danger type="text" size="small" onClick={onRemove}>移除此操作</Button>
+  </div></details>;
+}
+
+function GlobalSettings({ open, onClose, value, onChange }: { open: boolean; onClose: () => void; value: Global; onChange: (value: Global) => void }) {
+  return <Drawer title="全局输出设置" open={open} onClose={onClose} width={420}><div className="settings-fields"><h3>输出视频</h3><div className="two-fields">{(['width', 'height', 'fps'] as const).map((field) => <label key={field}>{({ width: '宽度', height: '高度', fps: '帧率' })[field]}<InputNumber min={1} value={value.output[field]} onChange={(number) => number != null && onChange({ ...value, output: { ...value.output, [field]: number } })}/></label>)}<label>编码器<Input value={value.output.codec || 'libx264'} onChange={(event) => onChange({ ...value, output: { ...value.output, codec: event.target.value } })}/></label></div><label>码率（可选）<Input placeholder="例如：4M" value={value.output.bitrate || ''} onChange={(event) => onChange({ ...value, output: { ...value.output, bitrate: event.target.value || undefined } })}/></label><div className="settings-section-heading"><h3>字幕样式</h3><Switch aria-label="启用字幕样式" checked={!!value.subtitleStyle} onChange={(enabled) => onChange({ ...value, subtitleStyle: enabled ? { fontSize: 48, color: '#FFFFFF', position: 'bottom' } : undefined })}/></div>{value.subtitleStyle && <><label>字号<InputNumber min={1} value={value.subtitleStyle.fontSize} onChange={(fontSize) => fontSize != null && onChange({ ...value, subtitleStyle: { ...value.subtitleStyle, fontSize } })}/></label><label>颜色<Input value={value.subtitleStyle.color || '#FFFFFF'} onChange={(event) => onChange({ ...value, subtitleStyle: { ...value.subtitleStyle, color: event.target.value } })}/></label><label>位置<Select value={value.subtitleStyle.position || 'bottom'} options={[{ value: 'top', label: '顶部' }, { value: 'center', label: '居中' }, { value: 'bottom', label: '底部' }]} onChange={(position) => onChange({ ...value, subtitleStyle: { ...value.subtitleStyle, position } })}/></label></>}<div className="settings-section-heading"><h3>背景音乐</h3><Switch aria-label="启用背景音乐" checked={!!value.bgm} onChange={(enabled) => onChange({ ...value, bgm: enabled ? { url: '', volume: .3, loop: true } : undefined })}/></div>{value.bgm && <><label>音乐地址<Input value={value.bgm.url} placeholder="https://…" onChange={(event) => onChange({ ...value, bgm: { ...value.bgm!, url: event.target.value } })}/></label><label>音量<InputNumber min={0} max={1} step={.1} value={value.bgm.volume ?? .3} onChange={(volume) => volume != null && onChange({ ...value, bgm: { ...value.bgm!, volume } })}/></label><label>循环播放<Switch checked={value.bgm.loop ?? true} onChange={(loop) => onChange({ ...value, bgm: { ...value.bgm!, loop } })}/></label></>}<p className="subtle">设置会同步到编辑器，请在关闭后保存方案。</p></div></Drawer>;
 }

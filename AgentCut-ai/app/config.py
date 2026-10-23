@@ -15,6 +15,9 @@ import os
 
 # 加载项目根目录的 .env（若存在），便于本地配置 API Key（无第三方依赖）
 def _load_dotenv():
+    # 离线测试和本地联调可显式关闭，避免读取开发者凭证文件。
+    if os.getenv("AGENTCUT_LOAD_DOTENV", "true").strip().lower() in ("0", "false", "no", "off"):
+        return
     env_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", ".env")
     if not os.path.exists(env_path):
         return

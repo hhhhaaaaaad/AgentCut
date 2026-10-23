@@ -1,0 +1,779 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:agentcut:analysis-evidence:v1",
+  "$defs": {
+    "AnalysisProfile": {
+      "additionalProperties": false,
+      "properties": {
+        "profileVersion": {
+          "minLength": 1,
+          "title": "Profileversion",
+          "type": "string"
+        },
+        "configVersion": {
+          "minLength": 1,
+          "title": "Configversion",
+          "type": "string"
+        },
+        "requestedType": {
+          "enum": [
+            "AUTO",
+            "TUTORIAL_INTERVIEW",
+            "VLOG_DOCUMENTARY",
+            "FAST_SHORT_VIDEO"
+          ],
+          "title": "Requestedtype",
+          "type": "string"
+        },
+        "effectiveType": {
+          "enum": [
+            "TUTORIAL_INTERVIEW",
+            "VLOG_DOCUMENTARY",
+            "FAST_SHORT_VIDEO"
+          ],
+          "title": "Effectivetype",
+          "type": "string"
+        },
+        "detectedPace": {
+          "enum": [
+            "SLOW",
+            "NORMAL",
+            "FAST"
+          ],
+          "title": "Detectedpace",
+          "type": "string"
+        },
+        "shotCountPerMinute": {
+          "minimum": 0,
+          "title": "Shotcountperminute",
+          "type": "number"
+        },
+        "novelShotCountPerMinute": {
+          "minimum": 0,
+          "title": "Novelshotcountperminute",
+          "type": "number"
+        },
+        "confidence": {
+          "maximum": 1,
+          "minimum": 0,
+          "title": "Confidence",
+          "type": "number"
+        },
+        "adjustmentReason": {
+          "title": "Adjustmentreason",
+          "type": "string"
+        },
+        "windowTargetMs": {
+          "exclusiveMinimum": 0,
+          "title": "Windowtargetms",
+          "type": "integer"
+        },
+        "frameBudget": {
+          "minimum": 0,
+          "title": "Framebudget",
+          "type": "integer"
+        },
+        "vlmBatchSize": {
+          "exclusiveMinimum": 0,
+          "title": "Vlmbatchsize",
+          "type": "integer"
+        },
+        "vlmConcurrency": {
+          "exclusiveMinimum": 0,
+          "title": "Vlmconcurrency",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "profileVersion",
+        "configVersion",
+        "requestedType",
+        "effectiveType",
+        "detectedPace",
+        "shotCountPerMinute",
+        "novelShotCountPerMinute",
+        "confidence",
+        "adjustmentReason",
+        "windowTargetMs",
+        "frameBudget",
+        "vlmBatchSize",
+        "vlmConcurrency"
+      ],
+      "title": "AnalysisProfile",
+      "type": "object"
+    },
+    "AnalysisWindow": {
+      "additionalProperties": false,
+      "properties": {
+        "windowId": {
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Windowid",
+          "type": "string"
+        },
+        "assetHash": {
+          "minLength": 1,
+          "title": "Assethash",
+          "type": "string"
+        },
+        "startMs": {
+          "minimum": 0,
+          "title": "Startms",
+          "type": "integer"
+        },
+        "endMs": {
+          "minimum": 0,
+          "title": "Endms",
+          "type": "integer"
+        },
+        "contextStartMs": {
+          "minimum": 0,
+          "title": "Contextstartms",
+          "type": "integer"
+        },
+        "contextEndMs": {
+          "minimum": 0,
+          "title": "Contextendms",
+          "type": "integer"
+        },
+        "sceneIds": {
+          "items": {
+            "minLength": 1,
+            "pattern": "^[A-Za-z0-9_-]+$",
+            "type": "string"
+          },
+          "title": "Sceneids",
+          "type": "array"
+        },
+        "selectedFrameIds": {
+          "items": {
+            "minLength": 1,
+            "pattern": "^[A-Za-z0-9_-]+$",
+            "type": "string"
+          },
+          "title": "Selectedframeids",
+          "type": "array"
+        },
+        "profileVersion": {
+          "minLength": 1,
+          "title": "Profileversion",
+          "type": "string"
+        },
+        "plannerVersion": {
+          "minLength": 1,
+          "title": "Plannerversion",
+          "type": "string"
+        }
+      },
+      "required": [
+        "windowId",
+        "assetHash",
+        "startMs",
+        "endMs",
+        "contextStartMs",
+        "contextEndMs",
+        "sceneIds",
+        "selectedFrameIds",
+        "profileVersion",
+        "plannerVersion"
+      ],
+      "title": "AnalysisWindow",
+      "type": "object"
+    },
+    "FailureRange": {
+      "additionalProperties": false,
+      "properties": {
+        "startMs": {
+          "minimum": 0,
+          "title": "Startms",
+          "type": "integer"
+        },
+        "endMs": {
+          "minimum": 0,
+          "title": "Endms",
+          "type": "integer"
+        },
+        "phase": {
+          "enum": [
+            "PROBE",
+            "SCENE",
+            "FRAMES",
+            "ASR",
+            "VLM",
+            "FUSION",
+            "GLOBAL"
+          ],
+          "title": "Phase",
+          "type": "string"
+        },
+        "code": {
+          "minLength": 1,
+          "title": "Code",
+          "type": "string"
+        },
+        "reason": {
+          "title": "Reason",
+          "type": "string"
+        }
+      },
+      "required": [
+        "startMs",
+        "endMs",
+        "phase",
+        "code",
+        "reason"
+      ],
+      "title": "FailureRange",
+      "type": "object"
+    },
+    "FrameObservation": {
+      "additionalProperties": false,
+      "properties": {
+        "frameId": {
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Frameid",
+          "type": "string"
+        },
+        "windowId": {
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Windowid",
+          "type": "string"
+        },
+        "sceneId": {
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Sceneid",
+          "type": "string"
+        },
+        "timestampMs": {
+          "minimum": 0,
+          "title": "Timestampms",
+          "type": "integer"
+        },
+        "description": {
+          "title": "Description",
+          "type": "string"
+        },
+        "tags": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Tags",
+          "type": "array"
+        },
+        "importance": {
+          "maximum": 1,
+          "minimum": 0,
+          "title": "Importance",
+          "type": "number"
+        },
+        "source": {
+          "$ref": "#/$defs/SourceProvenance"
+        }
+      },
+      "required": [
+        "frameId",
+        "windowId",
+        "sceneId",
+        "timestampMs",
+        "description",
+        "tags",
+        "importance",
+        "source"
+      ],
+      "title": "FrameObservation",
+      "type": "object"
+    },
+    "GlobalAnalysis": {
+      "additionalProperties": false,
+      "properties": {
+        "windowRefs": {
+          "items": {
+            "minLength": 1,
+            "pattern": "^[A-Za-z0-9_-]+$",
+            "type": "string"
+          },
+          "title": "Windowrefs",
+          "type": "array"
+        },
+        "summary": {
+          "title": "Summary",
+          "type": "string"
+        },
+        "topics": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Topics",
+          "type": "array"
+        },
+        "findings": {
+          "items": {
+            "$ref": "#/$defs/GlobalFinding"
+          },
+          "title": "Findings",
+          "type": "array"
+        },
+        "provenance": {
+          "additionalProperties": {
+            "$ref": "#/$defs/SourceProvenance"
+          },
+          "title": "Provenance",
+          "type": "object"
+        }
+      },
+      "required": [
+        "windowRefs",
+        "summary",
+        "topics",
+        "findings",
+        "provenance"
+      ],
+      "title": "GlobalAnalysis",
+      "type": "object"
+    },
+    "GlobalCoverage": {
+      "additionalProperties": false,
+      "properties": {
+        "totalWindows": {
+          "minimum": 0,
+          "title": "Totalwindows",
+          "type": "integer"
+        },
+        "completeWindows": {
+          "minimum": 0,
+          "title": "Completewindows",
+          "type": "integer"
+        },
+        "coveredMs": {
+          "minimum": 0,
+          "title": "Coveredms",
+          "type": "integer"
+        },
+        "failedWindowIds": {
+          "items": {
+            "minLength": 1,
+            "pattern": "^[A-Za-z0-9_-]+$",
+            "type": "string"
+          },
+          "title": "Failedwindowids",
+          "type": "array"
+        }
+      },
+      "required": [
+        "totalWindows",
+        "completeWindows",
+        "coveredMs",
+        "failedWindowIds"
+      ],
+      "title": "GlobalCoverage",
+      "type": "object"
+    },
+    "GlobalFinding": {
+      "additionalProperties": false,
+      "properties": {
+        "findingId": {
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Findingid",
+          "type": "string"
+        },
+        "kind": {
+          "enum": [
+            "TOPIC",
+            "CHAPTER",
+            "ARGUMENT",
+            "HIGHLIGHT",
+            "REDUNDANCY",
+            "DEPENDENCY"
+          ],
+          "title": "Kind",
+          "type": "string"
+        },
+        "startMs": {
+          "minimum": 0,
+          "title": "Startms",
+          "type": "integer"
+        },
+        "endMs": {
+          "minimum": 0,
+          "title": "Endms",
+          "type": "integer"
+        },
+        "text": {
+          "minLength": 1,
+          "title": "Text",
+          "type": "string"
+        },
+        "evidenceRefs": {
+          "items": {
+            "minLength": 1,
+            "pattern": "^[A-Za-z0-9_-]+$",
+            "type": "string"
+          },
+          "minItems": 1,
+          "title": "Evidencerefs",
+          "type": "array"
+        }
+      },
+      "required": [
+        "findingId",
+        "kind",
+        "startMs",
+        "endMs",
+        "text",
+        "evidenceRefs"
+      ],
+      "title": "GlobalFinding",
+      "type": "object"
+    },
+    "SourceProvenance": {
+      "additionalProperties": false,
+      "properties": {
+        "mode": {
+          "enum": [
+            "REAL",
+            "SIMULATED",
+            "MIXED",
+            "NO_SPEECH",
+            "UNAVAILABLE"
+          ],
+          "title": "Mode",
+          "type": "string"
+        },
+        "provider": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Provider"
+        },
+        "model": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Model"
+        },
+        "reason": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Reason"
+        }
+      },
+      "required": [
+        "mode"
+      ],
+      "title": "SourceProvenance",
+      "type": "object"
+    },
+    "TranscriptSegmentV1": {
+      "additionalProperties": false,
+      "properties": {
+        "transcriptId": {
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Transcriptid",
+          "type": "string"
+        },
+        "startMs": {
+          "minimum": 0,
+          "title": "Startms",
+          "type": "integer"
+        },
+        "endMs": {
+          "minimum": 0,
+          "title": "Endms",
+          "type": "integer"
+        },
+        "text": {
+          "title": "Text",
+          "type": "string"
+        },
+        "timingQuality": {
+          "enum": [
+            "COARSE_BLOCK",
+            "SENTENCE",
+            "WORD",
+            "MANUAL"
+          ],
+          "title": "Timingquality",
+          "type": "string"
+        },
+        "source": {
+          "$ref": "#/$defs/SourceProvenance"
+        }
+      },
+      "required": [
+        "transcriptId",
+        "startMs",
+        "endMs",
+        "text",
+        "timingQuality",
+        "source"
+      ],
+      "title": "TranscriptSegmentV1",
+      "type": "object"
+    },
+    "WindowAnalysis": {
+      "additionalProperties": false,
+      "properties": {
+        "windowId": {
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Windowid",
+          "type": "string"
+        },
+        "startMs": {
+          "minimum": 0,
+          "title": "Startms",
+          "type": "integer"
+        },
+        "endMs": {
+          "minimum": 0,
+          "title": "Endms",
+          "type": "integer"
+        },
+        "frameObservationRefs": {
+          "items": {
+            "minLength": 1,
+            "pattern": "^[A-Za-z0-9_-]+$",
+            "type": "string"
+          },
+          "title": "Frameobservationrefs",
+          "type": "array"
+        },
+        "transcriptRefs": {
+          "items": {
+            "minLength": 1,
+            "pattern": "^[A-Za-z0-9_-]+$",
+            "type": "string"
+          },
+          "title": "Transcriptrefs",
+          "type": "array"
+        },
+        "summary": {
+          "title": "Summary",
+          "type": "string"
+        },
+        "topics": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Topics",
+          "type": "array"
+        },
+        "events": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Events",
+          "type": "array"
+        },
+        "coverage": {
+          "$ref": "#/$defs/WindowCoverage"
+        },
+        "provenance": {
+          "additionalProperties": {
+            "$ref": "#/$defs/SourceProvenance"
+          },
+          "title": "Provenance",
+          "type": "object"
+        }
+      },
+      "required": [
+        "windowId",
+        "startMs",
+        "endMs",
+        "frameObservationRefs",
+        "transcriptRefs",
+        "summary",
+        "topics",
+        "events",
+        "coverage",
+        "provenance"
+      ],
+      "title": "WindowAnalysis",
+      "type": "object"
+    },
+    "WindowCoverage": {
+      "additionalProperties": false,
+      "properties": {
+        "selectedFrames": {
+          "minimum": 0,
+          "title": "Selectedframes",
+          "type": "integer"
+        },
+        "successfulFrames": {
+          "minimum": 0,
+          "title": "Successfulframes",
+          "type": "integer"
+        },
+        "asrOverlapMs": {
+          "minimum": 0,
+          "title": "Asroverlapms",
+          "type": "integer"
+        },
+        "visualComplete": {
+          "title": "Visualcomplete",
+          "type": "boolean"
+        },
+        "audioComplete": {
+          "title": "Audiocomplete",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "selectedFrames",
+        "successfulFrames",
+        "asrOverlapMs",
+        "visualComplete",
+        "audioComplete"
+      ],
+      "title": "WindowCoverage",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "schemaVersion": {
+      "const": "1.0",
+      "title": "Schemaversion",
+      "type": "string"
+    },
+    "assetId": {
+      "minLength": 1,
+      "pattern": "^[A-Za-z0-9_-]+$",
+      "title": "Assetid",
+      "type": "string"
+    },
+    "assetHash": {
+      "minLength": 1,
+      "title": "Assethash",
+      "type": "string"
+    },
+    "durationMs": {
+      "exclusiveMinimum": 0,
+      "title": "Durationms",
+      "type": "integer"
+    },
+    "configVersion": {
+      "minLength": 1,
+      "title": "Configversion",
+      "type": "string"
+    },
+    "profile": {
+      "$ref": "#/$defs/AnalysisProfile"
+    },
+    "windows": {
+      "items": {
+        "$ref": "#/$defs/AnalysisWindow"
+      },
+      "minItems": 1,
+      "title": "Windows",
+      "type": "array"
+    },
+    "frameObservations": {
+      "items": {
+        "$ref": "#/$defs/FrameObservation"
+      },
+      "title": "Frameobservations",
+      "type": "array"
+    },
+    "transcripts": {
+      "items": {
+        "$ref": "#/$defs/TranscriptSegmentV1"
+      },
+      "title": "Transcripts",
+      "type": "array"
+    },
+    "windowAnalyses": {
+      "items": {
+        "$ref": "#/$defs/WindowAnalysis"
+      },
+      "title": "Windowanalyses",
+      "type": "array"
+    },
+    "globalAnalysis": {
+      "$ref": "#/$defs/GlobalAnalysis"
+    },
+    "coverage": {
+      "$ref": "#/$defs/GlobalCoverage"
+    },
+    "failureRanges": {
+      "items": {
+        "$ref": "#/$defs/FailureRange"
+      },
+      "title": "Failureranges",
+      "type": "array"
+    },
+    "executionStatus": {
+      "const": "SUCCESS",
+      "title": "Executionstatus",
+      "type": "string"
+    },
+    "analysisOutcome": {
+      "enum": [
+        "COMPLETE",
+        "PARTIAL"
+      ],
+      "title": "Analysisoutcome",
+      "type": "string"
+    },
+    "reviewStatus": {
+      "enum": [
+        "READY",
+        "NEEDS_REVIEW"
+      ],
+      "title": "Reviewstatus",
+      "type": "string"
+    },
+    "provenance": {
+      "additionalProperties": {
+        "$ref": "#/$defs/SourceProvenance"
+      },
+      "title": "Provenance",
+      "type": "object"
+    }
+  },
+  "required": [
+    "schemaVersion",
+    "assetId",
+    "assetHash",
+    "durationMs",
+    "configVersion",
+    "profile",
+    "windows",
+    "frameObservations",
+    "transcripts",
+    "windowAnalyses",
+    "globalAnalysis",
+    "coverage",
+    "failureRanges",
+    "executionStatus",
+    "analysisOutcome",
+    "reviewStatus",
+    "provenance"
+  ],
+  "title": "AnalysisEvidenceV1",
+  "type": "object"
+}

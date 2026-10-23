@@ -1,0 +1,448 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:agentcut:material-index:v1",
+  "$defs": {
+    "ArtifactRef": {
+      "additionalProperties": false,
+      "properties": {
+        "artifactId": {
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Artifactid",
+          "type": "string"
+        },
+        "revision": {
+          "maximum": 9007199254740991,
+          "minimum": 1,
+          "title": "Revision",
+          "type": "integer"
+        },
+        "contentHash": {
+          "pattern": "^sha256:[0-9a-f]{64}$",
+          "title": "Contenthash",
+          "type": "string"
+        }
+      },
+      "required": [
+        "artifactId",
+        "revision",
+        "contentHash"
+      ],
+      "title": "ArtifactRef",
+      "type": "object"
+    },
+    "AssetRef": {
+      "additionalProperties": false,
+      "properties": {
+        "assetId": {
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Assetid",
+          "type": "string"
+        },
+        "assetHash": {
+          "pattern": "^sha256:[0-9a-f]{64}$",
+          "title": "Assethash",
+          "type": "string"
+        },
+        "durationMs": {
+          "maximum": 9007199254740991,
+          "minimum": 1,
+          "title": "Durationms",
+          "type": "integer"
+        },
+        "displayName": {
+          "minLength": 1,
+          "pattern": "\\S",
+          "title": "Displayname",
+          "type": "string"
+        }
+      },
+      "required": [
+        "assetId",
+        "assetHash",
+        "durationMs",
+        "displayName"
+      ],
+      "title": "AssetRef",
+      "type": "object"
+    },
+    "Dependency": {
+      "additionalProperties": false,
+      "properties": {
+        "unitId": {
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Unitid",
+          "type": "string"
+        },
+        "kind": {
+          "enum": [
+            "DEFINITION",
+            "COREFERENCE",
+            "CONDITION",
+            "NEGATION",
+            "CAUSE",
+            "QUESTION_ANSWER"
+          ],
+          "title": "Kind",
+          "type": "string"
+        },
+        "level": {
+          "enum": [
+            "REQUIRED",
+            "REVIEW"
+          ],
+          "title": "Level",
+          "type": "string"
+        }
+      },
+      "required": [
+        "unitId",
+        "kind",
+        "level"
+      ],
+      "title": "Dependency",
+      "type": "object"
+    },
+    "IndexTranscript": {
+      "additionalProperties": false,
+      "properties": {
+        "transcriptId": {
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Transcriptid",
+          "type": "string"
+        },
+        "sourceRange": {
+          "$ref": "#/$defs/Range"
+        },
+        "text": {
+          "minLength": 1,
+          "pattern": "\\S",
+          "title": "Text",
+          "type": "string"
+        },
+        "timingQuality": {
+          "enum": [
+            "COARSE_BLOCK",
+            "SENTENCE",
+            "WORD",
+            "MANUAL"
+          ],
+          "title": "Timingquality",
+          "type": "string"
+        },
+        "source": {
+          "$ref": "#/$defs/Provenance"
+        }
+      },
+      "required": [
+        "transcriptId",
+        "sourceRange",
+        "text",
+        "timingQuality",
+        "source"
+      ],
+      "title": "IndexTranscript",
+      "type": "object"
+    },
+    "MaterialUnit": {
+      "additionalProperties": false,
+      "properties": {
+        "unitId": {
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Unitid",
+          "type": "string"
+        },
+        "kind": {
+          "enum": [
+            "SPEECH",
+            "VISUAL_ONLY"
+          ],
+          "title": "Kind",
+          "type": "string"
+        },
+        "sourceRange": {
+          "$ref": "#/$defs/Range"
+        },
+        "originalText": {
+          "title": "Originaltext",
+          "type": "string"
+        },
+        "timingQuality": {
+          "enum": [
+            "NONE",
+            "COARSE_BLOCK",
+            "SENTENCE",
+            "WORD",
+            "MANUAL"
+          ],
+          "title": "Timingquality",
+          "type": "string"
+        },
+        "transcriptRefs": {
+          "items": {
+            "pattern": "^[A-Za-z0-9_-]+$",
+            "type": "string"
+          },
+          "title": "Transcriptrefs",
+          "type": "array"
+        },
+        "sceneRefs": {
+          "items": {
+            "pattern": "^[A-Za-z0-9_-]+$",
+            "type": "string"
+          },
+          "minItems": 1,
+          "title": "Scenerefs",
+          "type": "array"
+        },
+        "frameRefs": {
+          "items": {
+            "pattern": "^[A-Za-z0-9_-]+$",
+            "type": "string"
+          },
+          "title": "Framerefs",
+          "type": "array"
+        },
+        "asrSource": {
+          "$ref": "#/$defs/Provenance"
+        },
+        "dependencies": {
+          "items": {
+            "$ref": "#/$defs/Dependency"
+          },
+          "title": "Dependencies",
+          "type": "array"
+        }
+      },
+      "required": [
+        "unitId",
+        "kind",
+        "sourceRange",
+        "originalText",
+        "timingQuality",
+        "transcriptRefs",
+        "sceneRefs",
+        "frameRefs",
+        "asrSource",
+        "dependencies"
+      ],
+      "title": "MaterialUnit",
+      "type": "object"
+    },
+    "Observation": {
+      "additionalProperties": false,
+      "properties": {
+        "frameId": {
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Frameid",
+          "type": "string"
+        },
+        "sceneId": {
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Sceneid",
+          "type": "string"
+        },
+        "timestampMs": {
+          "maximum": 9007199254740991,
+          "minimum": 0,
+          "title": "Timestampms",
+          "type": "integer"
+        },
+        "description": {
+          "title": "Description",
+          "type": "string"
+        },
+        "source": {
+          "$ref": "#/$defs/Provenance"
+        }
+      },
+      "required": [
+        "frameId",
+        "sceneId",
+        "timestampMs",
+        "description",
+        "source"
+      ],
+      "title": "Observation",
+      "type": "object"
+    },
+    "Provenance": {
+      "additionalProperties": false,
+      "properties": {
+        "mode": {
+          "enum": [
+            "REAL",
+            "SIMULATED",
+            "MIXED",
+            "NO_SPEECH",
+            "UNAVAILABLE"
+          ],
+          "title": "Mode",
+          "type": "string"
+        },
+        "provider": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "pattern": "\\S",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Provider"
+        },
+        "model": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "pattern": "\\S",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Model"
+        },
+        "reason": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "pattern": "\\S",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Reason"
+        }
+      },
+      "required": [
+        "mode",
+        "provider",
+        "model",
+        "reason"
+      ],
+      "title": "Provenance",
+      "type": "object"
+    },
+    "Range": {
+      "additionalProperties": false,
+      "properties": {
+        "startMs": {
+          "maximum": 9007199254740991,
+          "minimum": 0,
+          "title": "Startms",
+          "type": "integer"
+        },
+        "endMs": {
+          "maximum": 9007199254740991,
+          "minimum": 1,
+          "title": "Endms",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "startMs",
+        "endMs"
+      ],
+      "title": "Range",
+      "type": "object"
+    },
+    "Scene": {
+      "additionalProperties": false,
+      "properties": {
+        "sceneId": {
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Sceneid",
+          "type": "string"
+        },
+        "sourceRange": {
+          "$ref": "#/$defs/Range"
+        }
+      },
+      "required": [
+        "sceneId",
+        "sourceRange"
+      ],
+      "title": "Scene",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "indexSchemaVersion": {
+      "const": "1.0",
+      "title": "Indexschemaversion",
+      "type": "string"
+    },
+    "indexId": {
+      "pattern": "^[A-Za-z0-9_-]+$",
+      "title": "Indexid",
+      "type": "string"
+    },
+    "indexVersion": {
+      "maximum": 9007199254740991,
+      "minimum": 1,
+      "title": "Indexversion",
+      "type": "integer"
+    },
+    "indexHash": {
+      "pattern": "^sha256:[0-9a-f]{64}$",
+      "title": "Indexhash",
+      "type": "string"
+    },
+    "assetRef": {
+      "$ref": "#/$defs/AssetRef"
+    },
+    "analysisRef": {
+      "$ref": "#/$defs/ArtifactRef"
+    },
+    "scenes": {
+      "items": {
+        "$ref": "#/$defs/Scene"
+      },
+      "minItems": 1,
+      "title": "Scenes",
+      "type": "array"
+    },
+    "observations": {
+      "items": {
+        "$ref": "#/$defs/Observation"
+      },
+      "title": "Observations",
+      "type": "array"
+    },
+    "transcripts": {
+      "items": {
+        "$ref": "#/$defs/IndexTranscript"
+      },
+      "title": "Transcripts",
+      "type": "array"
+    },
+    "units": {
+      "items": {
+        "$ref": "#/$defs/MaterialUnit"
+      },
+      "minItems": 1,
+      "title": "Units",
+      "type": "array"
+    }
+  },
+  "required": [
+    "indexSchemaVersion",
+    "indexId",
+    "indexVersion",
+    "indexHash",
+    "assetRef",
+    "analysisRef",
+    "scenes",
+    "observations",
+    "transcripts",
+    "units"
+  ],
+  "title": "MaterialIndexV1",
+  "type": "object"
+}

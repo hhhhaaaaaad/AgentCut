@@ -1,0 +1,6413 @@
+{
+  "fixtureVersion": "1.0",
+  "fictional": true,
+  "base": {
+    "materialIndex": {
+      "indexSchemaVersion": "1.0",
+      "indexId": "index_fixture",
+      "indexVersion": 3,
+      "indexHash": "sha256:e97d50988f20e47f2a4b7a26940b56f502d89eb2cd276073b241a63e1b393648",
+      "assetRef": {
+        "assetId": "asset_fixture",
+        "assetHash": "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "durationMs": 12000,
+        "displayName": "虚构采访.mp4"
+      },
+      "analysisRef": {
+        "artifactId": "analysis_fixture",
+        "revision": 2,
+        "contentHash": "sha256:bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"
+      },
+      "scenes": [
+        {
+          "sceneId": "scene_1",
+          "sourceRange": {
+            "startMs": 0,
+            "endMs": 6000
+          }
+        },
+        {
+          "sceneId": "scene_2",
+          "sourceRange": {
+            "startMs": 6000,
+            "endMs": 12000
+          }
+        }
+      ],
+      "observations": [
+        {
+          "frameId": "frame_1",
+          "sceneId": "scene_1",
+          "timestampMs": 1000,
+          "description": "受访者介绍主题。",
+          "source": {
+            "mode": "REAL",
+            "provider": "fixture",
+            "model": "fixture-model",
+            "reason": null
+          }
+        },
+        {
+          "frameId": "frame_2",
+          "sceneId": "scene_2",
+          "timestampMs": 6500,
+          "description": "受访者解释观点。",
+          "source": {
+            "mode": "REAL",
+            "provider": "fixture",
+            "model": "fixture-model",
+            "reason": null
+          }
+        },
+        {
+          "frameId": "frame_3",
+          "sceneId": "scene_2",
+          "timestampMs": 9000,
+          "description": "受访者总结。",
+          "source": {
+            "mode": "REAL",
+            "provider": "fixture",
+            "model": "fixture-model",
+            "reason": null
+          }
+        }
+      ],
+      "units": [
+        {
+          "unitId": "unit_1",
+          "kind": "SPEECH",
+          "sourceRange": {
+            "startMs": 0,
+            "endMs": 4000
+          },
+          "originalText": "不是越短越好。",
+          "timingQuality": "SENTENCE",
+          "transcriptRefs": [
+            "asr_1"
+          ],
+          "sceneRefs": [
+            "scene_1"
+          ],
+          "frameRefs": [
+            "frame_1"
+          ],
+          "asrSource": {
+            "mode": "REAL",
+            "provider": "fixture",
+            "model": "fixture-model",
+            "reason": null
+          },
+          "dependencies": []
+        },
+        {
+          "unitId": "unit_2",
+          "kind": "SPEECH",
+          "sourceRange": {
+            "startMs": 4000,
+            "endMs": 8000
+          },
+          "originalText": "而是让观众更容易看懂。",
+          "timingQuality": "SENTENCE",
+          "transcriptRefs": [
+            "asr_2"
+          ],
+          "sceneRefs": [
+            "scene_1",
+            "scene_2"
+          ],
+          "frameRefs": [
+            "frame_2"
+          ],
+          "asrSource": {
+            "mode": "REAL",
+            "provider": "fixture",
+            "model": "fixture-model",
+            "reason": null
+          },
+          "dependencies": [
+            {
+              "unitId": "unit_1",
+              "kind": "NEGATION",
+              "level": "REQUIRED"
+            }
+          ]
+        },
+        {
+          "unitId": "unit_3",
+          "kind": "SPEECH",
+          "sourceRange": {
+            "startMs": 8000,
+            "endMs": 12000
+          },
+          "originalText": "保留必要的上下文。",
+          "timingQuality": "SENTENCE",
+          "transcriptRefs": [
+            "asr_3"
+          ],
+          "sceneRefs": [
+            "scene_2"
+          ],
+          "frameRefs": [
+            "frame_3"
+          ],
+          "asrSource": {
+            "mode": "REAL",
+            "provider": "fixture",
+            "model": "fixture-model",
+            "reason": null
+          },
+          "dependencies": []
+        }
+      ],
+      "transcripts": [
+        {
+          "transcriptId": "asr_1",
+          "sourceRange": {
+            "startMs": 0,
+            "endMs": 4000
+          },
+          "text": "不是越短越好。",
+          "timingQuality": "SENTENCE",
+          "source": {
+            "mode": "REAL",
+            "provider": "fixture",
+            "model": "fixture-model",
+            "reason": null
+          }
+        },
+        {
+          "transcriptId": "asr_2",
+          "sourceRange": {
+            "startMs": 4000,
+            "endMs": 8000
+          },
+          "text": "而是让观众更容易看懂。",
+          "timingQuality": "SENTENCE",
+          "source": {
+            "mode": "REAL",
+            "provider": "fixture",
+            "model": "fixture-model",
+            "reason": null
+          }
+        },
+        {
+          "transcriptId": "asr_3",
+          "sourceRange": {
+            "startMs": 8000,
+            "endMs": 12000
+          },
+          "text": "保留必要的上下文。",
+          "timingQuality": "SENTENCE",
+          "source": {
+            "mode": "REAL",
+            "provider": "fixture",
+            "model": "fixture-model",
+            "reason": null
+          }
+        }
+      ]
+    },
+    "decision": {
+      "decisionSchemaVersion": "1.0",
+      "decisionId": "decision_fixture",
+      "indexRef": {
+        "indexId": "index_fixture",
+        "indexVersion": 3,
+        "indexHash": "sha256:e97d50988f20e47f2a4b7a26940b56f502d89eb2cd276073b241a63e1b393648"
+      },
+      "inputHash": "sha256:72407c6041df56c0fcf7ef4d6f4434065661843d5b5bcbf3dea2c24167b55690",
+      "rows": [
+        {
+          "rowId": "row_1",
+          "sourceUnitRefs": [
+            "unit_1",
+            "unit_2"
+          ],
+          "narrativeRole": "EXPLANATION",
+          "selectionReason": "完整保留不是与而是的转折。",
+          "packagingSuggestions": [
+            {
+              "suggestionId": "suggestion_1",
+              "kind": "TITLE",
+              "text": "建议标题：减少理解成本"
+            }
+          ]
+        },
+        {
+          "rowId": "row_2",
+          "sourceUnitRefs": [
+            "unit_3"
+          ],
+          "narrativeRole": "CONCLUSION",
+          "selectionReason": "保留总结。",
+          "packagingSuggestions": []
+        }
+      ]
+    },
+    "script": {
+      "scriptSchemaVersion": "1.0",
+      "scriptId": "script_fixture",
+      "revision": 1,
+      "projectId": "project_fixture",
+      "generationTaskId": "task_fixture",
+      "assetRef": {
+        "assetId": "asset_fixture",
+        "assetHash": "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "durationMs": 12000,
+        "displayName": "虚构采访.mp4"
+      },
+      "indexRef": {
+        "indexId": "index_fixture",
+        "indexVersion": 3,
+        "indexHash": "sha256:e97d50988f20e47f2a4b7a26940b56f502d89eb2cd276073b241a63e1b393648"
+      },
+      "inputHash": "sha256:72407c6041df56c0fcf7ef4d6f4434065661843d5b5bcbf3dea2c24167b55690",
+      "target": {
+        "mode": "TOPIC_EXTRACT",
+        "topic": "避免误删上下文",
+        "maxDurationMs": 15000,
+        "desiredDurationMs": 12000,
+        "aspectRatio": "9:16",
+        "subtitleRequested": true,
+        "style": "原声采访",
+        "contentType": "TUTORIAL_INTERVIEW",
+        "editPolicy": "ORIGINAL_ORDER_ORIGINAL_SPEED_HARD_CUT"
+      },
+      "title": "上下文比秒数更重要",
+      "rows": [
+        {
+          "rowId": "row_1",
+          "shotNo": 1,
+          "sourceUnitRefs": [
+            "unit_1",
+            "unit_2"
+          ],
+          "sourceParts": [
+            {
+              "unitId": "unit_1",
+              "sourceRange": {
+                "startMs": 0,
+                "endMs": 4000
+              }
+            },
+            {
+              "unitId": "unit_2",
+              "sourceRange": {
+                "startMs": 4000,
+                "endMs": 8000
+              }
+            }
+          ],
+          "outputRange": {
+            "startMs": 0,
+            "endMs": 8000
+          },
+          "spokenQuotes": [
+            {
+              "unitId": "unit_1",
+              "text": "不是越短越好。"
+            },
+            {
+              "unitId": "unit_2",
+              "text": "而是让观众更容易看懂。"
+            }
+          ],
+          "visualEvidence": [
+            {
+              "frameId": "frame_1",
+              "observedDescription": "受访者介绍主题。"
+            },
+            {
+              "frameId": "frame_2",
+              "observedDescription": "受访者解释观点。"
+            }
+          ],
+          "narrativeRole": "EXPLANATION",
+          "selectionReason": "完整保留不是与而是的转折。",
+          "dependencyRefs": [
+            "unit_1"
+          ],
+          "riskRefs": [],
+          "treatmentNote": "",
+          "audioTreatment": "ORIGINAL",
+          "cutNotes": ""
+        },
+        {
+          "rowId": "row_2",
+          "shotNo": 2,
+          "sourceUnitRefs": [
+            "unit_3"
+          ],
+          "sourceParts": [
+            {
+              "unitId": "unit_3",
+              "sourceRange": {
+                "startMs": 8000,
+                "endMs": 12000
+              }
+            }
+          ],
+          "outputRange": {
+            "startMs": 8000,
+            "endMs": 12000
+          },
+          "spokenQuotes": [
+            {
+              "unitId": "unit_3",
+              "text": "保留必要的上下文。"
+            }
+          ],
+          "visualEvidence": [
+            {
+              "frameId": "frame_3",
+              "observedDescription": "受访者总结。"
+            }
+          ],
+          "narrativeRole": "CONCLUSION",
+          "selectionReason": "保留总结。",
+          "dependencyRefs": [],
+          "riskRefs": [],
+          "treatmentNote": "",
+          "audioTreatment": "ORIGINAL",
+          "cutNotes": ""
+        }
+      ],
+      "estimatedDurationMs": 12000,
+      "captionCues": [
+        {
+          "cueId": "cue_unit_1",
+          "rowId": "row_1",
+          "unitId": "unit_1",
+          "text": "不是越短越好。",
+          "outputRange": {
+            "startMs": 0,
+            "endMs": 4000
+          },
+          "timingQuality": "SENTENCE"
+        },
+        {
+          "cueId": "cue_unit_2",
+          "rowId": "row_1",
+          "unitId": "unit_2",
+          "text": "而是让观众更容易看懂。",
+          "outputRange": {
+            "startMs": 4000,
+            "endMs": 8000
+          },
+          "timingQuality": "SENTENCE"
+        },
+        {
+          "cueId": "cue_unit_3",
+          "rowId": "row_2",
+          "unitId": "unit_3",
+          "text": "保留必要的上下文。",
+          "outputRange": {
+            "startMs": 8000,
+            "endMs": 12000
+          },
+          "timingQuality": "SENTENCE"
+        }
+      ],
+      "executableActions": [
+        {
+          "actionId": "audio_1",
+          "type": "ORIGINAL_AUDIO",
+          "rowId": "row_1",
+          "cueId": null
+        },
+        {
+          "actionId": "action_cue_unit_1",
+          "type": "CAPTION",
+          "rowId": "row_1",
+          "cueId": "cue_unit_1"
+        },
+        {
+          "actionId": "action_cue_unit_2",
+          "type": "CAPTION",
+          "rowId": "row_1",
+          "cueId": "cue_unit_2"
+        },
+        {
+          "actionId": "audio_2",
+          "type": "ORIGINAL_AUDIO",
+          "rowId": "row_2",
+          "cueId": null
+        },
+        {
+          "actionId": "action_cue_unit_3",
+          "type": "CAPTION",
+          "rowId": "row_2",
+          "cueId": "cue_unit_3"
+        }
+      ],
+      "packagingSuggestions": [
+        {
+          "suggestionId": "suggestion_1",
+          "kind": "TITLE",
+          "text": "建议标题：减少理解成本",
+          "rowId": "row_1",
+          "status": "PROPOSED"
+        }
+      ],
+      "manualNotes": "",
+      "riskItems": [],
+      "scriptHash": "sha256:a40d3001ee7ddc8eaa0694b78a084db44c23ad226af350ffa6ac097b21cd3f6c",
+      "validationReport": {
+        "validationVersion": "b1-1.0",
+        "candidateHash": "sha256:a40d3001ee7ddc8eaa0694b78a084db44c23ad226af350ffa6ac097b21cd3f6c",
+        "hardPassed": true,
+        "issueRefs": []
+      },
+      "quality": {
+        "candidateHash": "sha256:a40d3001ee7ddc8eaa0694b78a084db44c23ad226af350ffa6ac097b21cd3f6c",
+        "passed": true,
+        "overallScore": 0.9,
+        "issueRefs": []
+      },
+      "reviewStatus": "READY"
+    },
+    "submission": {
+      "protocolVersion": "1.0",
+      "messageType": "ANALYZE_REQUEST",
+      "taskId": "task_fixture",
+      "projectId": "project_fixture",
+      "runId": "run_fixture",
+      "attempt": 1,
+      "inputHash": "sha256:72407c6041df56c0fcf7ef4d6f4434065661843d5b5bcbf3dea2c24167b55690",
+      "configVersion": "config-1",
+      "input": {
+        "inputSchemaVersion": "1.0",
+        "requestId": "request_fixture",
+        "assetId": "asset_fixture",
+        "taskName": "虚构契约验收",
+        "target": {
+          "mode": "TOPIC_EXTRACT",
+          "topic": "避免误删上下文",
+          "maxDurationMs": 15000,
+          "desiredDurationMs": 12000,
+          "aspectRatio": "9:16",
+          "subtitleRequested": true,
+          "style": "原声采访",
+          "contentType": "TUTORIAL_INTERVIEW",
+          "editPolicy": "ORIGINAL_ORDER_ORIGINAL_SPEED_HARD_CUT"
+        }
+      },
+      "assetRef": {
+        "assetId": "asset_fixture",
+        "assetHash": "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "durationMs": 12000,
+        "displayName": "虚构采访.mp4"
+      },
+      "mediaObjectKey": "projects/fixture/source.mp4",
+      "callbackUrl": "http://127.0.0.1:8080/api/v1/tasks/fixture/events"
+    },
+    "events": [
+      {
+        "protocolVersion": "1.0",
+        "event": "PROGRESS",
+        "eventId": "event_1",
+        "requestId": "request_fixture",
+        "taskId": "task_fixture",
+        "projectId": "project_fixture",
+        "assetId": "asset_fixture",
+        "assetHash": "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "runId": "run_fixture",
+        "attempt": 1,
+        "inputHash": "sha256:72407c6041df56c0fcf7ef4d6f4434065661843d5b5bcbf3dea2c24167b55690",
+        "sequence": 1,
+        "heartbeatAt": "2026-01-01T00:00:01Z",
+        "phase": "PROBING",
+        "progress": 12,
+        "executionStatus": "RUNNING",
+        "analysisOutcome": "NONE",
+        "reviewStatus": "NOT_AVAILABLE",
+        "resultRefs": null,
+        "error": null
+      },
+      {
+        "protocolVersion": "1.0",
+        "event": "PROGRESS",
+        "eventId": "event_2",
+        "requestId": "request_fixture",
+        "taskId": "task_fixture",
+        "projectId": "project_fixture",
+        "assetId": "asset_fixture",
+        "assetHash": "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "runId": "run_fixture",
+        "attempt": 1,
+        "inputHash": "sha256:72407c6041df56c0fcf7ef4d6f4434065661843d5b5bcbf3dea2c24167b55690",
+        "sequence": 2,
+        "heartbeatAt": "2026-01-01T00:00:02Z",
+        "phase": "PLANNING",
+        "progress": 70,
+        "executionStatus": "RUNNING",
+        "analysisOutcome": "NONE",
+        "reviewStatus": "NOT_AVAILABLE",
+        "resultRefs": null,
+        "error": null
+      },
+      {
+        "protocolVersion": "1.0",
+        "event": "COMPLETED",
+        "eventId": "event_3",
+        "requestId": "request_fixture",
+        "taskId": "task_fixture",
+        "projectId": "project_fixture",
+        "assetId": "asset_fixture",
+        "assetHash": "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "runId": "run_fixture",
+        "attempt": 1,
+        "inputHash": "sha256:72407c6041df56c0fcf7ef4d6f4434065661843d5b5bcbf3dea2c24167b55690",
+        "sequence": 3,
+        "heartbeatAt": "2026-01-01T00:00:03Z",
+        "phase": "COMPLETED",
+        "progress": 100,
+        "executionStatus": "SUCCESS",
+        "analysisOutcome": "COMPLETE",
+        "reviewStatus": "READY",
+        "resultRefs": {
+          "analysis": {
+            "artifactId": "analysis_fixture",
+            "revision": 2,
+            "contentHash": "sha256:bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"
+          },
+          "materialIndex": {
+            "artifactId": "index_fixture",
+            "revision": 3,
+            "contentHash": "sha256:e97d50988f20e47f2a4b7a26940b56f502d89eb2cd276073b241a63e1b393648"
+          },
+          "script": {
+            "artifactId": "script_fixture",
+            "revision": 1,
+            "contentHash": "sha256:a40d3001ee7ddc8eaa0694b78a084db44c23ad226af350ffa6ac097b21cd3f6c"
+          }
+        },
+        "error": null
+      }
+    ]
+  },
+  "cases": [
+    {
+      "name": "complete-real-ready",
+      "valid": true,
+      "patches": []
+    },
+    {
+      "name": "qa-unavailable-review-draft",
+      "valid": true,
+      "patches": [
+        {
+          "op": "set",
+          "path": [
+            "script",
+            "riskItems"
+          ],
+          "value": [
+            {
+              "riskId": "risk_1",
+              "code": "QA_UNAVAILABLE",
+              "level": "REVIEW",
+              "rowRefs": [],
+              "unitRefs": [],
+              "message": "Fictional QA_UNAVAILABLE"
+            }
+          ]
+        },
+        {
+          "op": "set",
+          "path": [
+            "script",
+            "scriptHash"
+          ],
+          "value": "sha256:df502da03be85f2bc9265966e969c49772ea98bb66f9a9f7db8c65e8e51250bf"
+        },
+        {
+          "op": "set",
+          "path": [
+            "script",
+            "validationReport",
+            "candidateHash"
+          ],
+          "value": "sha256:df502da03be85f2bc9265966e969c49772ea98bb66f9a9f7db8c65e8e51250bf"
+        },
+        {
+          "op": "set",
+          "path": [
+            "script",
+            "validationReport",
+            "issueRefs"
+          ],
+          "value": [
+            "risk_1"
+          ]
+        },
+        {
+          "op": "set",
+          "path": [
+            "script",
+            "quality"
+          ],
+          "value": null
+        },
+        {
+          "op": "set",
+          "path": [
+            "script",
+            "reviewStatus"
+          ],
+          "value": "NEEDS_REVIEW"
+        },
+        {
+          "op": "set",
+          "path": [
+            "events",
+            2,
+            "reviewStatus"
+          ],
+          "value": "NEEDS_REVIEW"
+        },
+        {
+          "op": "set",
+          "path": [
+            "events",
+            2,
+            "resultRefs",
+            "script",
+            "contentHash"
+          ],
+          "value": "sha256:df502da03be85f2bc9265966e969c49772ea98bb66f9a9f7db8c65e8e51250bf"
+        }
+      ]
+    },
+    {
+      "name": "coarse-whole-block-needs-review",
+      "valid": true,
+      "patches": [
+        {
+          "op": "set",
+          "path": [
+            "materialIndex",
+            "indexHash"
+          ],
+          "value": "sha256:68fc1503562f537da2b8e7e5059bd6d46e64b9daabc2ed345233c0babfba9f70"
+        },
+        {
+          "op": "set",
+          "path": [
+            "materialIndex",
+            "units",
+            0,
+            "timingQuality"
+          ],
+          "value": "COARSE_BLOCK"
+        },
+        {
+          "op": "set",
+          "path": [
+            "materialIndex",
+            "transcripts",
+            0,
+            "timingQuality"
+          ],
+          "value": "COARSE_BLOCK"
+        },
+        {
+          "op": "set",
+          "path": [
+            "decision",
+            "indexRef",
+            "indexHash"
+          ],
+          "value": "sha256:68fc1503562f537da2b8e7e5059bd6d46e64b9daabc2ed345233c0babfba9f70"
+        },
+        {
+          "op": "set",
+          "path": [
+            "script",
+            "indexRef",
+            "indexHash"
+          ],
+          "value": "sha256:68fc1503562f537da2b8e7e5059bd6d46e64b9daabc2ed345233c0babfba9f70"
+        },
+        {
+          "op": "set",
+          "path": [
+            "script",
+            "rows",
+            0,
+            "riskRefs"
+          ],
+          "value": [
+            "risk_1",
+            "risk_2"
+          ]
+        },
+        {
+          "op": "set",
+          "path": [
+            "script",
+            "captionCues"
+          ],
+          "value": [
+            {
+              "cueId": "cue_unit_2",
+              "rowId": "row_1",
+              "unitId": "unit_2",
+              "text": "而是让观众更容易看懂。",
+              "outputRange": {
+                "startMs": 4000,
+                "endMs": 8000
+              },
+              "timingQuality": "SENTENCE"
+            },
+            {
+              "cueId": "cue_unit_3",
+              "rowId": "row_2",
+              "unitId": "unit_3",
+              "text": "保留必要的上下文。",
+              "outputRange": {
+                "startMs": 8000,
+                "endMs": 12000
+              },
+              "timingQuality": "SENTENCE"
+            }
+          ]
+        },
+        {
+          "op": "set",
+          "path": [
+            "script",
+            "executableActions"
+          ],
+          "value": [
+            {
+              "actionId": "audio_1",
+              "type": "ORIGINAL_AUDIO",
+              "rowId": "row_1",
+              "cueId": null
+            },
+            {
+              "actionId": "action_cue_unit_2",
+              "type": "CAPTION",
+              "rowId": "row_1",
+              "cueId": "cue_unit_2"
+            },
+            {
+              "actionId": "audio_2",
+              "type": "ORIGINAL_AUDIO",
+              "rowId": "row_2",
+              "cueId": null
+            },
+            {
+              "actionId": "action_cue_unit_3",
+              "type": "CAPTION",
+              "rowId": "row_2",
+              "cueId": "cue_unit_3"
+            }
+          ]
+        },
+        {
+          "op": "set",
+          "path": [
+            "script",
+            "riskItems"
+          ],
+          "value": [
+            {
+              "riskId": "risk_1",
+              "code": "COARSE_ALIGNMENT",
+              "level": "REVIEW",
+              "rowRefs": [
+                "row_1"
+              ],
+              "unitRefs": [
+                "unit_1"
+              ],
+              "message": "Fictional COARSE_ALIGNMENT"
+            },
+            {
+              "riskId": "risk_2",
+              "code": "SUBTITLE_UNAVAILABLE",
+              "level": "REVIEW",
+              "rowRefs": [
+                "row_1"
+              ],
+              "unitRefs": [
+                "unit_1"
+              ],
+              "message": "Fictional SUBTITLE_UNAVAILABLE"
+            }
+          ]
+        },
+        {
+          "op": "set",
+          "path": [
+            "script",
+            "scriptHash"
+          ],
+          "value": "sha256:01c177a350db39230c6012eea5aed2f778fd5fe6f42acb035117c395992b350c"
+        },
+        {
+          "op": "set",
+          "path": [
+            "script",
+            "validationReport",
+            "candidateHash"
+          ],
+          "value": "sha256:01c177a350db39230c6012eea5aed2f778fd5fe6f42acb035117c395992b350c"
+        },
+        {
+          "op": "set",
+          "path": [
+            "script",
+            "validationReport",
+            "issueRefs"
+          ],
+          "value": [
+            "risk_1",
+            "risk_2"
+          ]
+        },
+        {
+          "op": "set",
+          "path": [
+            "script",
+            "quality",
+            "candidateHash"
+          ],
+          "value": "sha256:01c177a350db39230c6012eea5aed2f778fd5fe6f42acb035117c395992b350c"
+        },
+        {
+          "op": "set",
+          "path": [
+            "script",
+            "reviewStatus"
+          ],
+          "value": "NEEDS_REVIEW"
+        },
+        {
+          "op": "set",
+          "path": [
+            "events",
+            2,
+            "reviewStatus"
+          ],
+          "value": "NEEDS_REVIEW"
+        },
+        {
+          "op": "set",
+          "path": [
+            "events",
+            2,
+            "resultRefs",
+            "materialIndex",
+            "contentHash"
+          ],
+          "value": "sha256:68fc1503562f537da2b8e7e5059bd6d46e64b9daabc2ed345233c0babfba9f70"
+        },
+        {
+          "op": "set",
+          "path": [
+            "events",
+            2,
+            "resultRefs",
+            "script",
+            "contentHash"
+          ],
+          "value": "sha256:01c177a350db39230c6012eea5aed2f778fd5fe6f42acb035117c395992b350c"
+        }
+      ]
+    },
+    {
+      "name": "simulated-transcript-is-marked-review",
+      "valid": true,
+      "patches": [
+        {
+          "op": "set",
+          "path": [
+            "materialIndex",
+            "indexHash"
+          ],
+          "value": "sha256:3f328cbde09126116c9ec1fbc34c1f11816288159721ad79d5021928ec97aee8"
+        },
+        {
+          "op": "set",
+          "path": [
+            "materialIndex",
+            "units",
+            0,
+            "asrSource",
+            "mode"
+          ],
+          "value": "SIMULATED"
+        },
+        {
+          "op": "set",
+          "path": [
+            "materialIndex",
+            "transcripts",
+            0,
+            "source",
+            "mode"
+          ],
+          "value": "SIMULATED"
+        },
+        {
+          "op": "set",
+          "path": [
+            "decision",
+            "indexRef",
+            "indexHash"
+          ],
+          "value": "sha256:3f328cbde09126116c9ec1fbc34c1f11816288159721ad79d5021928ec97aee8"
+        },
+        {
+          "op": "set",
+          "path": [
+            "script",
+            "indexRef",
+            "indexHash"
+          ],
+          "value": "sha256:3f328cbde09126116c9ec1fbc34c1f11816288159721ad79d5021928ec97aee8"
+        },
+        {
+          "op": "set",
+          "path": [
+            "script",
+            "rows",
+            0,
+            "riskRefs"
+          ],
+          "value": [
+            "risk_1",
+            "risk_2"
+          ]
+        },
+        {
+          "op": "set",
+          "path": [
+            "script",
+            "captionCues"
+          ],
+          "value": [
+            {
+              "cueId": "cue_unit_2",
+              "rowId": "row_1",
+              "unitId": "unit_2",
+              "text": "而是让观众更容易看懂。",
+              "outputRange": {
+                "startMs": 4000,
+                "endMs": 8000
+              },
+              "timingQuality": "SENTENCE"
+            },
+            {
+              "cueId": "cue_unit_3",
+              "rowId": "row_2",
+              "unitId": "unit_3",
+              "text": "保留必要的上下文。",
+              "outputRange": {
+                "startMs": 8000,
+                "endMs": 12000
+              },
+              "timingQuality": "SENTENCE"
+            }
+          ]
+        },
+        {
+          "op": "set",
+          "path": [
+            "script",
+            "executableActions"
+          ],
+          "value": [
+            {
+              "actionId": "audio_1",
+              "type": "ORIGINAL_AUDIO",
+              "rowId": "row_1",
+              "cueId": null
+            },
+            {
+              "actionId": "action_cue_unit_2",
+              "type": "CAPTION",
+              "rowId": "row_1",
+              "cueId": "cue_unit_2"
+            },
+            {
+              "actionId": "audio_2",
+              "type": "ORIGINAL_AUDIO",
+              "rowId": "row_2",
+              "cueId": null
+            },
+            {
+              "actionId": "action_cue_unit_3",
+              "type": "CAPTION",
+              "rowId": "row_2",
+              "cueId": "cue_unit_3"
+            }
+          ]
+        },
+        {
+          "op": "set",
+          "path": [
+            "script",
+            "riskItems"
+          ],
+          "value": [
+            {
+              "riskId": "risk_1",
+              "code": "UNTRUSTED_SOURCE",
+              "level": "REVIEW",
+              "rowRefs": [
+                "row_1"
+              ],
+              "unitRefs": [
+                "unit_1"
+              ],
+              "message": "Fictional UNTRUSTED_SOURCE"
+            },
+            {
+              "riskId": "risk_2",
+              "code": "SUBTITLE_UNAVAILABLE",
+              "level": "REVIEW",
+              "rowRefs": [
+                "row_1"
+              ],
+              "unitRefs": [
+                "unit_1"
+              ],
+              "message": "Fictional SUBTITLE_UNAVAILABLE"
+            }
+          ]
+        },
+        {
+          "op": "set",
+          "path": [
+            "script",
+            "scriptHash"
+          ],
+          "value": "sha256:6239d8457729c1143171b43160d640f5b15a6592d42d3d76aa5f6b41ffe242eb"
+        },
+        {
+          "op": "set",
+          "path": [
+            "script",
+            "validationReport",
+            "candidateHash"
+          ],
+          "value": "sha256:6239d8457729c1143171b43160d640f5b15a6592d42d3d76aa5f6b41ffe242eb"
+        },
+        {
+          "op": "set",
+          "path": [
+            "script",
+            "validationReport",
+            "issueRefs"
+          ],
+          "value": [
+            "risk_1",
+            "risk_2"
+          ]
+        },
+        {
+          "op": "set",
+          "path": [
+            "script",
+            "quality",
+            "candidateHash"
+          ],
+          "value": "sha256:6239d8457729c1143171b43160d640f5b15a6592d42d3d76aa5f6b41ffe242eb"
+        },
+        {
+          "op": "set",
+          "path": [
+            "script",
+            "reviewStatus"
+          ],
+          "value": "NEEDS_REVIEW"
+        },
+        {
+          "op": "set",
+          "path": [
+            "events",
+            2,
+            "reviewStatus"
+          ],
+          "value": "NEEDS_REVIEW"
+        },
+        {
+          "op": "set",
+          "path": [
+            "events",
+            2,
+            "resultRefs",
+            "materialIndex",
+            "contentHash"
+          ],
+          "value": "sha256:3f328cbde09126116c9ec1fbc34c1f11816288159721ad79d5021928ec97aee8"
+        },
+        {
+          "op": "set",
+          "path": [
+            "events",
+            2,
+            "resultRefs",
+            "script",
+            "contentHash"
+          ],
+          "value": "sha256:6239d8457729c1143171b43160d640f5b15a6592d42d3d76aa5f6b41ffe242eb"
+        }
+      ]
+    },
+    {
+      "name": "partial-visual-preserves-other-evidence",
+      "valid": true,
+      "patches": [
+        {
+          "op": "set",
+          "path": [
+            "materialIndex",
+            "indexHash"
+          ],
+          "value": "sha256:7e69266dfa4cda47db2ca839f59cb9b81b331de383b948cddbb2031edd6505c8"
+        },
+        {
+          "op": "set",
+          "path": [
+            "materialIndex",
+            "observations"
+          ],
+          "value": [
+            {
+              "frameId": "frame_1",
+              "sceneId": "scene_1",
+              "timestampMs": 1000,
+              "description": "受访者介绍主题。",
+              "source": {
+                "mode": "REAL",
+                "provider": "fixture",
+                "model": "fixture-model",
+                "reason": null
+              }
+            },
+            {
+              "frameId": "frame_2",
+              "sceneId": "scene_2",
+              "timestampMs": 6500,
+              "description": "受访者解释观点。",
+              "source": {
+                "mode": "REAL",
+                "provider": "fixture",
+                "model": "fixture-model",
+                "reason": null
+              }
+            }
+          ]
+        },
+        {
+          "op": "set",
+          "path": [
+            "materialIndex",
+            "units",
+            2,
+            "frameRefs"
+          ],
+          "value": []
+        },
+        {
+          "op": "set",
+          "path": [
+            "decision",
+            "indexRef",
+            "indexHash"
+          ],
+          "value": "sha256:7e69266dfa4cda47db2ca839f59cb9b81b331de383b948cddbb2031edd6505c8"
+        },
+        {
+          "op": "set",
+          "path": [
+            "script",
+            "indexRef",
+            "indexHash"
+          ],
+          "value": "sha256:7e69266dfa4cda47db2ca839f59cb9b81b331de383b948cddbb2031edd6505c8"
+        },
+        {
+          "op": "set",
+          "path": [
+            "script",
+            "rows",
+            1,
+            "visualEvidence"
+          ],
+          "value": []
+        },
+        {
+          "op": "set",
+          "path": [
+            "script",
+            "rows",
+            1,
+            "riskRefs"
+          ],
+          "value": [
+            "risk_1"
+          ]
+        },
+        {
+          "op": "set",
+          "path": [
+            "script",
+            "riskItems"
+          ],
+          "value": [
+            {
+              "riskId": "risk_1",
+              "code": "VISUAL_UNVERIFIED",
+              "level": "REVIEW",
+              "rowRefs": [
+                "row_2"
+              ],
+              "unitRefs": [
+                "unit_3"
+              ],
+              "message": "Fictional VISUAL_UNVERIFIED"
+            }
+          ]
+        },
+        {
+          "op": "set",
+          "path": [
+            "script",
+            "scriptHash"
+          ],
+          "value": "sha256:ada68717ffe5a4404ad47f4fb1200e853a9e6ccd0969fb00747839eed8086473"
+        },
+        {
+          "op": "set",
+          "path": [
+            "script",
+            "validationReport",
+            "candidateHash"
+          ],
+          "value": "sha256:ada68717ffe5a4404ad47f4fb1200e853a9e6ccd0969fb00747839eed8086473"
+        },
+        {
+          "op": "set",
+          "path": [
+            "script",
+            "validationReport",
+            "issueRefs"
+          ],
+          "value": [
+            "risk_1"
+          ]
+        },
+        {
+          "op": "set",
+          "path": [
+            "script",
+            "quality",
+            "candidateHash"
+          ],
+          "value": "sha256:ada68717ffe5a4404ad47f4fb1200e853a9e6ccd0969fb00747839eed8086473"
+        },
+        {
+          "op": "set",
+          "path": [
+            "script",
+            "reviewStatus"
+          ],
+          "value": "NEEDS_REVIEW"
+        },
+        {
+          "op": "set",
+          "path": [
+            "events",
+            2,
+            "analysisOutcome"
+          ],
+          "value": "PARTIAL"
+        },
+        {
+          "op": "set",
+          "path": [
+            "events",
+            2,
+            "reviewStatus"
+          ],
+          "value": "NEEDS_REVIEW"
+        },
+        {
+          "op": "set",
+          "path": [
+            "events",
+            2,
+            "resultRefs",
+            "materialIndex",
+            "contentHash"
+          ],
+          "value": "sha256:7e69266dfa4cda47db2ca839f59cb9b81b331de383b948cddbb2031edd6505c8"
+        },
+        {
+          "op": "set",
+          "path": [
+            "events",
+            2,
+            "resultRefs",
+            "script",
+            "contentHash"
+          ],
+          "value": "sha256:ada68717ffe5a4404ad47f4fb1200e853a9e6ccd0969fb00747839eed8086473"
+        }
+      ]
+    },
+    {
+      "name": "no-speech-does-not-invent-quotes",
+      "valid": true,
+      "patches": [
+        {
+          "op": "set",
+          "path": [
+            "materialIndex",
+            "indexHash"
+          ],
+          "value": "sha256:0f4996ca3fed95d2d786164800c05afaef25f6b098f90634bed6ec0161b89b92"
+        },
+        {
+          "op": "set",
+          "path": [
+            "materialIndex",
+            "units",
+            0,
+            "kind"
+          ],
+          "value": "VISUAL_ONLY"
+        },
+        {
+          "op": "set",
+          "path": [
+            "materialIndex",
+            "units",
+            0,
+            "originalText"
+          ],
+          "value": ""
+        },
+        {
+          "op": "set",
+          "path": [
+            "materialIndex",
+            "units",
+            0,
+            "timingQuality"
+          ],
+          "value": "NONE"
+        },
+        {
+          "op": "set",
+          "path": [
+            "materialIndex",
+            "units",
+            0,
+            "transcriptRefs"
+          ],
+          "value": []
+        },
+        {
+          "op": "set",
+          "path": [
+            "materialIndex",
+            "units",
+            0,
+            "asrSource",
+            "mode"
+          ],
+          "value": "NO_SPEECH"
+        },
+        {
+          "op": "set",
+          "path": [
+            "materialIndex",
+            "units",
+            1,
+            "kind"
+          ],
+          "value": "VISUAL_ONLY"
+        },
+        {
+          "op": "set",
+          "path": [
+            "materialIndex",
+            "units",
+            1,
+            "originalText"
+          ],
+          "value": ""
+        },
+        {
+          "op": "set",
+          "path": [
+            "materialIndex",
+            "units",
+            1,
+            "timingQuality"
+          ],
+          "value": "NONE"
+        },
+        {
+          "op": "set",
+          "path": [
+            "materialIndex",
+            "units",
+            1,
+            "transcriptRefs"
+          ],
+          "value": []
+        },
+        {
+          "op": "set",
+          "path": [
+            "materialIndex",
+            "units",
+            1,
+            "asrSource",
+            "mode"
+          ],
+          "value": "NO_SPEECH"
+        },
+        {
+          "op": "set",
+          "path": [
+            "materialIndex",
+            "units",
+            2,
+            "kind"
+          ],
+          "value": "VISUAL_ONLY"
+        },
+        {
+          "op": "set",
+          "path": [
+            "materialIndex",
+            "units",
+            2,
+            "originalText"
+          ],
+          "value": ""
+        },
+        {
+          "op": "set",
+          "path": [
+            "materialIndex",
+            "units",
+            2,
+            "timingQuality"
+          ],
+          "value": "NONE"
+        },
+        {
+          "op": "set",
+          "path": [
+            "materialIndex",
+            "units",
+            2,
+            "transcriptRefs"
+          ],
+          "value": []
+        },
+        {
+          "op": "set",
+          "path": [
+            "materialIndex",
+            "units",
+            2,
+            "asrSource",
+            "mode"
+          ],
+          "value": "NO_SPEECH"
+        },
+        {
+          "op": "set",
+          "path": [
+            "materialIndex",
+            "transcripts"
+          ],
+          "value": []
+        },
+        {
+          "op": "set",
+          "path": [
+            "decision",
+            "indexRef",
+            "indexHash"
+          ],
+          "value": "sha256:0f4996ca3fed95d2d786164800c05afaef25f6b098f90634bed6ec0161b89b92"
+        },
+        {
+          "op": "set",
+          "path": [
+            "script",
+            "indexRef",
+            "indexHash"
+          ],
+          "value": "sha256:0f4996ca3fed95d2d786164800c05afaef25f6b098f90634bed6ec0161b89b92"
+        },
+        {
+          "op": "set",
+          "path": [
+            "script",
+            "rows",
+            0,
+            "spokenQuotes"
+          ],
+          "value": []
+        },
+        {
+          "op": "set",
+          "path": [
+            "script",
+            "rows",
+            1,
+            "spokenQuotes"
+          ],
+          "value": []
+        },
+        {
+          "op": "set",
+          "path": [
+            "script",
+            "captionCues"
+          ],
+          "value": []
+        },
+        {
+          "op": "set",
+          "path": [
+            "script",
+            "executableActions"
+          ],
+          "value": [
+            {
+              "actionId": "audio_1",
+              "type": "ORIGINAL_AUDIO",
+              "rowId": "row_1",
+              "cueId": null
+            },
+            {
+              "actionId": "audio_2",
+              "type": "ORIGINAL_AUDIO",
+              "rowId": "row_2",
+              "cueId": null
+            }
+          ]
+        },
+        {
+          "op": "set",
+          "path": [
+            "script",
+            "scriptHash"
+          ],
+          "value": "sha256:44b5a4a2571310e388bb47fadd98f9cf943e023994f062d8d83e11ca9e1989e5"
+        },
+        {
+          "op": "set",
+          "path": [
+            "script",
+            "validationReport",
+            "candidateHash"
+          ],
+          "value": "sha256:44b5a4a2571310e388bb47fadd98f9cf943e023994f062d8d83e11ca9e1989e5"
+        },
+        {
+          "op": "set",
+          "path": [
+            "script",
+            "quality",
+            "candidateHash"
+          ],
+          "value": "sha256:44b5a4a2571310e388bb47fadd98f9cf943e023994f062d8d83e11ca9e1989e5"
+        },
+        {
+          "op": "set",
+          "path": [
+            "events",
+            2,
+            "resultRefs",
+            "materialIndex",
+            "contentHash"
+          ],
+          "value": "sha256:0f4996ca3fed95d2d786164800c05afaef25f6b098f90634bed6ec0161b89b92"
+        },
+        {
+          "op": "set",
+          "path": [
+            "events",
+            2,
+            "resultRefs",
+            "script",
+            "contentHash"
+          ],
+          "value": "sha256:44b5a4a2571310e388bb47fadd98f9cf943e023994f062d8d83e11ca9e1989e5"
+        }
+      ]
+    },
+    {
+      "name": "running-task-has-no-normal-result",
+      "valid": true,
+      "patches": [
+        {
+          "op": "set",
+          "path": [
+            "materialIndex"
+          ],
+          "value": null
+        },
+        {
+          "op": "set",
+          "path": [
+            "decision"
+          ],
+          "value": null
+        },
+        {
+          "op": "set",
+          "path": [
+            "script"
+          ],
+          "value": null
+        },
+        {
+          "op": "set",
+          "path": [
+            "events"
+          ],
+          "value": [
+            {
+              "protocolVersion": "1.0",
+              "event": "PROGRESS",
+              "eventId": "event_1",
+              "requestId": "request_fixture",
+              "taskId": "task_fixture",
+              "projectId": "project_fixture",
+              "assetId": "asset_fixture",
+              "assetHash": "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+              "runId": "run_fixture",
+              "attempt": 1,
+              "inputHash": "sha256:72407c6041df56c0fcf7ef4d6f4434065661843d5b5bcbf3dea2c24167b55690",
+              "sequence": 1,
+              "heartbeatAt": "2026-01-01T00:00:01Z",
+              "phase": "PROBING",
+              "progress": 12,
+              "executionStatus": "RUNNING",
+              "analysisOutcome": "NONE",
+              "reviewStatus": "NOT_AVAILABLE",
+              "resultRefs": null,
+              "error": null
+            },
+            {
+              "protocolVersion": "1.0",
+              "event": "PROGRESS",
+              "eventId": "event_2",
+              "requestId": "request_fixture",
+              "taskId": "task_fixture",
+              "projectId": "project_fixture",
+              "assetId": "asset_fixture",
+              "assetHash": "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+              "runId": "run_fixture",
+              "attempt": 1,
+              "inputHash": "sha256:72407c6041df56c0fcf7ef4d6f4434065661843d5b5bcbf3dea2c24167b55690",
+              "sequence": 2,
+              "heartbeatAt": "2026-01-01T00:00:02Z",
+              "phase": "PLANNING",
+              "progress": 70,
+              "executionStatus": "RUNNING",
+              "analysisOutcome": "NONE",
+              "reviewStatus": "NOT_AVAILABLE",
+              "resultRefs": null,
+              "error": null
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "failed-no-candidate-without-fake-script",
+      "valid": true,
+      "patches": [
+        {
+          "op": "set",
+          "path": [
+            "materialIndex"
+          ],
+          "value": null
+        },
+        {
+          "op": "set",
+          "path": [
+            "decision"
+          ],
+          "value": null
+        },
+        {
+          "op": "set",
+          "path": [
+            "script"
+          ],
+          "value": null
+        },
+        {
+          "op": "set",
+          "path": [
+            "events"
+          ],
+          "value": [
+            {
+              "protocolVersion": "1.0",
+              "event": "PROGRESS",
+              "eventId": "event_1",
+              "requestId": "request_fixture",
+              "taskId": "task_fixture",
+              "projectId": "project_fixture",
+              "assetId": "asset_fixture",
+              "assetHash": "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+              "runId": "run_fixture",
+              "attempt": 1,
+              "inputHash": "sha256:72407c6041df56c0fcf7ef4d6f4434065661843d5b5bcbf3dea2c24167b55690",
+              "sequence": 1,
+              "heartbeatAt": "2026-01-01T00:00:01Z",
+              "phase": "PROBING",
+              "progress": 12,
+              "executionStatus": "RUNNING",
+              "analysisOutcome": "NONE",
+              "reviewStatus": "NOT_AVAILABLE",
+              "resultRefs": null,
+              "error": null
+            },
+            {
+              "protocolVersion": "1.0",
+              "event": "COMPLETED",
+              "eventId": "event_2",
+              "requestId": "request_fixture",
+              "taskId": "task_fixture",
+              "projectId": "project_fixture",
+              "assetId": "asset_fixture",
+              "assetHash": "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+              "runId": "run_fixture",
+              "attempt": 1,
+              "inputHash": "sha256:72407c6041df56c0fcf7ef4d6f4434065661843d5b5bcbf3dea2c24167b55690",
+              "sequence": 2,
+              "heartbeatAt": "2026-01-01T00:00:02Z",
+              "phase": "FAILED",
+              "progress": 70,
+              "executionStatus": "FAILED",
+              "analysisOutcome": "NONE",
+              "reviewStatus": "NOT_AVAILABLE",
+              "resultRefs": null,
+              "error": {
+                "code": "NO_CANDIDATE",
+                "message": "No legal candidate found in bounded search.",
+                "retryable": false
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "accepted-manual-suggestion-is-not-executed",
+      "valid": true,
+      "patches": [
+        {
+          "op": "set",
+          "path": [
+            "script",
+            "packagingSuggestions",
+            0,
+            "status"
+          ],
+          "value": "ACCEPTED_MANUAL"
+        },
+        {
+          "op": "set",
+          "path": [
+            "script",
+            "scriptHash"
+          ],
+          "value": "sha256:ba9ddc93d2cd0633acf1b17d4e39ed20458de33fdba54b3d4f4d69ace53f3a23"
+        },
+        {
+          "op": "set",
+          "path": [
+            "script",
+            "validationReport",
+            "candidateHash"
+          ],
+          "value": "sha256:ba9ddc93d2cd0633acf1b17d4e39ed20458de33fdba54b3d4f4d69ace53f3a23"
+        },
+        {
+          "op": "set",
+          "path": [
+            "script",
+            "quality",
+            "candidateHash"
+          ],
+          "value": "sha256:ba9ddc93d2cd0633acf1b17d4e39ed20458de33fdba54b3d4f4d69ace53f3a23"
+        },
+        {
+          "op": "set",
+          "path": [
+            "events",
+            2,
+            "resultRefs",
+            "script",
+            "contentHash"
+          ],
+          "value": "sha256:ba9ddc93d2cd0633acf1b17d4e39ed20458de33fdba54b3d4f4d69ace53f3a23"
+        }
+      ]
+    },
+    {
+      "name": "desired-duration-is-a-preference",
+      "valid": true,
+      "patches": [
+        {
+          "op": "set",
+          "path": [
+            "decision",
+            "inputHash"
+          ],
+          "value": "sha256:16ea49ba37b6270a1ea4383c81c245f62d241d01c303340cb5218ef89b7e2ebf"
+        },
+        {
+          "op": "set",
+          "path": [
+            "script",
+            "inputHash"
+          ],
+          "value": "sha256:16ea49ba37b6270a1ea4383c81c245f62d241d01c303340cb5218ef89b7e2ebf"
+        },
+        {
+          "op": "set",
+          "path": [
+            "script",
+            "target",
+            "desiredDurationMs"
+          ],
+          "value": 14000
+        },
+        {
+          "op": "set",
+          "path": [
+            "script",
+            "scriptHash"
+          ],
+          "value": "sha256:35b376ca8567c6211d85d73013329271f3728a235b9f30680f277989cbf6dfe7"
+        },
+        {
+          "op": "set",
+          "path": [
+            "script",
+            "validationReport",
+            "candidateHash"
+          ],
+          "value": "sha256:35b376ca8567c6211d85d73013329271f3728a235b9f30680f277989cbf6dfe7"
+        },
+        {
+          "op": "set",
+          "path": [
+            "script",
+            "quality",
+            "candidateHash"
+          ],
+          "value": "sha256:35b376ca8567c6211d85d73013329271f3728a235b9f30680f277989cbf6dfe7"
+        },
+        {
+          "op": "set",
+          "path": [
+            "submission",
+            "inputHash"
+          ],
+          "value": "sha256:16ea49ba37b6270a1ea4383c81c245f62d241d01c303340cb5218ef89b7e2ebf"
+        },
+        {
+          "op": "set",
+          "path": [
+            "submission",
+            "input",
+            "target",
+            "desiredDurationMs"
+          ],
+          "value": 14000
+        },
+        {
+          "op": "set",
+          "path": [
+            "events",
+            0,
+            "inputHash"
+          ],
+          "value": "sha256:16ea49ba37b6270a1ea4383c81c245f62d241d01c303340cb5218ef89b7e2ebf"
+        },
+        {
+          "op": "set",
+          "path": [
+            "events",
+            1,
+            "inputHash"
+          ],
+          "value": "sha256:16ea49ba37b6270a1ea4383c81c245f62d241d01c303340cb5218ef89b7e2ebf"
+        },
+        {
+          "op": "set",
+          "path": [
+            "events",
+            2,
+            "inputHash"
+          ],
+          "value": "sha256:16ea49ba37b6270a1ea4383c81c245f62d241d01c303340cb5218ef89b7e2ebf"
+        },
+        {
+          "op": "set",
+          "path": [
+            "events",
+            2,
+            "resultRefs",
+            "script",
+            "contentHash"
+          ],
+          "value": "sha256:35b376ca8567c6211d85d73013329271f3728a235b9f30680f277989cbf6dfe7"
+        }
+      ]
+    },
+    {
+      "name": "heartbeat-does-not-require-progress-change",
+      "valid": true,
+      "patches": [
+        {
+          "op": "set",
+          "path": [
+            "events",
+            1,
+            "progress"
+          ],
+          "value": 12
+        }
+      ]
+    },
+    {
+      "name": "trimmed-output-has-independent-timebase",
+      "valid": true,
+      "patches": [
+        {
+          "op": "set",
+          "path": [
+            "decision",
+            "rows"
+          ],
+          "value": [
+            {
+              "rowId": "row_2",
+              "sourceUnitRefs": [
+                "unit_3"
+              ],
+              "narrativeRole": "CONCLUSION",
+              "selectionReason": "保留总结。",
+              "packagingSuggestions": []
+            }
+          ]
+        },
+        {
+          "op": "set",
+          "path": [
+            "script",
+            "rows"
+          ],
+          "value": [
+            {
+              "rowId": "row_2",
+              "shotNo": 1,
+              "sourceUnitRefs": [
+                "unit_3"
+              ],
+              "sourceParts": [
+                {
+                  "unitId": "unit_3",
+                  "sourceRange": {
+                    "startMs": 8000,
+                    "endMs": 12000
+                  }
+                }
+              ],
+              "outputRange": {
+                "startMs": 0,
+                "endMs": 4000
+              },
+              "spokenQuotes": [
+                {
+                  "unitId": "unit_3",
+                  "text": "保留必要的上下文。"
+                }
+              ],
+              "visualEvidence": [
+                {
+                  "frameId": "frame_3",
+                  "observedDescription": "受访者总结。"
+                }
+              ],
+              "narrativeRole": "CONCLUSION",
+              "selectionReason": "保留总结。",
+              "dependencyRefs": [],
+              "riskRefs": [],
+              "treatmentNote": "",
+              "audioTreatment": "ORIGINAL",
+              "cutNotes": ""
+            }
+          ]
+        },
+        {
+          "op": "set",
+          "path": [
+            "script",
+            "estimatedDurationMs"
+          ],
+          "value": 4000
+        },
+        {
+          "op": "set",
+          "path": [
+            "script",
+            "captionCues"
+          ],
+          "value": [
+            {
+              "cueId": "cue_unit_3",
+              "rowId": "row_2",
+              "unitId": "unit_3",
+              "text": "保留必要的上下文。",
+              "outputRange": {
+                "startMs": 0,
+                "endMs": 4000
+              },
+              "timingQuality": "SENTENCE"
+            }
+          ]
+        },
+        {
+          "op": "set",
+          "path": [
+            "script",
+            "executableActions"
+          ],
+          "value": [
+            {
+              "actionId": "audio_2",
+              "type": "ORIGINAL_AUDIO",
+              "rowId": "row_2",
+              "cueId": null
+            },
+            {
+              "actionId": "action_cue_unit_3",
+              "type": "CAPTION",
+              "rowId": "row_2",
+              "cueId": "cue_unit_3"
+            }
+          ]
+        },
+        {
+          "op": "set",
+          "path": [
+            "script",
+            "packagingSuggestions"
+          ],
+          "value": []
+        },
+        {
+          "op": "set",
+          "path": [
+            "script",
+            "scriptHash"
+          ],
+          "value": "sha256:18d45a629b9fa5a7a4cb4f5e573c0d49c8c683a23b805c5a4ece1d166d9324c9"
+        },
+        {
+          "op": "set",
+          "path": [
+            "script",
+            "validationReport",
+            "candidateHash"
+          ],
+          "value": "sha256:18d45a629b9fa5a7a4cb4f5e573c0d49c8c683a23b805c5a4ece1d166d9324c9"
+        },
+        {
+          "op": "set",
+          "path": [
+            "script",
+            "quality",
+            "candidateHash"
+          ],
+          "value": "sha256:18d45a629b9fa5a7a4cb4f5e573c0d49c8c683a23b805c5a4ece1d166d9324c9"
+        },
+        {
+          "op": "set",
+          "path": [
+            "events",
+            2,
+            "resultRefs",
+            "script",
+            "contentHash"
+          ],
+          "value": "sha256:18d45a629b9fa5a7a4cb4f5e573c0d49c8c683a23b805c5a4ece1d166d9324c9"
+        }
+      ]
+    },
+    {
+      "name": "subtitle-source-timestamp-after-trimming",
+      "valid": false,
+      "patches": [
+        {
+          "op": "set",
+          "path": [
+            "decision",
+            "rows"
+          ],
+          "value": [
+            {
+              "rowId": "row_2",
+              "sourceUnitRefs": [
+                "unit_3"
+              ],
+              "narrativeRole": "CONCLUSION",
+              "selectionReason": "保留总结。",
+              "packagingSuggestions": []
+            }
+          ]
+        },
+        {
+          "op": "set",
+          "path": [
+            "script",
+            "rows"
+          ],
+          "value": [
+            {
+              "rowId": "row_2",
+              "shotNo": 1,
+              "sourceUnitRefs": [
+                "unit_3"
+              ],
+              "sourceParts": [
+                {
+                  "unitId": "unit_3",
+                  "sourceRange": {
+                    "startMs": 8000,
+                    "endMs": 12000
+                  }
+                }
+              ],
+              "outputRange": {
+                "startMs": 0,
+                "endMs": 4000
+              },
+              "spokenQuotes": [
+                {
+                  "unitId": "unit_3",
+                  "text": "保留必要的上下文。"
+                }
+              ],
+              "visualEvidence": [
+                {
+                  "frameId": "frame_3",
+                  "observedDescription": "受访者总结。"
+                }
+              ],
+              "narrativeRole": "CONCLUSION",
+              "selectionReason": "保留总结。",
+              "dependencyRefs": [],
+              "riskRefs": [],
+              "treatmentNote": "",
+              "audioTreatment": "ORIGINAL",
+              "cutNotes": ""
+            }
+          ]
+        },
+        {
+          "op": "set",
+          "path": [
+            "script",
+            "estimatedDurationMs"
+          ],
+          "value": 4000
+        },
+        {
+          "op": "set",
+          "path": [
+            "script",
+            "captionCues"
+          ],
+          "value": [
+            {
+              "cueId": "cue_unit_3",
+              "rowId": "row_2",
+              "unitId": "unit_3",
+              "text": "保留必要的上下文。",
+              "outputRange": {
+                "startMs": 8000,
+                "endMs": 12000
+              },
+              "timingQuality": "SENTENCE"
+            }
+          ]
+        },
+        {
+          "op": "set",
+          "path": [
+            "script",
+            "executableActions"
+          ],
+          "value": [
+            {
+              "actionId": "audio_2",
+              "type": "ORIGINAL_AUDIO",
+              "rowId": "row_2",
+              "cueId": null
+            },
+            {
+              "actionId": "action_cue_unit_3",
+              "type": "CAPTION",
+              "rowId": "row_2",
+              "cueId": "cue_unit_3"
+            }
+          ]
+        },
+        {
+          "op": "set",
+          "path": [
+            "script",
+            "packagingSuggestions"
+          ],
+          "value": []
+        },
+        {
+          "op": "set",
+          "path": [
+            "script",
+            "scriptHash"
+          ],
+          "value": "sha256:fa5549144d45fb9e10edb67426e15f96b129a0eb98102c72878500dc90246f2b"
+        },
+        {
+          "op": "set",
+          "path": [
+            "script",
+            "validationReport",
+            "candidateHash"
+          ],
+          "value": "sha256:fa5549144d45fb9e10edb67426e15f96b129a0eb98102c72878500dc90246f2b"
+        },
+        {
+          "op": "set",
+          "path": [
+            "script",
+            "quality",
+            "candidateHash"
+          ],
+          "value": "sha256:fa5549144d45fb9e10edb67426e15f96b129a0eb98102c72878500dc90246f2b"
+        },
+        {
+          "op": "set",
+          "path": [
+            "events",
+            2,
+            "resultRefs",
+            "script",
+            "contentHash"
+          ],
+          "value": "sha256:fa5549144d45fb9e10edb67426e15f96b129a0eb98102c72878500dc90246f2b"
+        }
+      ]
+    },
+    {
+      "name": "director-free-time",
+      "valid": false,
+      "patches": [
+        {
+          "op": "set",
+          "path": [
+            "decision",
+            "rows",
+            0,
+            "sourceRange"
+          ],
+          "value": {
+            "startMs": 1,
+            "endMs": 2
+          }
+        }
+      ]
+    },
+    {
+      "name": "director-invented-quote",
+      "valid": false,
+      "patches": [
+        {
+          "op": "set",
+          "path": [
+            "decision",
+            "rows",
+            0,
+            "spokenText"
+          ],
+          "value": "Made up"
+        }
+      ]
+    },
+    {
+      "name": "director-command",
+      "valid": false,
+      "patches": [
+        {
+          "op": "set",
+          "path": [
+            "decision",
+            "rows",
+            0,
+            "command"
+          ],
+          "value": "ffmpeg anything"
+        }
+      ]
+    },
+    {
+      "name": "unknown-unit",
+      "valid": false,
+      "patches": [
+        {
+          "op": "set",
+          "path": [
+            "decision",
+            "rows",
+            0,
+            "sourceUnitRefs",
+            0
+          ],
+          "value": "foreign_unit"
+        }
+      ]
+    },
+    {
+      "name": "unknown-frame",
+      "valid": false,
+      "patches": [
+        {
+          "op": "set",
+          "path": [
+            "materialIndex",
+            "indexHash"
+          ],
+          "value": "sha256:e737ec35f75c522882aee1dcf9ef77aec905945d7ef252ec5565ba12103d78bc"
+        },
+        {
+          "op": "set",
+          "path": [
+            "materialIndex",
+            "units",
+            0,
+            "frameRefs",
+            0
+          ],
+          "value": "foreign_frame"
+        },
+        {
+          "op": "set",
+          "path": [
+            "decision",
+            "indexRef",
+            "indexHash"
+          ],
+          "value": "sha256:e737ec35f75c522882aee1dcf9ef77aec905945d7ef252ec5565ba12103d78bc"
+        },
+        {
+          "op": "set",
+          "path": [
+            "script",
+            "indexRef",
+            "indexHash"
+          ],
+          "value": "sha256:e737ec35f75c522882aee1dcf9ef77aec905945d7ef252ec5565ba12103d78bc"
+        },
+        {
+          "op": "set",
+          "path": [
+            "script",
+            "scriptHash"
+          ],
+          "value": "sha256:dafc5b1e7055f066078e880828ffd2ee3000025ac27332b4583fc1ea29ca0d86"
+        },
+        {
+          "op": "set",
+          "path": [
+            "script",
+            "validationReport",
+            "candidateHash"
+          ],
+          "value": "sha256:dafc5b1e7055f066078e880828ffd2ee3000025ac27332b4583fc1ea29ca0d86"
+        },
+        {
+          "op": "set",
+          "path": [
+            "script",
+            "quality",
+            "candidateHash"
+          ],
+          "value": "sha256:dafc5b1e7055f066078e880828ffd2ee3000025ac27332b4583fc1ea29ca0d86"
+        },
+        {
+          "op": "set",
+          "path": [
+            "events",
+            2,
+            "resultRefs",
+            "materialIndex",
+            "contentHash"
+          ],
+          "value": "sha256:e737ec35f75c522882aee1dcf9ef77aec905945d7ef252ec5565ba12103d78bc"
+        },
+        {
+          "op": "set",
+          "path": [
+            "events",
+            2,
+            "resultRefs",
+            "script",
+            "contentHash"
+          ],
+          "value": "sha256:dafc5b1e7055f066078e880828ffd2ee3000025ac27332b4583fc1ea29ca0d86"
+        }
+      ]
+    },
+    {
+      "name": "unknown-transcript",
+      "valid": false,
+      "patches": [
+        {
+          "op": "set",
+          "path": [
+            "materialIndex",
+            "indexHash"
+          ],
+          "value": "sha256:8d1873fb03b0b76ac688130fc211bf4f5986bfa510501e63ae058b7bc809c0e4"
+        },
+        {
+          "op": "set",
+          "path": [
+            "materialIndex",
+            "units",
+            0,
+            "transcriptRefs",
+            0
+          ],
+          "value": "foreign_asr"
+        },
+        {
+          "op": "set",
+          "path": [
+            "decision",
+            "indexRef",
+            "indexHash"
+          ],
+          "value": "sha256:8d1873fb03b0b76ac688130fc211bf4f5986bfa510501e63ae058b7bc809c0e4"
+        },
+        {
+          "op": "set",
+          "path": [
+            "script",
+            "indexRef",
+            "indexHash"
+          ],
+          "value": "sha256:8d1873fb03b0b76ac688130fc211bf4f5986bfa510501e63ae058b7bc809c0e4"
+        },
+        {
+          "op": "set",
+          "path": [
+            "script",
+            "scriptHash"
+          ],
+          "value": "sha256:b8edeb581c5163e0f47daef0d360e594c661d317979a5e8f273e713a000f6e0c"
+        },
+        {
+          "op": "set",
+          "path": [
+            "script",
+            "validationReport",
+            "candidateHash"
+          ],
+          "value": "sha256:b8edeb581c5163e0f47daef0d360e594c661d317979a5e8f273e713a000f6e0c"
+        },
+        {
+          "op": "set",
+          "path": [
+            "script",
+            "quality",
+            "candidateHash"
+          ],
+          "value": "sha256:b8edeb581c5163e0f47daef0d360e594c661d317979a5e8f273e713a000f6e0c"
+        },
+        {
+          "op": "set",
+          "path": [
+            "events",
+            2,
+            "resultRefs",
+            "materialIndex",
+            "contentHash"
+          ],
+          "value": "sha256:8d1873fb03b0b76ac688130fc211bf4f5986bfa510501e63ae058b7bc809c0e4"
+        },
+        {
+          "op": "set",
+          "path": [
+            "events",
+            2,
+            "resultRefs",
+            "script",
+            "contentHash"
+          ],
+          "value": "sha256:b8edeb581c5163e0f47daef0d360e594c661d317979a5e8f273e713a000f6e0c"
+        }
+      ]
+    },
+    {
+      "name": "forged-index-quote",
+      "valid": false,
+      "patches": [
+        {
+          "op": "set",
+          "path": [
+            "materialIndex",
+            "indexHash"
+          ],
+          "value": "sha256:4190d7cd3401a1f4e8341e02722d8398065d663f4c576e7cdcf0b721ab146658"
+        },
+        {
+          "op": "set",
+          "path": [
+            "materialIndex",
+            "units",
+            0,
+            "originalText"
+          ],
+          "value": "伪造的索引原话"
+        },
+        {
+          "op": "set",
+          "path": [
+            "decision",
+            "indexRef",
+            "indexHash"
+          ],
+          "value": "sha256:4190d7cd3401a1f4e8341e02722d8398065d663f4c576e7cdcf0b721ab146658"
+        },
+        {
+          "op": "set",
+          "path": [
+            "script",
+            "indexRef",
+            "indexHash"
+          ],
+          "value": "sha256:4190d7cd3401a1f4e8341e02722d8398065d663f4c576e7cdcf0b721ab146658"
+        },
+        {
+          "op": "set",
+          "path": [
+            "script",
+            "scriptHash"
+          ],
+          "value": "sha256:12e4fa4b59bbc4d7ce567681ba5352d99f60530b443c6ddc989fb7faf113e476"
+        },
+        {
+          "op": "set",
+          "path": [
+            "script",
+            "validationReport",
+            "candidateHash"
+          ],
+          "value": "sha256:12e4fa4b59bbc4d7ce567681ba5352d99f60530b443c6ddc989fb7faf113e476"
+        },
+        {
+          "op": "set",
+          "path": [
+            "script",
+            "quality",
+            "candidateHash"
+          ],
+          "value": "sha256:12e4fa4b59bbc4d7ce567681ba5352d99f60530b443c6ddc989fb7faf113e476"
+        },
+        {
+          "op": "set",
+          "path": [
+            "events",
+            2,
+            "resultRefs",
+            "materialIndex",
+            "contentHash"
+          ],
+          "value": "sha256:4190d7cd3401a1f4e8341e02722d8398065d663f4c576e7cdcf0b721ab146658"
+        },
+        {
+          "op": "set",
+          "path": [
+            "events",
+            2,
+            "resultRefs",
+            "script",
+            "contentHash"
+          ],
+          "value": "sha256:12e4fa4b59bbc4d7ce567681ba5352d99f60530b443c6ddc989fb7faf113e476"
+        }
+      ]
+    },
+    {
+      "name": "coarse-ASR-falsely-promoted",
+      "valid": false,
+      "patches": [
+        {
+          "op": "set",
+          "path": [
+            "materialIndex",
+            "indexHash"
+          ],
+          "value": "sha256:5821ecc57e56c1296a65f8c2ebf8d987ac0dd22cfa0fb219de61ab658ee1746a"
+        },
+        {
+          "op": "set",
+          "path": [
+            "materialIndex",
+            "transcripts",
+            0,
+            "timingQuality"
+          ],
+          "value": "COARSE_BLOCK"
+        },
+        {
+          "op": "set",
+          "path": [
+            "decision",
+            "indexRef",
+            "indexHash"
+          ],
+          "value": "sha256:5821ecc57e56c1296a65f8c2ebf8d987ac0dd22cfa0fb219de61ab658ee1746a"
+        },
+        {
+          "op": "set",
+          "path": [
+            "script",
+            "indexRef",
+            "indexHash"
+          ],
+          "value": "sha256:5821ecc57e56c1296a65f8c2ebf8d987ac0dd22cfa0fb219de61ab658ee1746a"
+        },
+        {
+          "op": "set",
+          "path": [
+            "script",
+            "scriptHash"
+          ],
+          "value": "sha256:df49ae6222c7d45b7c2fee95624d23121c82cf82cd91bbf0837bed4c016f0f5a"
+        },
+        {
+          "op": "set",
+          "path": [
+            "script",
+            "validationReport",
+            "candidateHash"
+          ],
+          "value": "sha256:df49ae6222c7d45b7c2fee95624d23121c82cf82cd91bbf0837bed4c016f0f5a"
+        },
+        {
+          "op": "set",
+          "path": [
+            "script",
+            "quality",
+            "candidateHash"
+          ],
+          "value": "sha256:df49ae6222c7d45b7c2fee95624d23121c82cf82cd91bbf0837bed4c016f0f5a"
+        },
+        {
+          "op": "set",
+          "path": [
+            "events",
+            2,
+            "resultRefs",
+            "materialIndex",
+            "contentHash"
+          ],
+          "value": "sha256:5821ecc57e56c1296a65f8c2ebf8d987ac0dd22cfa0fb219de61ab658ee1746a"
+        },
+        {
+          "op": "set",
+          "path": [
+            "events",
+            2,
+            "resultRefs",
+            "script",
+            "contentHash"
+          ],
+          "value": "sha256:df49ae6222c7d45b7c2fee95624d23121c82cf82cd91bbf0837bed4c016f0f5a"
+        }
+      ]
+    },
+    {
+      "name": "coarse-ASR-partially-selected",
+      "valid": false,
+      "patches": [
+        {
+          "op": "set",
+          "path": [
+            "materialIndex",
+            "indexHash"
+          ],
+          "value": "sha256:3b5008355ea155e7a1e0fb28ad0d8c967847f202dc7be1f56eee4c23f74d78f2"
+        },
+        {
+          "op": "set",
+          "path": [
+            "materialIndex",
+            "transcripts",
+            0,
+            "sourceRange",
+            "endMs"
+          ],
+          "value": 5000
+        },
+        {
+          "op": "set",
+          "path": [
+            "decision",
+            "indexRef",
+            "indexHash"
+          ],
+          "value": "sha256:3b5008355ea155e7a1e0fb28ad0d8c967847f202dc7be1f56eee4c23f74d78f2"
+        },
+        {
+          "op": "set",
+          "path": [
+            "script",
+            "indexRef",
+            "indexHash"
+          ],
+          "value": "sha256:3b5008355ea155e7a1e0fb28ad0d8c967847f202dc7be1f56eee4c23f74d78f2"
+        },
+        {
+          "op": "set",
+          "path": [
+            "script",
+            "scriptHash"
+          ],
+          "value": "sha256:e4da33a171ebf1b8eada87163426cf6ce8b1195d2227f15d061bc802743c8f96"
+        },
+        {
+          "op": "set",
+          "path": [
+            "script",
+            "validationReport",
+            "candidateHash"
+          ],
+          "value": "sha256:e4da33a171ebf1b8eada87163426cf6ce8b1195d2227f15d061bc802743c8f96"
+        },
+        {
+          "op": "set",
+          "path": [
+            "script",
+            "quality",
+            "candidateHash"
+          ],
+          "value": "sha256:e4da33a171ebf1b8eada87163426cf6ce8b1195d2227f15d061bc802743c8f96"
+        },
+        {
+          "op": "set",
+          "path": [
+            "events",
+            2,
+            "resultRefs",
+            "materialIndex",
+            "contentHash"
+          ],
+          "value": "sha256:3b5008355ea155e7a1e0fb28ad0d8c967847f202dc7be1f56eee4c23f74d78f2"
+        },
+        {
+          "op": "set",
+          "path": [
+            "events",
+            2,
+            "resultRefs",
+            "script",
+            "contentHash"
+          ],
+          "value": "sha256:e4da33a171ebf1b8eada87163426cf6ce8b1195d2227f15d061bc802743c8f96"
+        }
+      ]
+    },
+    {
+      "name": "duplicate-scene-id",
+      "valid": false,
+      "patches": [
+        {
+          "op": "set",
+          "path": [
+            "materialIndex",
+            "indexHash"
+          ],
+          "value": "sha256:06196e1e8fd12f9915e4779370d633a1dad60ecf3eaba4e8f336cc4e4c29f04c"
+        },
+        {
+          "op": "set",
+          "path": [
+            "materialIndex",
+            "scenes",
+            1,
+            "sceneId"
+          ],
+          "value": "scene_1"
+        },
+        {
+          "op": "set",
+          "path": [
+            "decision",
+            "indexRef",
+            "indexHash"
+          ],
+          "value": "sha256:06196e1e8fd12f9915e4779370d633a1dad60ecf3eaba4e8f336cc4e4c29f04c"
+        },
+        {
+          "op": "set",
+          "path": [
+            "script",
+            "indexRef",
+            "indexHash"
+          ],
+          "value": "sha256:06196e1e8fd12f9915e4779370d633a1dad60ecf3eaba4e8f336cc4e4c29f04c"
+        },
+        {
+          "op": "set",
+          "path": [
+            "script",
+            "scriptHash"
+          ],
+          "value": "sha256:ec9ee74c999667ea8dda580e0ed6d66e1d3ad27cf95fa2b2d64fdba85e853166"
+        },
+        {
+          "op": "set",
+          "path": [
+            "script",
+            "validationReport",
+            "candidateHash"
+          ],
+          "value": "sha256:ec9ee74c999667ea8dda580e0ed6d66e1d3ad27cf95fa2b2d64fdba85e853166"
+        },
+        {
+          "op": "set",
+          "path": [
+            "script",
+            "quality",
+            "candidateHash"
+          ],
+          "value": "sha256:ec9ee74c999667ea8dda580e0ed6d66e1d3ad27cf95fa2b2d64fdba85e853166"
+        },
+        {
+          "op": "set",
+          "path": [
+            "events",
+            2,
+            "resultRefs",
+            "materialIndex",
+            "contentHash"
+          ],
+          "value": "sha256:06196e1e8fd12f9915e4779370d633a1dad60ecf3eaba4e8f336cc4e4c29f04c"
+        },
+        {
+          "op": "set",
+          "path": [
+            "events",
+            2,
+            "resultRefs",
+            "script",
+            "contentHash"
+          ],
+          "value": "sha256:ec9ee74c999667ea8dda580e0ed6d66e1d3ad27cf95fa2b2d64fdba85e853166"
+        }
+      ]
+    },
+    {
+      "name": "scene-coverage-gap",
+      "valid": false,
+      "patches": [
+        {
+          "op": "set",
+          "path": [
+            "materialIndex",
+            "indexHash"
+          ],
+          "value": "sha256:5dfce340fd9e7b9d51737c4c18007bab3a672efe1170314ed4fa1ce5be658dac"
+        },
+        {
+          "op": "set",
+          "path": [
+            "materialIndex",
+            "scenes",
+            1,
+            "sourceRange",
+            "startMs"
+          ],
+          "value": 6001
+        },
+        {
+          "op": "set",
+          "path": [
+            "decision",
+            "indexRef",
+            "indexHash"
+          ],
+          "value": "sha256:5dfce340fd9e7b9d51737c4c18007bab3a672efe1170314ed4fa1ce5be658dac"
+        },
+        {
+          "op": "set",
+          "path": [
+            "script",
+            "indexRef",
+            "indexHash"
+          ],
+          "value": "sha256:5dfce340fd9e7b9d51737c4c18007bab3a672efe1170314ed4fa1ce5be658dac"
+        },
+        {
+          "op": "set",
+          "path": [
+            "script",
+            "scriptHash"
+          ],
+          "value": "sha256:c4ac3d57ed910ed7da080b693403d4b92d7521f7e31ecfbe0a2191b7e448fb3d"
+        },
+        {
+          "op": "set",
+          "path": [
+            "script",
+            "validationReport",
+            "candidateHash"
+          ],
+          "value": "sha256:c4ac3d57ed910ed7da080b693403d4b92d7521f7e31ecfbe0a2191b7e448fb3d"
+        },
+        {
+          "op": "set",
+          "path": [
+            "script",
+            "quality",
+            "candidateHash"
+          ],
+          "value": "sha256:c4ac3d57ed910ed7da080b693403d4b92d7521f7e31ecfbe0a2191b7e448fb3d"
+        },
+        {
+          "op": "set",
+          "path": [
+            "events",
+            2,
+            "resultRefs",
+            "materialIndex",
+            "contentHash"
+          ],
+          "value": "sha256:5dfce340fd9e7b9d51737c4c18007bab3a672efe1170314ed4fa1ce5be658dac"
+        },
+        {
+          "op": "set",
+          "path": [
+            "events",
+            2,
+            "resultRefs",
+            "script",
+            "contentHash"
+          ],
+          "value": "sha256:c4ac3d57ed910ed7da080b693403d4b92d7521f7e31ecfbe0a2191b7e448fb3d"
+        }
+      ]
+    },
+    {
+      "name": "scene-missing-tail",
+      "valid": false,
+      "patches": [
+        {
+          "op": "set",
+          "path": [
+            "materialIndex",
+            "indexHash"
+          ],
+          "value": "sha256:a0f114f4de5e02acc2cc8a85ddd7cbf88ffcbfddf3de47f6c77de9a8c1bf2c08"
+        },
+        {
+          "op": "set",
+          "path": [
+            "materialIndex",
+            "scenes",
+            1,
+            "sourceRange",
+            "endMs"
+          ],
+          "value": 11999
+        },
+        {
+          "op": "set",
+          "path": [
+            "decision",
+            "indexRef",
+            "indexHash"
+          ],
+          "value": "sha256:a0f114f4de5e02acc2cc8a85ddd7cbf88ffcbfddf3de47f6c77de9a8c1bf2c08"
+        },
+        {
+          "op": "set",
+          "path": [
+            "script",
+            "indexRef",
+            "indexHash"
+          ],
+          "value": "sha256:a0f114f4de5e02acc2cc8a85ddd7cbf88ffcbfddf3de47f6c77de9a8c1bf2c08"
+        },
+        {
+          "op": "set",
+          "path": [
+            "script",
+            "scriptHash"
+          ],
+          "value": "sha256:86f6c8da8c363d933dd3e7ae2ee7ae7d3b6ad11231b434bd27a71a975d462471"
+        },
+        {
+          "op": "set",
+          "path": [
+            "script",
+            "validationReport",
+            "candidateHash"
+          ],
+          "value": "sha256:86f6c8da8c363d933dd3e7ae2ee7ae7d3b6ad11231b434bd27a71a975d462471"
+        },
+        {
+          "op": "set",
+          "path": [
+            "script",
+            "quality",
+            "candidateHash"
+          ],
+          "value": "sha256:86f6c8da8c363d933dd3e7ae2ee7ae7d3b6ad11231b434bd27a71a975d462471"
+        },
+        {
+          "op": "set",
+          "path": [
+            "events",
+            2,
+            "resultRefs",
+            "materialIndex",
+            "contentHash"
+          ],
+          "value": "sha256:a0f114f4de5e02acc2cc8a85ddd7cbf88ffcbfddf3de47f6c77de9a8c1bf2c08"
+        },
+        {
+          "op": "set",
+          "path": [
+            "events",
+            2,
+            "resultRefs",
+            "script",
+            "contentHash"
+          ],
+          "value": "sha256:86f6c8da8c363d933dd3e7ae2ee7ae7d3b6ad11231b434bd27a71a975d462471"
+        }
+      ]
+    },
+    {
+      "name": "unknown-index-version",
+      "valid": false,
+      "patches": [
+        {
+          "op": "set",
+          "path": [
+            "decision",
+            "indexRef",
+            "indexVersion"
+          ],
+          "value": 999
+        }
+      ]
+    },
+    {
+      "name": "foreign-source-hash",
+      "valid": false,
+      "patches": [
+        {
+          "op": "set",
+          "path": [
+            "script",
+            "assetRef",
+            "assetHash"
+          ],
+          "value": "sha256:0000000000000000000000000000000000000000000000000000000000000000"
+        },
+        {
+          "op": "set",
+          "path": [
+            "script",
+            "scriptHash"
+          ],
+          "value": "sha256:a5fd8cce7019115edeed9b7881377b84092ac4ae5572e485a687809e9ef9f093"
+        },
+        {
+          "op": "set",
+          "path": [
+            "script",
+            "validationReport",
+            "candidateHash"
+          ],
+          "value": "sha256:a5fd8cce7019115edeed9b7881377b84092ac4ae5572e485a687809e9ef9f093"
+        },
+        {
+          "op": "set",
+          "path": [
+            "script",
+            "quality",
+            "candidateHash"
+          ],
+          "value": "sha256:a5fd8cce7019115edeed9b7881377b84092ac4ae5572e485a687809e9ef9f093"
+        },
+        {
+          "op": "set",
+          "path": [
+            "events",
+            2,
+            "resultRefs",
+            "script",
+            "contentHash"
+          ],
+          "value": "sha256:a5fd8cce7019115edeed9b7881377b84092ac4ae5572e485a687809e9ef9f093"
+        }
+      ]
+    },
+    {
+      "name": "fractional-source-time",
+      "valid": false,
+      "patches": [
+        {
+          "op": "set",
+          "path": [
+            "materialIndex",
+            "indexHash"
+          ],
+          "value": "sha256:0e4fb80b9a25c01eb2f90fd86f2601b69bfdb700705ba487a16cc47249a90451"
+        },
+        {
+          "op": "set",
+          "path": [
+            "materialIndex",
+            "units",
+            0,
+            "sourceRange",
+            "startMs"
+          ],
+          "value": 0.25
+        },
+        {
+          "op": "set",
+          "path": [
+            "decision",
+            "indexRef",
+            "indexHash"
+          ],
+          "value": "sha256:0e4fb80b9a25c01eb2f90fd86f2601b69bfdb700705ba487a16cc47249a90451"
+        },
+        {
+          "op": "set",
+          "path": [
+            "script",
+            "indexRef",
+            "indexHash"
+          ],
+          "value": "sha256:0e4fb80b9a25c01eb2f90fd86f2601b69bfdb700705ba487a16cc47249a90451"
+        },
+        {
+          "op": "set",
+          "path": [
+            "script",
+            "scriptHash"
+          ],
+          "value": "sha256:378236d4813bf57edcd2a1b5fb7b63d413c26a693d9507482274281f519dcca8"
+        },
+        {
+          "op": "set",
+          "path": [
+            "script",
+            "validationReport",
+            "candidateHash"
+          ],
+          "value": "sha256:378236d4813bf57edcd2a1b5fb7b63d413c26a693d9507482274281f519dcca8"
+        },
+        {
+          "op": "set",
+          "path": [
+            "script",
+            "quality",
+            "candidateHash"
+          ],
+          "value": "sha256:378236d4813bf57edcd2a1b5fb7b63d413c26a693d9507482274281f519dcca8"
+        },
+        {
+          "op": "set",
+          "path": [
+            "events",
+            2,
+            "resultRefs",
+            "materialIndex",
+            "contentHash"
+          ],
+          "value": "sha256:0e4fb80b9a25c01eb2f90fd86f2601b69bfdb700705ba487a16cc47249a90451"
+        },
+        {
+          "op": "set",
+          "path": [
+            "events",
+            2,
+            "resultRefs",
+            "script",
+            "contentHash"
+          ],
+          "value": "sha256:378236d4813bf57edcd2a1b5fb7b63d413c26a693d9507482274281f519dcca8"
+        }
+      ]
+    },
+    {
+      "name": "string-time",
+      "valid": false,
+      "patches": [
+        {
+          "op": "set",
+          "path": [
+            "materialIndex",
+            "indexHash"
+          ],
+          "value": "sha256:e84f5633007692e3a6d66bd3b30791d380a051f1015ae9ccd647336443a62204"
+        },
+        {
+          "op": "set",
+          "path": [
+            "materialIndex",
+            "units",
+            0,
+            "sourceRange",
+            "startMs"
+          ],
+          "value": "0"
+        },
+        {
+          "op": "set",
+          "path": [
+            "decision",
+            "indexRef",
+            "indexHash"
+          ],
+          "value": "sha256:e84f5633007692e3a6d66bd3b30791d380a051f1015ae9ccd647336443a62204"
+        },
+        {
+          "op": "set",
+          "path": [
+            "script",
+            "indexRef",
+            "indexHash"
+          ],
+          "value": "sha256:e84f5633007692e3a6d66bd3b30791d380a051f1015ae9ccd647336443a62204"
+        },
+        {
+          "op": "set",
+          "path": [
+            "script",
+            "scriptHash"
+          ],
+          "value": "sha256:46537f5dd71a0278fbd1c21561eef753f241c020bba2f6e7d5292b105add2326"
+        },
+        {
+          "op": "set",
+          "path": [
+            "script",
+            "validationReport",
+            "candidateHash"
+          ],
+          "value": "sha256:46537f5dd71a0278fbd1c21561eef753f241c020bba2f6e7d5292b105add2326"
+        },
+        {
+          "op": "set",
+          "path": [
+            "script",
+            "quality",
+            "candidateHash"
+          ],
+          "value": "sha256:46537f5dd71a0278fbd1c21561eef753f241c020bba2f6e7d5292b105add2326"
+        },
+        {
+          "op": "set",
+          "path": [
+            "events",
+            2,
+            "resultRefs",
+            "materialIndex",
+            "contentHash"
+          ],
+          "value": "sha256:e84f5633007692e3a6d66bd3b30791d380a051f1015ae9ccd647336443a62204"
+        },
+        {
+          "op": "set",
+          "path": [
+            "events",
+            2,
+            "resultRefs",
+            "script",
+            "contentHash"
+          ],
+          "value": "sha256:46537f5dd71a0278fbd1c21561eef753f241c020bba2f6e7d5292b105add2326"
+        }
+      ]
+    },
+    {
+      "name": "boolean-time",
+      "valid": false,
+      "patches": [
+        {
+          "op": "set",
+          "path": [
+            "materialIndex",
+            "indexHash"
+          ],
+          "value": "sha256:b70860662681c568dec759edd18ad993fbfe6c63e43c054f35b49a27dd59d753"
+        },
+        {
+          "op": "set",
+          "path": [
+            "materialIndex",
+            "units",
+            0,
+            "sourceRange",
+            "startMs"
+          ],
+          "value": false
+        },
+        {
+          "op": "set",
+          "path": [
+            "decision",
+            "indexRef",
+            "indexHash"
+          ],
+          "value": "sha256:b70860662681c568dec759edd18ad993fbfe6c63e43c054f35b49a27dd59d753"
+        },
+        {
+          "op": "set",
+          "path": [
+            "script",
+            "indexRef",
+            "indexHash"
+          ],
+          "value": "sha256:b70860662681c568dec759edd18ad993fbfe6c63e43c054f35b49a27dd59d753"
+        },
+        {
+          "op": "set",
+          "path": [
+            "script",
+            "scriptHash"
+          ],
+          "value": "sha256:861f80a2236647e746c096432f104c3576a5386da388d94966b70c1e34b33760"
+        },
+        {
+          "op": "set",
+          "path": [
+            "script",
+            "validationReport",
+            "candidateHash"
+          ],
+          "value": "sha256:861f80a2236647e746c096432f104c3576a5386da388d94966b70c1e34b33760"
+        },
+        {
+          "op": "set",
+          "path": [
+            "script",
+            "quality",
+            "candidateHash"
+          ],
+          "value": "sha256:861f80a2236647e746c096432f104c3576a5386da388d94966b70c1e34b33760"
+        },
+        {
+          "op": "set",
+          "path": [
+            "events",
+            2,
+            "resultRefs",
+            "materialIndex",
+            "contentHash"
+          ],
+          "value": "sha256:b70860662681c568dec759edd18ad993fbfe6c63e43c054f35b49a27dd59d753"
+        },
+        {
+          "op": "set",
+          "path": [
+            "events",
+            2,
+            "resultRefs",
+            "script",
+            "contentHash"
+          ],
+          "value": "sha256:861f80a2236647e746c096432f104c3576a5386da388d94966b70c1e34b33760"
+        }
+      ]
+    },
+    {
+      "name": "unsafe-integer-time",
+      "valid": false,
+      "patches": [
+        {
+          "op": "set",
+          "path": [
+            "decision",
+            "inputHash"
+          ],
+          "value": "sha256:68392a73686830f7f9c6b02855189d89e7187d4e85fd64dd842db14682b62474"
+        },
+        {
+          "op": "set",
+          "path": [
+            "script",
+            "inputHash"
+          ],
+          "value": "sha256:68392a73686830f7f9c6b02855189d89e7187d4e85fd64dd842db14682b62474"
+        },
+        {
+          "op": "set",
+          "path": [
+            "script",
+            "scriptHash"
+          ],
+          "value": "sha256:96a81bd363b74515d6e6337fc6661a60c4df61b3bf2be925247ba71015cb66b2"
+        },
+        {
+          "op": "set",
+          "path": [
+            "script",
+            "validationReport",
+            "candidateHash"
+          ],
+          "value": "sha256:96a81bd363b74515d6e6337fc6661a60c4df61b3bf2be925247ba71015cb66b2"
+        },
+        {
+          "op": "set",
+          "path": [
+            "script",
+            "quality",
+            "candidateHash"
+          ],
+          "value": "sha256:96a81bd363b74515d6e6337fc6661a60c4df61b3bf2be925247ba71015cb66b2"
+        },
+        {
+          "op": "set",
+          "path": [
+            "submission",
+            "inputHash"
+          ],
+          "value": "sha256:68392a73686830f7f9c6b02855189d89e7187d4e85fd64dd842db14682b62474"
+        },
+        {
+          "op": "set",
+          "path": [
+            "submission",
+            "assetRef",
+            "durationMs"
+          ],
+          "value": 9007199254740992
+        },
+        {
+          "op": "set",
+          "path": [
+            "events",
+            0,
+            "inputHash"
+          ],
+          "value": "sha256:68392a73686830f7f9c6b02855189d89e7187d4e85fd64dd842db14682b62474"
+        },
+        {
+          "op": "set",
+          "path": [
+            "events",
+            1,
+            "inputHash"
+          ],
+          "value": "sha256:68392a73686830f7f9c6b02855189d89e7187d4e85fd64dd842db14682b62474"
+        },
+        {
+          "op": "set",
+          "path": [
+            "events",
+            2,
+            "inputHash"
+          ],
+          "value": "sha256:68392a73686830f7f9c6b02855189d89e7187d4e85fd64dd842db14682b62474"
+        },
+        {
+          "op": "set",
+          "path": [
+            "events",
+            2,
+            "resultRefs",
+            "script",
+            "contentHash"
+          ],
+          "value": "sha256:96a81bd363b74515d6e6337fc6661a60c4df61b3bf2be925247ba71015cb66b2"
+        }
+      ]
+    },
+    {
+      "name": "numeric-id",
+      "valid": false,
+      "patches": [
+        {
+          "op": "set",
+          "path": [
+            "decision",
+            "inputHash"
+          ],
+          "value": "sha256:6909f43a9f444d33391d8979ef7cab360d17d56c7b85badbedbb74be37979905"
+        },
+        {
+          "op": "set",
+          "path": [
+            "script",
+            "inputHash"
+          ],
+          "value": "sha256:6909f43a9f444d33391d8979ef7cab360d17d56c7b85badbedbb74be37979905"
+        },
+        {
+          "op": "set",
+          "path": [
+            "script",
+            "scriptHash"
+          ],
+          "value": "sha256:16492f806cc28281eca8743bf95afefc32832c70e18a8a796e8e496e7f5a98e4"
+        },
+        {
+          "op": "set",
+          "path": [
+            "script",
+            "validationReport",
+            "candidateHash"
+          ],
+          "value": "sha256:16492f806cc28281eca8743bf95afefc32832c70e18a8a796e8e496e7f5a98e4"
+        },
+        {
+          "op": "set",
+          "path": [
+            "script",
+            "quality",
+            "candidateHash"
+          ],
+          "value": "sha256:16492f806cc28281eca8743bf95afefc32832c70e18a8a796e8e496e7f5a98e4"
+        },
+        {
+          "op": "set",
+          "path": [
+            "submission",
+            "inputHash"
+          ],
+          "value": "sha256:6909f43a9f444d33391d8979ef7cab360d17d56c7b85badbedbb74be37979905"
+        },
+        {
+          "op": "set",
+          "path": [
+            "submission",
+            "input",
+            "assetId"
+          ],
+          "value": 101
+        },
+        {
+          "op": "set",
+          "path": [
+            "events",
+            0,
+            "inputHash"
+          ],
+          "value": "sha256:6909f43a9f444d33391d8979ef7cab360d17d56c7b85badbedbb74be37979905"
+        },
+        {
+          "op": "set",
+          "path": [
+            "events",
+            1,
+            "inputHash"
+          ],
+          "value": "sha256:6909f43a9f444d33391d8979ef7cab360d17d56c7b85badbedbb74be37979905"
+        },
+        {
+          "op": "set",
+          "path": [
+            "events",
+            2,
+            "inputHash"
+          ],
+          "value": "sha256:6909f43a9f444d33391d8979ef7cab360d17d56c7b85badbedbb74be37979905"
+        },
+        {
+          "op": "set",
+          "path": [
+            "events",
+            2,
+            "resultRefs",
+            "script",
+            "contentHash"
+          ],
+          "value": "sha256:16492f806cc28281eca8743bf95afefc32832c70e18a8a796e8e496e7f5a98e4"
+        }
+      ]
+    },
+    {
+      "name": "empty-topic",
+      "valid": false,
+      "patches": [
+        {
+          "op": "set",
+          "path": [
+            "decision",
+            "inputHash"
+          ],
+          "value": "sha256:a012ed1e7269a90d1d55958922783a8fc22ceeeaa7a429317921c4d0a44af6eb"
+        },
+        {
+          "op": "set",
+          "path": [
+            "script",
+            "inputHash"
+          ],
+          "value": "sha256:a012ed1e7269a90d1d55958922783a8fc22ceeeaa7a429317921c4d0a44af6eb"
+        },
+        {
+          "op": "set",
+          "path": [
+            "script",
+            "scriptHash"
+          ],
+          "value": "sha256:2f2be31ae027cd9f979cb3a8ec597d980602290fc8813581f5f7c078b2d7d821"
+        },
+        {
+          "op": "set",
+          "path": [
+            "script",
+            "validationReport",
+            "candidateHash"
+          ],
+          "value": "sha256:2f2be31ae027cd9f979cb3a8ec597d980602290fc8813581f5f7c078b2d7d821"
+        },
+        {
+          "op": "set",
+          "path": [
+            "script",
+            "quality",
+            "candidateHash"
+          ],
+          "value": "sha256:2f2be31ae027cd9f979cb3a8ec597d980602290fc8813581f5f7c078b2d7d821"
+        },
+        {
+          "op": "set",
+          "path": [
+            "submission",
+            "inputHash"
+          ],
+          "value": "sha256:a012ed1e7269a90d1d55958922783a8fc22ceeeaa7a429317921c4d0a44af6eb"
+        },
+        {
+          "op": "set",
+          "path": [
+            "submission",
+            "input",
+            "target",
+            "topic"
+          ],
+          "value": "   "
+        },
+        {
+          "op": "set",
+          "path": [
+            "events",
+            0,
+            "inputHash"
+          ],
+          "value": "sha256:a012ed1e7269a90d1d55958922783a8fc22ceeeaa7a429317921c4d0a44af6eb"
+        },
+        {
+          "op": "set",
+          "path": [
+            "events",
+            1,
+            "inputHash"
+          ],
+          "value": "sha256:a012ed1e7269a90d1d55958922783a8fc22ceeeaa7a429317921c4d0a44af6eb"
+        },
+        {
+          "op": "set",
+          "path": [
+            "events",
+            2,
+            "inputHash"
+          ],
+          "value": "sha256:a012ed1e7269a90d1d55958922783a8fc22ceeeaa7a429317921c4d0a44af6eb"
+        },
+        {
+          "op": "set",
+          "path": [
+            "events",
+            2,
+            "resultRefs",
+            "script",
+            "contentHash"
+          ],
+          "value": "sha256:2f2be31ae027cd9f979cb3a8ec597d980602290fc8813581f5f7c078b2d7d821"
+        }
+      ]
+    },
+    {
+      "name": "boolean-string",
+      "valid": false,
+      "patches": [
+        {
+          "op": "set",
+          "path": [
+            "decision",
+            "inputHash"
+          ],
+          "value": "sha256:5749ffebf26d2d783c95a9fa1b1bdbb21fb3025854e24473e7b9b83961c344fb"
+        },
+        {
+          "op": "set",
+          "path": [
+            "script",
+            "inputHash"
+          ],
+          "value": "sha256:5749ffebf26d2d783c95a9fa1b1bdbb21fb3025854e24473e7b9b83961c344fb"
+        },
+        {
+          "op": "set",
+          "path": [
+            "script",
+            "scriptHash"
+          ],
+          "value": "sha256:d2ca36aa0306c5003c22fc362b16cec36a95b585ce95e24e60ddf1b15de79217"
+        },
+        {
+          "op": "set",
+          "path": [
+            "script",
+            "validationReport",
+            "candidateHash"
+          ],
+          "value": "sha256:d2ca36aa0306c5003c22fc362b16cec36a95b585ce95e24e60ddf1b15de79217"
+        },
+        {
+          "op": "set",
+          "path": [
+            "script",
+            "quality",
+            "candidateHash"
+          ],
+          "value": "sha256:d2ca36aa0306c5003c22fc362b16cec36a95b585ce95e24e60ddf1b15de79217"
+        },
+        {
+          "op": "set",
+          "path": [
+            "submission",
+            "inputHash"
+          ],
+          "value": "sha256:5749ffebf26d2d783c95a9fa1b1bdbb21fb3025854e24473e7b9b83961c344fb"
+        },
+        {
+          "op": "set",
+          "path": [
+            "submission",
+            "input",
+            "target",
+            "subtitleRequested"
+          ],
+          "value": "true"
+        },
+        {
+          "op": "set",
+          "path": [
+            "events",
+            0,
+            "inputHash"
+          ],
+          "value": "sha256:5749ffebf26d2d783c95a9fa1b1bdbb21fb3025854e24473e7b9b83961c344fb"
+        },
+        {
+          "op": "set",
+          "path": [
+            "events",
+            1,
+            "inputHash"
+          ],
+          "value": "sha256:5749ffebf26d2d783c95a9fa1b1bdbb21fb3025854e24473e7b9b83961c344fb"
+        },
+        {
+          "op": "set",
+          "path": [
+            "events",
+            2,
+            "inputHash"
+          ],
+          "value": "sha256:5749ffebf26d2d783c95a9fa1b1bdbb21fb3025854e24473e7b9b83961c344fb"
+        },
+        {
+          "op": "set",
+          "path": [
+            "events",
+            2,
+            "resultRefs",
+            "script",
+            "contentHash"
+          ],
+          "value": "sha256:d2ca36aa0306c5003c22fc362b16cec36a95b585ce95e24e60ddf1b15de79217"
+        }
+      ]
+    },
+    {
+      "name": "unsupported-speed",
+      "valid": false,
+      "patches": [
+        {
+          "op": "set",
+          "path": [
+            "decision",
+            "inputHash"
+          ],
+          "value": "sha256:c30fcafcbfe27bcc2f5c90fb9a98b48f2d83acfa0ee236220dc531cf1ebc7672"
+        },
+        {
+          "op": "set",
+          "path": [
+            "script",
+            "inputHash"
+          ],
+          "value": "sha256:c30fcafcbfe27bcc2f5c90fb9a98b48f2d83acfa0ee236220dc531cf1ebc7672"
+        },
+        {
+          "op": "set",
+          "path": [
+            "script",
+            "scriptHash"
+          ],
+          "value": "sha256:e92e8157b1bbc4bfb6e707cf8b0ab71e6e9e21d59911d98dc03abb1ebe76cfee"
+        },
+        {
+          "op": "set",
+          "path": [
+            "script",
+            "validationReport",
+            "candidateHash"
+          ],
+          "value": "sha256:e92e8157b1bbc4bfb6e707cf8b0ab71e6e9e21d59911d98dc03abb1ebe76cfee"
+        },
+        {
+          "op": "set",
+          "path": [
+            "script",
+            "quality",
+            "candidateHash"
+          ],
+          "value": "sha256:e92e8157b1bbc4bfb6e707cf8b0ab71e6e9e21d59911d98dc03abb1ebe76cfee"
+        },
+        {
+          "op": "set",
+          "path": [
+            "submission",
+            "inputHash"
+          ],
+          "value": "sha256:c30fcafcbfe27bcc2f5c90fb9a98b48f2d83acfa0ee236220dc531cf1ebc7672"
+        },
+        {
+          "op": "set",
+          "path": [
+            "submission",
+            "input",
+            "target",
+            "speed"
+          ],
+          "value": 2
+        },
+        {
+          "op": "set",
+          "path": [
+            "events",
+            0,
+            "inputHash"
+          ],
+          "value": "sha256:c30fcafcbfe27bcc2f5c90fb9a98b48f2d83acfa0ee236220dc531cf1ebc7672"
+        },
+        {
+          "op": "set",
+          "path": [
+            "events",
+            1,
+            "inputHash"
+          ],
+          "value": "sha256:c30fcafcbfe27bcc2f5c90fb9a98b48f2d83acfa0ee236220dc531cf1ebc7672"
+        },
+        {
+          "op": "set",
+          "path": [
+            "events",
+            2,
+            "inputHash"
+          ],
+          "value": "sha256:c30fcafcbfe27bcc2f5c90fb9a98b48f2d83acfa0ee236220dc531cf1ebc7672"
+        },
+        {
+          "op": "set",
+          "path": [
+            "events",
+            2,
+            "resultRefs",
+            "script",
+            "contentHash"
+          ],
+          "value": "sha256:e92e8157b1bbc4bfb6e707cf8b0ab71e6e9e21d59911d98dc03abb1ebe76cfee"
+        }
+      ]
+    },
+    {
+      "name": "partial-coarse-unit-cut",
+      "valid": false,
+      "patches": [
+        {
+          "op": "set",
+          "path": [
+            "script",
+            "rows",
+            0,
+            "sourceParts",
+            0,
+            "sourceRange",
+            "startMs"
+          ],
+          "value": 1
+        },
+        {
+          "op": "set",
+          "path": [
+            "script",
+            "scriptHash"
+          ],
+          "value": "sha256:667f1292b9188ef504c69416f1a6a69a008a1660a31950fae59f8fa584e81556"
+        },
+        {
+          "op": "set",
+          "path": [
+            "script",
+            "validationReport",
+            "candidateHash"
+          ],
+          "value": "sha256:667f1292b9188ef504c69416f1a6a69a008a1660a31950fae59f8fa584e81556"
+        },
+        {
+          "op": "set",
+          "path": [
+            "script",
+            "quality",
+            "candidateHash"
+          ],
+          "value": "sha256:667f1292b9188ef504c69416f1a6a69a008a1660a31950fae59f8fa584e81556"
+        },
+        {
+          "op": "set",
+          "path": [
+            "events",
+            2,
+            "resultRefs",
+            "script",
+            "contentHash"
+          ],
+          "value": "sha256:667f1292b9188ef504c69416f1a6a69a008a1660a31950fae59f8fa584e81556"
+        }
+      ]
+    },
+    {
+      "name": "quote-rewrite",
+      "valid": false,
+      "patches": [
+        {
+          "op": "set",
+          "path": [
+            "script",
+            "rows",
+            0,
+            "spokenQuotes",
+            0,
+            "text"
+          ],
+          "value": "模型改写的原话"
+        },
+        {
+          "op": "set",
+          "path": [
+            "script",
+            "scriptHash"
+          ],
+          "value": "sha256:e42e8ce204b48211950154e56f11b2ed2448343af46edc594aa2dbb1fbca0a3b"
+        },
+        {
+          "op": "set",
+          "path": [
+            "script",
+            "validationReport",
+            "candidateHash"
+          ],
+          "value": "sha256:e42e8ce204b48211950154e56f11b2ed2448343af46edc594aa2dbb1fbca0a3b"
+        },
+        {
+          "op": "set",
+          "path": [
+            "script",
+            "quality",
+            "candidateHash"
+          ],
+          "value": "sha256:e42e8ce204b48211950154e56f11b2ed2448343af46edc594aa2dbb1fbca0a3b"
+        },
+        {
+          "op": "set",
+          "path": [
+            "events",
+            2,
+            "resultRefs",
+            "script",
+            "contentHash"
+          ],
+          "value": "sha256:e42e8ce204b48211950154e56f11b2ed2448343af46edc594aa2dbb1fbca0a3b"
+        }
+      ]
+    },
+    {
+      "name": "visual-invention",
+      "valid": false,
+      "patches": [
+        {
+          "op": "set",
+          "path": [
+            "script",
+            "rows",
+            0,
+            "visualEvidence",
+            0,
+            "observedDescription"
+          ],
+          "value": "受访者在跳舞"
+        },
+        {
+          "op": "set",
+          "path": [
+            "script",
+            "scriptHash"
+          ],
+          "value": "sha256:5c5c5eef73d391ec75d8cb6a3a0cd7d9a985e20acec4f005eb62af0e2aa990b2"
+        },
+        {
+          "op": "set",
+          "path": [
+            "script",
+            "validationReport",
+            "candidateHash"
+          ],
+          "value": "sha256:5c5c5eef73d391ec75d8cb6a3a0cd7d9a985e20acec4f005eb62af0e2aa990b2"
+        },
+        {
+          "op": "set",
+          "path": [
+            "script",
+            "quality",
+            "candidateHash"
+          ],
+          "value": "sha256:5c5c5eef73d391ec75d8cb6a3a0cd7d9a985e20acec4f005eb62af0e2aa990b2"
+        },
+        {
+          "op": "set",
+          "path": [
+            "events",
+            2,
+            "resultRefs",
+            "script",
+            "contentHash"
+          ],
+          "value": "sha256:5c5c5eef73d391ec75d8cb6a3a0cd7d9a985e20acec4f005eb62af0e2aa990b2"
+        }
+      ]
+    },
+    {
+      "name": "output-time-gap",
+      "valid": false,
+      "patches": [
+        {
+          "op": "set",
+          "path": [
+            "script",
+            "rows",
+            1,
+            "outputRange",
+            "startMs"
+          ],
+          "value": 8001
+        },
+        {
+          "op": "set",
+          "path": [
+            "script",
+            "scriptHash"
+          ],
+          "value": "sha256:bf6bc1fe1274ef7ce16ab7335cb28622ffe2044527bfbda3b90e862f267caacd"
+        },
+        {
+          "op": "set",
+          "path": [
+            "script",
+            "validationReport",
+            "candidateHash"
+          ],
+          "value": "sha256:bf6bc1fe1274ef7ce16ab7335cb28622ffe2044527bfbda3b90e862f267caacd"
+        },
+        {
+          "op": "set",
+          "path": [
+            "script",
+            "quality",
+            "candidateHash"
+          ],
+          "value": "sha256:bf6bc1fe1274ef7ce16ab7335cb28622ffe2044527bfbda3b90e862f267caacd"
+        },
+        {
+          "op": "set",
+          "path": [
+            "events",
+            2,
+            "resultRefs",
+            "script",
+            "contentHash"
+          ],
+          "value": "sha256:bf6bc1fe1274ef7ce16ab7335cb28622ffe2044527bfbda3b90e862f267caacd"
+        }
+      ]
+    },
+    {
+      "name": "wrong-total-duration",
+      "valid": false,
+      "patches": [
+        {
+          "op": "set",
+          "path": [
+            "script",
+            "estimatedDurationMs"
+          ],
+          "value": 11999
+        },
+        {
+          "op": "set",
+          "path": [
+            "script",
+            "scriptHash"
+          ],
+          "value": "sha256:a5d9544ea99bd33bfe1cdaf073bae996528239334643759ef5470b4babdd4f54"
+        },
+        {
+          "op": "set",
+          "path": [
+            "script",
+            "validationReport",
+            "candidateHash"
+          ],
+          "value": "sha256:a5d9544ea99bd33bfe1cdaf073bae996528239334643759ef5470b4babdd4f54"
+        },
+        {
+          "op": "set",
+          "path": [
+            "script",
+            "quality",
+            "candidateHash"
+          ],
+          "value": "sha256:a5d9544ea99bd33bfe1cdaf073bae996528239334643759ef5470b4babdd4f54"
+        },
+        {
+          "op": "set",
+          "path": [
+            "events",
+            2,
+            "resultRefs",
+            "script",
+            "contentHash"
+          ],
+          "value": "sha256:a5d9544ea99bd33bfe1cdaf073bae996528239334643759ef5470b4babdd4f54"
+        }
+      ]
+    },
+    {
+      "name": "caption-source-time-instead-of-output",
+      "valid": false,
+      "patches": [
+        {
+          "op": "set",
+          "path": [
+            "script",
+            "captionCues",
+            2,
+            "outputRange",
+            "startMs"
+          ],
+          "value": 0
+        },
+        {
+          "op": "set",
+          "path": [
+            "script",
+            "scriptHash"
+          ],
+          "value": "sha256:d3e1228076319beb54193f2b662245c5d8e2bef5219633d859b7b31a4fb11a90"
+        },
+        {
+          "op": "set",
+          "path": [
+            "script",
+            "validationReport",
+            "candidateHash"
+          ],
+          "value": "sha256:d3e1228076319beb54193f2b662245c5d8e2bef5219633d859b7b31a4fb11a90"
+        },
+        {
+          "op": "set",
+          "path": [
+            "script",
+            "quality",
+            "candidateHash"
+          ],
+          "value": "sha256:d3e1228076319beb54193f2b662245c5d8e2bef5219633d859b7b31a4fb11a90"
+        },
+        {
+          "op": "set",
+          "path": [
+            "events",
+            2,
+            "resultRefs",
+            "script",
+            "contentHash"
+          ],
+          "value": "sha256:d3e1228076319beb54193f2b662245c5d8e2bef5219633d859b7b31a4fb11a90"
+        }
+      ]
+    },
+    {
+      "name": "caption-rewrite",
+      "valid": false,
+      "patches": [
+        {
+          "op": "set",
+          "path": [
+            "script",
+            "captionCues",
+            0,
+            "text"
+          ],
+          "value": "Rewrite"
+        },
+        {
+          "op": "set",
+          "path": [
+            "script",
+            "scriptHash"
+          ],
+          "value": "sha256:7d482b611105858c0df6c1c6aa29f16bc95070b5ef15c1b457d73cd72ec50edc"
+        },
+        {
+          "op": "set",
+          "path": [
+            "script",
+            "validationReport",
+            "candidateHash"
+          ],
+          "value": "sha256:7d482b611105858c0df6c1c6aa29f16bc95070b5ef15c1b457d73cd72ec50edc"
+        },
+        {
+          "op": "set",
+          "path": [
+            "script",
+            "quality",
+            "candidateHash"
+          ],
+          "value": "sha256:7d482b611105858c0df6c1c6aa29f16bc95070b5ef15c1b457d73cd72ec50edc"
+        },
+        {
+          "op": "set",
+          "path": [
+            "events",
+            2,
+            "resultRefs",
+            "script",
+            "contentHash"
+          ],
+          "value": "sha256:7d482b611105858c0df6c1c6aa29f16bc95070b5ef15c1b457d73cd72ec50edc"
+        }
+      ]
+    },
+    {
+      "name": "unsupported-action",
+      "valid": false,
+      "patches": [
+        {
+          "op": "set",
+          "path": [
+            "script",
+            "executableActions",
+            0,
+            "type"
+          ],
+          "value": "SPEED"
+        },
+        {
+          "op": "set",
+          "path": [
+            "script",
+            "scriptHash"
+          ],
+          "value": "sha256:463d98152307e1d5a38f9eac4a92d8a7c170d2cdd9f5581133c662ec914f78ca"
+        },
+        {
+          "op": "set",
+          "path": [
+            "script",
+            "validationReport",
+            "candidateHash"
+          ],
+          "value": "sha256:463d98152307e1d5a38f9eac4a92d8a7c170d2cdd9f5581133c662ec914f78ca"
+        },
+        {
+          "op": "set",
+          "path": [
+            "script",
+            "quality",
+            "candidateHash"
+          ],
+          "value": "sha256:463d98152307e1d5a38f9eac4a92d8a7c170d2cdd9f5581133c662ec914f78ca"
+        },
+        {
+          "op": "set",
+          "path": [
+            "events",
+            2,
+            "resultRefs",
+            "script",
+            "contentHash"
+          ],
+          "value": "sha256:463d98152307e1d5a38f9eac4a92d8a7c170d2cdd9f5581133c662ec914f78ca"
+        }
+      ]
+    },
+    {
+      "name": "model-compiled-packaging",
+      "valid": false,
+      "patches": [
+        {
+          "op": "set",
+          "path": [
+            "script",
+            "packagingSuggestions",
+            0,
+            "status"
+          ],
+          "value": "COMPILED"
+        },
+        {
+          "op": "set",
+          "path": [
+            "script",
+            "scriptHash"
+          ],
+          "value": "sha256:8683d9cce54c99a0f480e41023b0733f576f401fcdf5420bfe011df2a7c5f7ff"
+        },
+        {
+          "op": "set",
+          "path": [
+            "script",
+            "validationReport",
+            "candidateHash"
+          ],
+          "value": "sha256:8683d9cce54c99a0f480e41023b0733f576f401fcdf5420bfe011df2a7c5f7ff"
+        },
+        {
+          "op": "set",
+          "path": [
+            "script",
+            "quality",
+            "candidateHash"
+          ],
+          "value": "sha256:8683d9cce54c99a0f480e41023b0733f576f401fcdf5420bfe011df2a7c5f7ff"
+        },
+        {
+          "op": "set",
+          "path": [
+            "events",
+            2,
+            "resultRefs",
+            "script",
+            "contentHash"
+          ],
+          "value": "sha256:8683d9cce54c99a0f480e41023b0733f576f401fcdf5420bfe011df2a7c5f7ff"
+        }
+      ]
+    },
+    {
+      "name": "wrong-archive-revision",
+      "valid": false,
+      "patches": [
+        {
+          "op": "set",
+          "path": [
+            "script",
+            "revision"
+          ],
+          "value": 0
+        },
+        {
+          "op": "set",
+          "path": [
+            "script",
+            "scriptHash"
+          ],
+          "value": "sha256:b65201724a6889cab84c461d3a84cc3b2c4ea4204edb19874cbdafb99e4ba35f"
+        },
+        {
+          "op": "set",
+          "path": [
+            "script",
+            "validationReport",
+            "candidateHash"
+          ],
+          "value": "sha256:b65201724a6889cab84c461d3a84cc3b2c4ea4204edb19874cbdafb99e4ba35f"
+        },
+        {
+          "op": "set",
+          "path": [
+            "script",
+            "quality",
+            "candidateHash"
+          ],
+          "value": "sha256:b65201724a6889cab84c461d3a84cc3b2c4ea4204edb19874cbdafb99e4ba35f"
+        },
+        {
+          "op": "set",
+          "path": [
+            "events",
+            2,
+            "resultRefs",
+            "script",
+            "revision"
+          ],
+          "value": 0
+        },
+        {
+          "op": "set",
+          "path": [
+            "events",
+            2,
+            "resultRefs",
+            "script",
+            "contentHash"
+          ],
+          "value": "sha256:b65201724a6889cab84c461d3a84cc3b2c4ea4204edb19874cbdafb99e4ba35f"
+        }
+      ]
+    },
+    {
+      "name": "path-traversal-key",
+      "valid": false,
+      "patches": [
+        {
+          "op": "set",
+          "path": [
+            "submission",
+            "mediaObjectKey"
+          ],
+          "value": "projects/../private.mp4"
+        }
+      ]
+    },
+    {
+      "name": "absolute-filesystem-path",
+      "valid": false,
+      "patches": [
+        {
+          "op": "set",
+          "path": [
+            "submission",
+            "mediaObjectKey"
+          ],
+          "value": "/private/tmp/source.mp4"
+        }
+      ]
+    },
+    {
+      "name": "unknown-message-version",
+      "valid": false,
+      "patches": [
+        {
+          "op": "set",
+          "path": [
+            "submission",
+            "protocolVersion"
+          ],
+          "value": "2.0"
+        }
+      ]
+    },
+    {
+      "name": "selected-asset-mismatch",
+      "valid": false,
+      "patches": [
+        {
+          "op": "set",
+          "path": [
+            "decision",
+            "inputHash"
+          ],
+          "value": "sha256:03d062db50497318008475900e775e9ba9e993796242aea4097c038d5fcdc5ae"
+        },
+        {
+          "op": "set",
+          "path": [
+            "script",
+            "inputHash"
+          ],
+          "value": "sha256:03d062db50497318008475900e775e9ba9e993796242aea4097c038d5fcdc5ae"
+        },
+        {
+          "op": "set",
+          "path": [
+            "script",
+            "scriptHash"
+          ],
+          "value": "sha256:57a2702362f3e43d18470240d0a5b6a6866351d343b07af6a0c2f75b4ce477fd"
+        },
+        {
+          "op": "set",
+          "path": [
+            "script",
+            "validationReport",
+            "candidateHash"
+          ],
+          "value": "sha256:57a2702362f3e43d18470240d0a5b6a6866351d343b07af6a0c2f75b4ce477fd"
+        },
+        {
+          "op": "set",
+          "path": [
+            "script",
+            "quality",
+            "candidateHash"
+          ],
+          "value": "sha256:57a2702362f3e43d18470240d0a5b6a6866351d343b07af6a0c2f75b4ce477fd"
+        },
+        {
+          "op": "set",
+          "path": [
+            "submission",
+            "inputHash"
+          ],
+          "value": "sha256:03d062db50497318008475900e775e9ba9e993796242aea4097c038d5fcdc5ae"
+        },
+        {
+          "op": "set",
+          "path": [
+            "submission",
+            "input",
+            "assetId"
+          ],
+          "value": "another_asset"
+        },
+        {
+          "op": "set",
+          "path": [
+            "events",
+            0,
+            "inputHash"
+          ],
+          "value": "sha256:03d062db50497318008475900e775e9ba9e993796242aea4097c038d5fcdc5ae"
+        },
+        {
+          "op": "set",
+          "path": [
+            "events",
+            1,
+            "inputHash"
+          ],
+          "value": "sha256:03d062db50497318008475900e775e9ba9e993796242aea4097c038d5fcdc5ae"
+        },
+        {
+          "op": "set",
+          "path": [
+            "events",
+            2,
+            "inputHash"
+          ],
+          "value": "sha256:03d062db50497318008475900e775e9ba9e993796242aea4097c038d5fcdc5ae"
+        },
+        {
+          "op": "set",
+          "path": [
+            "events",
+            2,
+            "resultRefs",
+            "script",
+            "contentHash"
+          ],
+          "value": "sha256:57a2702362f3e43d18470240d0a5b6a6866351d343b07af6a0c2f75b4ce477fd"
+        }
+      ]
+    },
+    {
+      "name": "wrong-generation-task",
+      "valid": false,
+      "patches": [
+        {
+          "op": "set",
+          "path": [
+            "script",
+            "generationTaskId"
+          ],
+          "value": "another_task"
+        },
+        {
+          "op": "set",
+          "path": [
+            "script",
+            "scriptHash"
+          ],
+          "value": "sha256:36b8204a613cb56991afa39747046daace9a137ac5ef9584e649077bc32f8fa5"
+        },
+        {
+          "op": "set",
+          "path": [
+            "script",
+            "validationReport",
+            "candidateHash"
+          ],
+          "value": "sha256:36b8204a613cb56991afa39747046daace9a137ac5ef9584e649077bc32f8fa5"
+        },
+        {
+          "op": "set",
+          "path": [
+            "script",
+            "quality",
+            "candidateHash"
+          ],
+          "value": "sha256:36b8204a613cb56991afa39747046daace9a137ac5ef9584e649077bc32f8fa5"
+        },
+        {
+          "op": "set",
+          "path": [
+            "events",
+            2,
+            "resultRefs",
+            "script",
+            "contentHash"
+          ],
+          "value": "sha256:36b8204a613cb56991afa39747046daace9a137ac5ef9584e649077bc32f8fa5"
+        }
+      ]
+    },
+    {
+      "name": "progress-result-leak",
+      "valid": false,
+      "patches": [
+        {
+          "op": "set",
+          "path": [
+            "events",
+            0,
+            "resultRefs"
+          ],
+          "value": {
+            "analysis": {
+              "artifactId": "analysis_fixture",
+              "revision": 2,
+              "contentHash": "sha256:bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"
+            },
+            "materialIndex": {
+              "artifactId": "index_fixture",
+              "revision": 3,
+              "contentHash": "sha256:e97d50988f20e47f2a4b7a26940b56f502d89eb2cd276073b241a63e1b393648"
+            },
+            "script": {
+              "artifactId": "script_fixture",
+              "revision": 1,
+              "contentHash": "sha256:a40d3001ee7ddc8eaa0694b78a084db44c23ad226af350ffa6ac097b21cd3f6c"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "progress-at-100",
+      "valid": false,
+      "patches": [
+        {
+          "op": "set",
+          "path": [
+            "events",
+            0,
+            "progress"
+          ],
+          "value": 100
+        }
+      ]
+    },
+    {
+      "name": "unknown-phase",
+      "valid": false,
+      "patches": [
+        {
+          "op": "set",
+          "path": [
+            "events",
+            0,
+            "phase"
+          ],
+          "value": "RENDERING"
+        }
+      ]
+    },
+    {
+      "name": "invalid-heartbeat-calendar",
+      "valid": false,
+      "patches": [
+        {
+          "op": "set",
+          "path": [
+            "events",
+            0,
+            "heartbeatAt"
+          ],
+          "value": "2026-02-30T00:00:00Z"
+        }
+      ]
+    },
+    {
+      "name": "heartbeat-must-use-UTC",
+      "valid": false,
+      "patches": [
+        {
+          "op": "set",
+          "path": [
+            "events",
+            0,
+            "heartbeatAt"
+          ],
+          "value": "2026-01-01T08:00:00+08:00"
+        }
+      ]
+    },
+    {
+      "name": "heartbeat-cannot-be-text",
+      "valid": false,
+      "patches": [
+        {
+          "op": "set",
+          "path": [
+            "events",
+            0,
+            "heartbeatAt"
+          ],
+          "value": "yesterday"
+        }
+      ]
+    },
+    {
+      "name": "old-attempt-callback",
+      "valid": false,
+      "patches": [
+        {
+          "op": "set",
+          "path": [
+            "events",
+            2,
+            "attempt"
+          ],
+          "value": 2
+        }
+      ]
+    },
+    {
+      "name": "foreign-run-callback",
+      "valid": false,
+      "patches": [
+        {
+          "op": "set",
+          "path": [
+            "events",
+            2,
+            "runId"
+          ],
+          "value": "another_run"
+        }
+      ]
+    },
+    {
+      "name": "foreign-task-callback",
+      "valid": false,
+      "patches": [
+        {
+          "op": "set",
+          "path": [
+            "events",
+            2,
+            "taskId"
+          ],
+          "value": "another_task"
+        }
+      ]
+    },
+    {
+      "name": "foreign-asset-callback",
+      "valid": false,
+      "patches": [
+        {
+          "op": "set",
+          "path": [
+            "events",
+            2,
+            "assetHash"
+          ],
+          "value": "sha256:0000000000000000000000000000000000000000000000000000000000000000"
+        }
+      ]
+    },
+    {
+      "name": "progress-regression",
+      "valid": false,
+      "patches": [
+        {
+          "op": "set",
+          "path": [
+            "events",
+            1,
+            "progress"
+          ],
+          "value": 5
+        }
+      ]
+    },
+    {
+      "name": "sequence-regression",
+      "valid": false,
+      "patches": [
+        {
+          "op": "set",
+          "path": [
+            "events",
+            1,
+            "sequence"
+          ],
+          "value": 1
+        }
+      ]
+    },
+    {
+      "name": "duplicate-event-id",
+      "valid": false,
+      "patches": [
+        {
+          "op": "set",
+          "path": [
+            "events",
+            1,
+            "eventId"
+          ],
+          "value": "event_1"
+        }
+      ]
+    },
+    {
+      "name": "terminal-without-results",
+      "valid": false,
+      "patches": [
+        {
+          "op": "set",
+          "path": [
+            "events",
+            2,
+            "resultRefs"
+          ],
+          "value": null
+        }
+      ]
+    },
+    {
+      "name": "partial-cannot-be-ready",
+      "valid": false,
+      "patches": [
+        {
+          "op": "set",
+          "path": [
+            "events",
+            2,
+            "analysisOutcome"
+          ],
+          "value": "PARTIAL"
+        }
+      ]
+    },
+    {
+      "name": "success-with-error",
+      "valid": false,
+      "patches": [
+        {
+          "op": "set",
+          "path": [
+            "events",
+            2,
+            "error"
+          ],
+          "value": {
+            "code": "MODEL_FAILED",
+            "message": "failure",
+            "retryable": true
+          }
+        }
+      ]
+    },
+    {
+      "name": "qa-failure-without-risk",
+      "valid": false,
+      "patches": [
+        {
+          "op": "set",
+          "path": [
+            "script",
+            "quality",
+            "passed"
+          ],
+          "value": false
+        }
+      ]
+    },
+    {
+      "name": "stale-input-hash",
+      "valid": false,
+      "patches": [
+        {
+          "op": "set",
+          "path": [
+            "events",
+            2,
+            "inputHash"
+          ],
+          "value": "sha256:0000000000000000000000000000000000000000000000000000000000000000"
+        }
+      ]
+    },
+    {
+      "name": "stale-index-hash",
+      "valid": false,
+      "patches": [
+        {
+          "op": "set",
+          "path": [
+            "decision",
+            "indexRef",
+            "indexHash"
+          ],
+          "value": "sha256:0000000000000000000000000000000000000000000000000000000000000000"
+        }
+      ]
+    },
+    {
+      "name": "stale-script-hash",
+      "valid": false,
+      "patches": [
+        {
+          "op": "set",
+          "path": [
+            "script",
+            "scriptHash"
+          ],
+          "value": "sha256:0000000000000000000000000000000000000000000000000000000000000000"
+        }
+      ]
+    },
+    {
+      "name": "stale-qa-candidate",
+      "valid": false,
+      "patches": [
+        {
+          "op": "set",
+          "path": [
+            "script",
+            "quality",
+            "candidateHash"
+          ],
+          "value": "sha256:0000000000000000000000000000000000000000000000000000000000000000"
+        }
+      ]
+    },
+    {
+      "name": "stale-validation-candidate",
+      "valid": false,
+      "patches": [
+        {
+          "op": "set",
+          "path": [
+            "script",
+            "validationReport",
+            "candidateHash"
+          ],
+          "value": "sha256:0000000000000000000000000000000000000000000000000000000000000000"
+        }
+      ]
+    },
+    {
+      "name": "stale-result-hash",
+      "valid": false,
+      "patches": [
+        {
+          "op": "set",
+          "path": [
+            "events",
+            2,
+            "resultRefs",
+            "script",
+            "contentHash"
+          ],
+          "value": "sha256:0000000000000000000000000000000000000000000000000000000000000000"
+        }
+      ]
+    },
+    {
+      "name": "required-dependency-removed",
+      "valid": false,
+      "patches": [
+        {
+          "op": "set",
+          "path": [
+            "decision",
+            "rows",
+            0,
+            "sourceUnitRefs"
+          ],
+          "value": [
+            "unit_2"
+          ]
+        }
+      ]
+    },
+    {
+      "name": "noncontiguous-units-hidden-in-one-row",
+      "valid": false,
+      "patches": [
+        {
+          "op": "set",
+          "path": [
+            "decision",
+            "rows",
+            0,
+            "sourceUnitRefs",
+            1
+          ],
+          "value": "unit_3"
+        }
+      ]
+    },
+    {
+      "name": "duplicate-unit-selection",
+      "valid": false,
+      "patches": [
+        {
+          "op": "set",
+          "path": [
+            "decision",
+            "rows",
+            1,
+            "sourceUnitRefs",
+            0
+          ],
+          "value": "unit_2"
+        }
+      ]
+    },
+    {
+      "name": "source-order-reversed",
+      "valid": false,
+      "patches": [
+        {
+          "op": "set",
+          "path": [
+            "decision",
+            "rows",
+            0,
+            "rowId"
+          ],
+          "value": "row_2"
+        },
+        {
+          "op": "set",
+          "path": [
+            "decision",
+            "rows",
+            0,
+            "sourceUnitRefs"
+          ],
+          "value": [
+            "unit_3"
+          ]
+        },
+        {
+          "op": "set",
+          "path": [
+            "decision",
+            "rows",
+            0,
+            "narrativeRole"
+          ],
+          "value": "CONCLUSION"
+        },
+        {
+          "op": "set",
+          "path": [
+            "decision",
+            "rows",
+            0,
+            "selectionReason"
+          ],
+          "value": "保留总结。"
+        },
+        {
+          "op": "set",
+          "path": [
+            "decision",
+            "rows",
+            0,
+            "packagingSuggestions"
+          ],
+          "value": []
+        },
+        {
+          "op": "set",
+          "path": [
+            "decision",
+            "rows",
+            1,
+            "rowId"
+          ],
+          "value": "row_1"
+        },
+        {
+          "op": "set",
+          "path": [
+            "decision",
+            "rows",
+            1,
+            "sourceUnitRefs"
+          ],
+          "value": [
+            "unit_1",
+            "unit_2"
+          ]
+        },
+        {
+          "op": "set",
+          "path": [
+            "decision",
+            "rows",
+            1,
+            "narrativeRole"
+          ],
+          "value": "EXPLANATION"
+        },
+        {
+          "op": "set",
+          "path": [
+            "decision",
+            "rows",
+            1,
+            "selectionReason"
+          ],
+          "value": "完整保留不是与而是的转折。"
+        },
+        {
+          "op": "set",
+          "path": [
+            "decision",
+            "rows",
+            1,
+            "packagingSuggestions"
+          ],
+          "value": [
+            {
+              "suggestionId": "suggestion_1",
+              "kind": "TITLE",
+              "text": "建议标题：减少理解成本"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "missing-required-nullable-field",
+      "valid": false,
+      "patches": [
+        {
+          "op": "set",
+          "path": [
+            "decision",
+            "inputHash"
+          ],
+          "value": "sha256:ca8931fb6d55f2a2baa85c16145d5e553a3dd5f59049ea06639c2fd460091b9d"
+        },
+        {
+          "op": "set",
+          "path": [
+            "script",
+            "inputHash"
+          ],
+          "value": "sha256:ca8931fb6d55f2a2baa85c16145d5e553a3dd5f59049ea06639c2fd460091b9d"
+        },
+        {
+          "op": "set",
+          "path": [
+            "script",
+            "scriptHash"
+          ],
+          "value": "sha256:57b8b2d2d32bcb384e3fd86061ca251c3dfb20142196ca4896a97b848376143e"
+        },
+        {
+          "op": "set",
+          "path": [
+            "script",
+            "validationReport",
+            "candidateHash"
+          ],
+          "value": "sha256:57b8b2d2d32bcb384e3fd86061ca251c3dfb20142196ca4896a97b848376143e"
+        },
+        {
+          "op": "set",
+          "path": [
+            "script",
+            "quality",
+            "candidateHash"
+          ],
+          "value": "sha256:57b8b2d2d32bcb384e3fd86061ca251c3dfb20142196ca4896a97b848376143e"
+        },
+        {
+          "op": "set",
+          "path": [
+            "submission",
+            "inputHash"
+          ],
+          "value": "sha256:ca8931fb6d55f2a2baa85c16145d5e553a3dd5f59049ea06639c2fd460091b9d"
+        },
+        {
+          "op": "remove",
+          "path": [
+            "submission",
+            "input",
+            "target",
+            "desiredDurationMs"
+          ]
+        },
+        {
+          "op": "set",
+          "path": [
+            "events",
+            0,
+            "inputHash"
+          ],
+          "value": "sha256:ca8931fb6d55f2a2baa85c16145d5e553a3dd5f59049ea06639c2fd460091b9d"
+        },
+        {
+          "op": "set",
+          "path": [
+            "events",
+            1,
+            "inputHash"
+          ],
+          "value": "sha256:ca8931fb6d55f2a2baa85c16145d5e553a3dd5f59049ea06639c2fd460091b9d"
+        },
+        {
+          "op": "set",
+          "path": [
+            "events",
+            2,
+            "inputHash"
+          ],
+          "value": "sha256:ca8931fb6d55f2a2baa85c16145d5e553a3dd5f59049ea06639c2fd460091b9d"
+        },
+        {
+          "op": "set",
+          "path": [
+            "events",
+            2,
+            "resultRefs",
+            "script",
+            "contentHash"
+          ],
+          "value": "sha256:57b8b2d2d32bcb384e3fd86061ca251c3dfb20142196ca4896a97b848376143e"
+        }
+      ]
+    },
+    {
+      "name": "duration-above-hard-max",
+      "valid": false,
+      "patches": [
+        {
+          "op": "set",
+          "path": [
+            "decision",
+            "inputHash"
+          ],
+          "value": "sha256:3cc32e8b6bd7528ddd2396fa419269ee2ec9b7a3fb8d28c29dd540a170f57f3a"
+        },
+        {
+          "op": "set",
+          "path": [
+            "script",
+            "inputHash"
+          ],
+          "value": "sha256:3cc32e8b6bd7528ddd2396fa419269ee2ec9b7a3fb8d28c29dd540a170f57f3a"
+        },
+        {
+          "op": "set",
+          "path": [
+            "script",
+            "target",
+            "maxDurationMs"
+          ],
+          "value": 11000
+        },
+        {
+          "op": "set",
+          "path": [
+            "script",
+            "target",
+            "desiredDurationMs"
+          ],
+          "value": null
+        },
+        {
+          "op": "set",
+          "path": [
+            "script",
+            "scriptHash"
+          ],
+          "value": "sha256:27733c4bd0981c6e5ddc40970629f777e701228654477416d559fab38961d73f"
+        },
+        {
+          "op": "set",
+          "path": [
+            "script",
+            "validationReport",
+            "candidateHash"
+          ],
+          "value": "sha256:27733c4bd0981c6e5ddc40970629f777e701228654477416d559fab38961d73f"
+        },
+        {
+          "op": "set",
+          "path": [
+            "script",
+            "quality",
+            "candidateHash"
+          ],
+          "value": "sha256:27733c4bd0981c6e5ddc40970629f777e701228654477416d559fab38961d73f"
+        },
+        {
+          "op": "set",
+          "path": [
+            "submission",
+            "inputHash"
+          ],
+          "value": "sha256:3cc32e8b6bd7528ddd2396fa419269ee2ec9b7a3fb8d28c29dd540a170f57f3a"
+        },
+        {
+          "op": "set",
+          "path": [
+            "submission",
+            "input",
+            "target",
+            "maxDurationMs"
+          ],
+          "value": 11000
+        },
+        {
+          "op": "set",
+          "path": [
+            "submission",
+            "input",
+            "target",
+            "desiredDurationMs"
+          ],
+          "value": null
+        },
+        {
+          "op": "set",
+          "path": [
+            "events",
+            0,
+            "inputHash"
+          ],
+          "value": "sha256:3cc32e8b6bd7528ddd2396fa419269ee2ec9b7a3fb8d28c29dd540a170f57f3a"
+        },
+        {
+          "op": "set",
+          "path": [
+            "events",
+            1,
+            "inputHash"
+          ],
+          "value": "sha256:3cc32e8b6bd7528ddd2396fa419269ee2ec9b7a3fb8d28c29dd540a170f57f3a"
+        },
+        {
+          "op": "set",
+          "path": [
+            "events",
+            2,
+            "inputHash"
+          ],
+          "value": "sha256:3cc32e8b6bd7528ddd2396fa419269ee2ec9b7a3fb8d28c29dd540a170f57f3a"
+        },
+        {
+          "op": "set",
+          "path": [
+            "events",
+            2,
+            "resultRefs",
+            "script",
+            "contentHash"
+          ],
+          "value": "sha256:27733c4bd0981c6e5ddc40970629f777e701228654477416d559fab38961d73f"
+        }
+      ]
+    },
+    {
+      "name": "coarse-cannot-have-precise-caption",
+      "valid": false,
+      "patches": [
+        {
+          "op": "set",
+          "path": [
+            "materialIndex",
+            "indexHash"
+          ],
+          "value": "sha256:9547b8f619d2ed996a5470a59055f85c3616bf45af47974616868387f2466929"
+        },
+        {
+          "op": "set",
+          "path": [
+            "materialIndex",
+            "units",
+            0,
+            "timingQuality"
+          ],
+          "value": "COARSE_BLOCK"
+        },
+        {
+          "op": "set",
+          "path": [
+            "decision",
+            "indexRef",
+            "indexHash"
+          ],
+          "value": "sha256:9547b8f619d2ed996a5470a59055f85c3616bf45af47974616868387f2466929"
+        },
+        {
+          "op": "set",
+          "path": [
+            "script",
+            "indexRef",
+            "indexHash"
+          ],
+          "value": "sha256:9547b8f619d2ed996a5470a59055f85c3616bf45af47974616868387f2466929"
+        },
+        {
+          "op": "set",
+          "path": [
+            "script",
+            "scriptHash"
+          ],
+          "value": "sha256:13d9653cf60fc025693a040c0ea53f240ad2ac8b287099c8bce2f889a5de86bf"
+        },
+        {
+          "op": "set",
+          "path": [
+            "script",
+            "validationReport",
+            "candidateHash"
+          ],
+          "value": "sha256:13d9653cf60fc025693a040c0ea53f240ad2ac8b287099c8bce2f889a5de86bf"
+        },
+        {
+          "op": "set",
+          "path": [
+            "script",
+            "quality",
+            "candidateHash"
+          ],
+          "value": "sha256:13d9653cf60fc025693a040c0ea53f240ad2ac8b287099c8bce2f889a5de86bf"
+        },
+        {
+          "op": "set",
+          "path": [
+            "events",
+            2,
+            "resultRefs",
+            "materialIndex",
+            "contentHash"
+          ],
+          "value": "sha256:9547b8f619d2ed996a5470a59055f85c3616bf45af47974616868387f2466929"
+        },
+        {
+          "op": "set",
+          "path": [
+            "events",
+            2,
+            "resultRefs",
+            "script",
+            "contentHash"
+          ],
+          "value": "sha256:13d9653cf60fc025693a040c0ea53f240ad2ac8b287099c8bce2f889a5de86bf"
+        }
+      ]
+    },
+    {
+      "name": "no-speech-with-fabricated-dialogue",
+      "valid": false,
+      "patches": [
+        {
+          "op": "set",
+          "path": [
+            "materialIndex",
+            "indexHash"
+          ],
+          "value": "sha256:f0413349adc501ee60e82c3b4731cd2ecf49e0b8da4a21f5b14d8dfb1ee9d7ae"
+        },
+        {
+          "op": "set",
+          "path": [
+            "materialIndex",
+            "units",
+            0,
+            "kind"
+          ],
+          "value": "VISUAL_ONLY"
+        },
+        {
+          "op": "set",
+          "path": [
+            "materialIndex",
+            "units",
+            0,
+            "originalText"
+          ],
+          "value": "invented"
+        },
+        {
+          "op": "set",
+          "path": [
+            "materialIndex",
+            "units",
+            0,
+            "timingQuality"
+          ],
+          "value": "NONE"
+        },
+        {
+          "op": "set",
+          "path": [
+            "materialIndex",
+            "units",
+            0,
+            "transcriptRefs"
+          ],
+          "value": []
+        },
+        {
+          "op": "set",
+          "path": [
+            "materialIndex",
+            "units",
+            0,
+            "asrSource",
+            "mode"
+          ],
+          "value": "NO_SPEECH"
+        },
+        {
+          "op": "set",
+          "path": [
+            "materialIndex",
+            "units",
+            1,
+            "kind"
+          ],
+          "value": "VISUAL_ONLY"
+        },
+        {
+          "op": "set",
+          "path": [
+            "materialIndex",
+            "units",
+            1,
+            "originalText"
+          ],
+          "value": ""
+        },
+        {
+          "op": "set",
+          "path": [
+            "materialIndex",
+            "units",
+            1,
+            "timingQuality"
+          ],
+          "value": "NONE"
+        },
+        {
+          "op": "set",
+          "path": [
+            "materialIndex",
+            "units",
+            1,
+            "transcriptRefs"
+          ],
+          "value": []
+        },
+        {
+          "op": "set",
+          "path": [
+            "materialIndex",
+            "units",
+            1,
+            "asrSource",
+            "mode"
+          ],
+          "value": "NO_SPEECH"
+        },
+        {
+          "op": "set",
+          "path": [
+            "materialIndex",
+            "units",
+            2,
+            "kind"
+          ],
+          "value": "VISUAL_ONLY"
+        },
+        {
+          "op": "set",
+          "path": [
+            "materialIndex",
+            "units",
+            2,
+            "originalText"
+          ],
+          "value": ""
+        },
+        {
+          "op": "set",
+          "path": [
+            "materialIndex",
+            "units",
+            2,
+            "timingQuality"
+          ],
+          "value": "NONE"
+        },
+        {
+          "op": "set",
+          "path": [
+            "materialIndex",
+            "units",
+            2,
+            "transcriptRefs"
+          ],
+          "value": []
+        },
+        {
+          "op": "set",
+          "path": [
+            "materialIndex",
+            "units",
+            2,
+            "asrSource",
+            "mode"
+          ],
+          "value": "NO_SPEECH"
+        },
+        {
+          "op": "set",
+          "path": [
+            "materialIndex",
+            "transcripts"
+          ],
+          "value": []
+        },
+        {
+          "op": "set",
+          "path": [
+            "decision",
+            "indexRef",
+            "indexHash"
+          ],
+          "value": "sha256:f0413349adc501ee60e82c3b4731cd2ecf49e0b8da4a21f5b14d8dfb1ee9d7ae"
+        },
+        {
+          "op": "set",
+          "path": [
+            "script",
+            "indexRef",
+            "indexHash"
+          ],
+          "value": "sha256:f0413349adc501ee60e82c3b4731cd2ecf49e0b8da4a21f5b14d8dfb1ee9d7ae"
+        },
+        {
+          "op": "set",
+          "path": [
+            "script",
+            "rows",
+            0,
+            "spokenQuotes"
+          ],
+          "value": []
+        },
+        {
+          "op": "set",
+          "path": [
+            "script",
+            "rows",
+            1,
+            "spokenQuotes"
+          ],
+          "value": []
+        },
+        {
+          "op": "set",
+          "path": [
+            "script",
+            "captionCues"
+          ],
+          "value": []
+        },
+        {
+          "op": "set",
+          "path": [
+            "script",
+            "executableActions"
+          ],
+          "value": [
+            {
+              "actionId": "audio_1",
+              "type": "ORIGINAL_AUDIO",
+              "rowId": "row_1",
+              "cueId": null
+            },
+            {
+              "actionId": "audio_2",
+              "type": "ORIGINAL_AUDIO",
+              "rowId": "row_2",
+              "cueId": null
+            }
+          ]
+        },
+        {
+          "op": "set",
+          "path": [
+            "script",
+            "scriptHash"
+          ],
+          "value": "sha256:46ad96abc574508477ed7a0eab977b7b8a9ac49e24dfa577e0334aa131b5b9a6"
+        },
+        {
+          "op": "set",
+          "path": [
+            "script",
+            "validationReport",
+            "candidateHash"
+          ],
+          "value": "sha256:46ad96abc574508477ed7a0eab977b7b8a9ac49e24dfa577e0334aa131b5b9a6"
+        },
+        {
+          "op": "set",
+          "path": [
+            "script",
+            "quality",
+            "candidateHash"
+          ],
+          "value": "sha256:46ad96abc574508477ed7a0eab977b7b8a9ac49e24dfa577e0334aa131b5b9a6"
+        },
+        {
+          "op": "set",
+          "path": [
+            "events",
+            2,
+            "resultRefs",
+            "materialIndex",
+            "contentHash"
+          ],
+          "value": "sha256:f0413349adc501ee60e82c3b4731cd2ecf49e0b8da4a21f5b14d8dfb1ee9d7ae"
+        },
+        {
+          "op": "set",
+          "path": [
+            "events",
+            2,
+            "resultRefs",
+            "script",
+            "contentHash"
+          ],
+          "value": "sha256:46ad96abc574508477ed7a0eab977b7b8a9ac49e24dfa577e0334aa131b5b9a6"
+        }
+      ]
+    },
+    {
+      "name": "untrusted-source-cannot-be-ready",
+      "valid": false,
+      "patches": [
+        {
+          "op": "set",
+          "path": [
+            "materialIndex",
+            "indexHash"
+          ],
+          "value": "sha256:3f328cbde09126116c9ec1fbc34c1f11816288159721ad79d5021928ec97aee8"
+        },
+        {
+          "op": "set",
+          "path": [
+            "materialIndex",
+            "units",
+            0,
+            "asrSource",
+            "mode"
+          ],
+          "value": "SIMULATED"
+        },
+        {
+          "op": "set",
+          "path": [
+            "materialIndex",
+            "transcripts",
+            0,
+            "source",
+            "mode"
+          ],
+          "value": "SIMULATED"
+        },
+        {
+          "op": "set",
+          "path": [
+            "decision",
+            "indexRef",
+            "indexHash"
+          ],
+          "value": "sha256:3f328cbde09126116c9ec1fbc34c1f11816288159721ad79d5021928ec97aee8"
+        },
+        {
+          "op": "set",
+          "path": [
+            "script",
+            "indexRef",
+            "indexHash"
+          ],
+          "value": "sha256:3f328cbde09126116c9ec1fbc34c1f11816288159721ad79d5021928ec97aee8"
+        },
+        {
+          "op": "set",
+          "path": [
+            "script",
+            "rows",
+            0,
+            "riskRefs"
+          ],
+          "value": [
+            "risk_1",
+            "risk_2"
+          ]
+        },
+        {
+          "op": "set",
+          "path": [
+            "script",
+            "captionCues"
+          ],
+          "value": [
+            {
+              "cueId": "cue_unit_2",
+              "rowId": "row_1",
+              "unitId": "unit_2",
+              "text": "而是让观众更容易看懂。",
+              "outputRange": {
+                "startMs": 4000,
+                "endMs": 8000
+              },
+              "timingQuality": "SENTENCE"
+            },
+            {
+              "cueId": "cue_unit_3",
+              "rowId": "row_2",
+              "unitId": "unit_3",
+              "text": "保留必要的上下文。",
+              "outputRange": {
+                "startMs": 8000,
+                "endMs": 12000
+              },
+              "timingQuality": "SENTENCE"
+            }
+          ]
+        },
+        {
+          "op": "set",
+          "path": [
+            "script",
+            "executableActions"
+          ],
+          "value": [
+            {
+              "actionId": "audio_1",
+              "type": "ORIGINAL_AUDIO",
+              "rowId": "row_1",
+              "cueId": null
+            },
+            {
+              "actionId": "action_cue_unit_2",
+              "type": "CAPTION",
+              "rowId": "row_1",
+              "cueId": "cue_unit_2"
+            },
+            {
+              "actionId": "audio_2",
+              "type": "ORIGINAL_AUDIO",
+              "rowId": "row_2",
+              "cueId": null
+            },
+            {
+              "actionId": "action_cue_unit_3",
+              "type": "CAPTION",
+              "rowId": "row_2",
+              "cueId": "cue_unit_3"
+            }
+          ]
+        },
+        {
+          "op": "set",
+          "path": [
+            "script",
+            "riskItems"
+          ],
+          "value": [
+            {
+              "riskId": "risk_1",
+              "code": "UNTRUSTED_SOURCE",
+              "level": "REVIEW",
+              "rowRefs": [
+                "row_1"
+              ],
+              "unitRefs": [
+                "unit_1"
+              ],
+              "message": "Fictional UNTRUSTED_SOURCE"
+            },
+            {
+              "riskId": "risk_2",
+              "code": "SUBTITLE_UNAVAILABLE",
+              "level": "REVIEW",
+              "rowRefs": [
+                "row_1"
+              ],
+              "unitRefs": [
+                "unit_1"
+              ],
+              "message": "Fictional SUBTITLE_UNAVAILABLE"
+            }
+          ]
+        },
+        {
+          "op": "set",
+          "path": [
+            "script",
+            "scriptHash"
+          ],
+          "value": "sha256:6239d8457729c1143171b43160d640f5b15a6592d42d3d76aa5f6b41ffe242eb"
+        },
+        {
+          "op": "set",
+          "path": [
+            "script",
+            "validationReport",
+            "candidateHash"
+          ],
+          "value": "sha256:6239d8457729c1143171b43160d640f5b15a6592d42d3d76aa5f6b41ffe242eb"
+        },
+        {
+          "op": "set",
+          "path": [
+            "script",
+            "validationReport",
+            "issueRefs"
+          ],
+          "value": [
+            "risk_1",
+            "risk_2"
+          ]
+        },
+        {
+          "op": "set",
+          "path": [
+            "script",
+            "quality",
+            "candidateHash"
+          ],
+          "value": "sha256:6239d8457729c1143171b43160d640f5b15a6592d42d3d76aa5f6b41ffe242eb"
+        },
+        {
+          "op": "set",
+          "path": [
+            "events",
+            2,
+            "resultRefs",
+            "materialIndex",
+            "contentHash"
+          ],
+          "value": "sha256:3f328cbde09126116c9ec1fbc34c1f11816288159721ad79d5021928ec97aee8"
+        },
+        {
+          "op": "set",
+          "path": [
+            "events",
+            2,
+            "resultRefs",
+            "script",
+            "contentHash"
+          ],
+          "value": "sha256:6239d8457729c1143171b43160d640f5b15a6592d42d3d76aa5f6b41ffe242eb"
+        }
+      ]
+    },
+    {
+      "name": "hard-invalid-cannot-be-success",
+      "valid": false,
+      "patches": [
+        {
+          "op": "set",
+          "path": [
+            "script",
+            "rows",
+            0,
+            "riskRefs"
+          ],
+          "value": [
+            "risk_1"
+          ]
+        },
+        {
+          "op": "set",
+          "path": [
+            "script",
+            "riskItems"
+          ],
+          "value": [
+            {
+              "riskId": "risk_1",
+              "code": "SEMANTIC_REVIEW",
+              "level": "HARD",
+              "rowRefs": [
+                "row_1"
+              ],
+              "unitRefs": [
+                "unit_1"
+              ],
+              "message": "Fictional SEMANTIC_REVIEW"
+            }
+          ]
+        },
+        {
+          "op": "set",
+          "path": [
+            "script",
+            "scriptHash"
+          ],
+          "value": "sha256:68f9b47bd6831d11ba5afabb79d55e75eb13c9455b832a27c78c76a2250d7378"
+        },
+        {
+          "op": "set",
+          "path": [
+            "script",
+            "validationReport",
+            "candidateHash"
+          ],
+          "value": "sha256:68f9b47bd6831d11ba5afabb79d55e75eb13c9455b832a27c78c76a2250d7378"
+        },
+        {
+          "op": "set",
+          "path": [
+            "script",
+            "validationReport",
+            "hardPassed"
+          ],
+          "value": false
+        },
+        {
+          "op": "set",
+          "path": [
+            "script",
+            "validationReport",
+            "issueRefs"
+          ],
+          "value": [
+            "risk_1"
+          ]
+        },
+        {
+          "op": "set",
+          "path": [
+            "script",
+            "quality",
+            "candidateHash"
+          ],
+          "value": "sha256:68f9b47bd6831d11ba5afabb79d55e75eb13c9455b832a27c78c76a2250d7378"
+        },
+        {
+          "op": "set",
+          "path": [
+            "script",
+            "quality",
+            "passed"
+          ],
+          "value": false
+        },
+        {
+          "op": "set",
+          "path": [
+            "script",
+            "quality",
+            "issueRefs"
+          ],
+          "value": [
+            "risk_1"
+          ]
+        },
+        {
+          "op": "set",
+          "path": [
+            "script",
+            "reviewStatus"
+          ],
+          "value": "NEEDS_REVIEW"
+        },
+        {
+          "op": "set",
+          "path": [
+            "events",
+            2,
+            "reviewStatus"
+          ],
+          "value": "NEEDS_REVIEW"
+        },
+        {
+          "op": "set",
+          "path": [
+            "events",
+            2,
+            "resultRefs",
+            "script",
+            "contentHash"
+          ],
+          "value": "sha256:68f9b47bd6831d11ba5afabb79d55e75eb13c9455b832a27c78c76a2250d7378"
+        }
+      ]
+    },
+    {
+      "name": "late-progress-cannot-revive-terminal",
+      "valid": false,
+      "patches": [
+        {
+          "op": "set",
+          "path": [
+            "events"
+          ],
+          "value": [
+            {
+              "protocolVersion": "1.0",
+              "event": "PROGRESS",
+              "eventId": "event_1",
+              "requestId": "request_fixture",
+              "taskId": "task_fixture",
+              "projectId": "project_fixture",
+              "assetId": "asset_fixture",
+              "assetHash": "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+              "runId": "run_fixture",
+              "attempt": 1,
+              "inputHash": "sha256:72407c6041df56c0fcf7ef4d6f4434065661843d5b5bcbf3dea2c24167b55690",
+              "sequence": 1,
+              "heartbeatAt": "2026-01-01T00:00:01Z",
+              "phase": "PROBING",
+              "progress": 12,
+              "executionStatus": "RUNNING",
+              "analysisOutcome": "NONE",
+              "reviewStatus": "NOT_AVAILABLE",
+              "resultRefs": null,
+              "error": null
+            },
+            {
+              "protocolVersion": "1.0",
+              "event": "PROGRESS",
+              "eventId": "event_2",
+              "requestId": "request_fixture",
+              "taskId": "task_fixture",
+              "projectId": "project_fixture",
+              "assetId": "asset_fixture",
+              "assetHash": "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+              "runId": "run_fixture",
+              "attempt": 1,
+              "inputHash": "sha256:72407c6041df56c0fcf7ef4d6f4434065661843d5b5bcbf3dea2c24167b55690",
+              "sequence": 2,
+              "heartbeatAt": "2026-01-01T00:00:02Z",
+              "phase": "PLANNING",
+              "progress": 70,
+              "executionStatus": "RUNNING",
+              "analysisOutcome": "NONE",
+              "reviewStatus": "NOT_AVAILABLE",
+              "resultRefs": null,
+              "error": null
+            },
+            {
+              "protocolVersion": "1.0",
+              "event": "COMPLETED",
+              "eventId": "event_3",
+              "requestId": "request_fixture",
+              "taskId": "task_fixture",
+              "projectId": "project_fixture",
+              "assetId": "asset_fixture",
+              "assetHash": "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+              "runId": "run_fixture",
+              "attempt": 1,
+              "inputHash": "sha256:72407c6041df56c0fcf7ef4d6f4434065661843d5b5bcbf3dea2c24167b55690",
+              "sequence": 3,
+              "heartbeatAt": "2026-01-01T00:00:03Z",
+              "phase": "COMPLETED",
+              "progress": 100,
+              "executionStatus": "SUCCESS",
+              "analysisOutcome": "COMPLETE",
+              "reviewStatus": "READY",
+              "resultRefs": {
+                "analysis": {
+                  "artifactId": "analysis_fixture",
+                  "revision": 2,
+                  "contentHash": "sha256:bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"
+                },
+                "materialIndex": {
+                  "artifactId": "index_fixture",
+                  "revision": 3,
+                  "contentHash": "sha256:e97d50988f20e47f2a4b7a26940b56f502d89eb2cd276073b241a63e1b393648"
+                },
+                "script": {
+                  "artifactId": "script_fixture",
+                  "revision": 1,
+                  "contentHash": "sha256:a40d3001ee7ddc8eaa0694b78a084db44c23ad226af350ffa6ac097b21cd3f6c"
+                }
+              },
+              "error": null
+            },
+            {
+              "protocolVersion": "1.0",
+              "event": "PROGRESS",
+              "eventId": "late_event",
+              "requestId": "request_fixture",
+              "taskId": "task_fixture",
+              "projectId": "project_fixture",
+              "assetId": "asset_fixture",
+              "assetHash": "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+              "runId": "run_fixture",
+              "attempt": 1,
+              "inputHash": "sha256:72407c6041df56c0fcf7ef4d6f4434065661843d5b5bcbf3dea2c24167b55690",
+              "sequence": 4,
+              "heartbeatAt": "2026-01-01T00:00:01Z",
+              "phase": "PROBING",
+              "progress": 100,
+              "executionStatus": "RUNNING",
+              "analysisOutcome": "NONE",
+              "reviewStatus": "NOT_AVAILABLE",
+              "resultRefs": null,
+              "error": null
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "failure-cannot-carry-normal-results",
+      "valid": false,
+      "patches": [
+        {
+          "op": "set",
+          "path": [
+            "events",
+            2,
+            "phase"
+          ],
+          "value": "FAILED"
+        },
+        {
+          "op": "set",
+          "path": [
+            "events",
+            2,
+            "progress"
+          ],
+          "value": 99
+        },
+        {
+          "op": "set",
+          "path": [
+            "events",
+            2,
+            "executionStatus"
+          ],
+          "value": "FAILED"
+        },
+        {
+          "op": "set",
+          "path": [
+            "events",
+            2,
+            "analysisOutcome"
+          ],
+          "value": "NONE"
+        },
+        {
+          "op": "set",
+          "path": [
+            "events",
+            2,
+            "reviewStatus"
+          ],
+          "value": "NOT_AVAILABLE"
+        },
+        {
+          "op": "set",
+          "path": [
+            "events",
+            2,
+            "error"
+          ],
+          "value": {
+            "code": "MODEL_FAILED",
+            "message": "failed",
+            "retryable": true
+          }
+        }
+      ]
+    }
+  ]
+}

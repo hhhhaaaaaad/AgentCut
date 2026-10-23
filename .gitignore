@@ -17,6 +17,9 @@ dist/
 target/
 *.class
 
+# ===== CI 本地复现报告 =====
+AgentCut-ai/reports/
+
 # ===== IDE =====
 .idea/
 .vscode/
