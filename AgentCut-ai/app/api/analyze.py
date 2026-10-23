@@ -234,8 +234,12 @@ async def _run_job(job_id: str, req: AnalyzeRequest) -> None:
         )
         await _push_progress(job_id, _PLAN_END, "剪辑方案就绪")
 
+        analysis = report.model_dump(mode="json")
+        # 加性元数据：随原有报告落库，无需修改 Plan 1.0 或新增数据库字段。
+        if getattr(plan_agent, "last_run", None) is not None:
+            analysis["planning"] = plan_agent.last_run.model_dump(mode="json")
         result = {
-            "analysis": report.model_dump(mode="json"),
+            "analysis": analysis,
             "plan": plan.to_contract_dict(),
             "quality": plan_agent.last_quality.model_dump(mode="json")
             if getattr(plan_agent, "last_quality", None)

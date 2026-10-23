@@ -150,7 +150,7 @@ public class AnalyzeTaskService {
             return;
         }
 
-        boolean needsReview = qualityFailed(qualityJson);
+        boolean needsReview = qualityFailed(qualityJson) || planningNeedsReview(reportJson, qualityJson);
         AnalysisReportEntity report = AnalysisReportEntity.builder()
                 .projectId(task.getProjectId())
                 .version(1)
@@ -174,7 +174,7 @@ public class AnalyzeTaskService {
         }
 
         if (needsReview) {
-            taskDomainService.markNeedsReview(taskId, planJson, "质量评审未通过，需人工复核");
+            taskDomainService.markNeedsReview(taskId, planJson, "方案或质量评审需人工复核");
         } else {
             taskDomainService.markSuccess(taskId, planJson);
         }
@@ -190,6 +190,27 @@ public class AnalyzeTaskService {
         } catch (Exception e) {
             log.warn("质量结果无法解析，按质量不可用处理: {}", e.getMessage());
             return false;
+        }
+    }
+
+    private boolean planningNeedsReview(String reportJson, String qualityJson) {
+        try {
+            JsonNode report = objectMapper.readTree(reportJson);
+            // 兼容旧报告；新版闭环缺失/非法 reviewStatus 时不能默认视为质量通过。
+            JsonNode planning = report == null ? null : report.get("planning");
+            if (planning == null) {
+                return false;
+            }
+            if (!"READY".equals(planning.path("reviewStatus").asText())) {
+                return true;
+            }
+            JsonNode quality = qualityJson == null ? null : objectMapper.readTree(qualityJson);
+            String selectedHash = planning.path("selectedCandidateHash").asText("");
+            return quality == null || !quality.path("passed").asBoolean(false)
+                    || !selectedHash.matches("[0-9a-f]{64}")
+                    || !selectedHash.equals(quality.path("candidateHash").asText(""));
+        } catch (Exception e) {
+            return true;
         }
     }
 
