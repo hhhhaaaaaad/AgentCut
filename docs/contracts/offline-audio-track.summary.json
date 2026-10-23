@@ -1,0 +1,43 @@
+{
+  "status": "PARTIAL",
+  "speechMs": 46000,
+  "audioChunks": 3,
+  "transcripts": 2,
+  "transcribedSpeechMs": 0,
+  "missingSpeechMs": 46000,
+  "chunkStatuses": [
+    "SUCCESS",
+    "SUCCESS",
+    "FAILED"
+  ],
+  "transcriptRanges": [
+    [
+      55000,
+      85000
+    ],
+    [
+      84000,
+      95000
+    ]
+  ],
+  "windowTranscriptCounts": [
+    1,
+    2,
+    0
+  ],
+  "windowFailedChunkCounts": [
+    0,
+    0,
+    1
+  ],
+  "originalText": [
+    "这一段完整保留跨窗口的原始转写，继续说明时间轴引用。",
+    "继续说明时间轴引用。后续音频块仍然保留原始全局时间。"
+  ],
+  "displayText": "这一段完整保留跨窗口的原始转写，继续说明时间轴引用。\n后续音频块仍然保留原始全局时间。",
+  "reviewReasons": [
+    "VAD_INCOMPLETE_SIMULATED_OR_UNRELIABLE",
+    "SIMULATED_ASR",
+    "ASR_CHUNKS_MISSING_OR_FAILED"
+  ]
+}

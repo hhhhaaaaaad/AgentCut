@@ -1,0 +1,2 @@
+# Optional local CPU VAD backend. No ASR/model service or model weights.
+webrtcvad-wheels==2.0.14.post1
