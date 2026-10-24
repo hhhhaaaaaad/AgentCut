@@ -305,6 +305,18 @@ QA 回查未选中原文、邻接关系、已声明依赖及帧观察；过期 h
 
 ## 5. B3：上传准入与任务后端
 
+### 2026-10-24 B3a 准备索引的在线任务
+
+新增独立在线脚本任务入口，基于受控 B2 输入目录接通 Java → Python ID 导演/QA 门禁 →
+回调 → 原子内存保存与按任务查询。实现 requestId/runId 去重、受理未知查询协调、
+身份/顺序/终态屏障、原始 evidence hash 绑定、独立脚本及证据查询和有限容量。
+默认规则选材、QA 不可用时明确需复核，不构造真实模型；虚构样例已完成双服务 HTTP 验收。
+新入口默认关闭，只在显式启用的 local profile 使用，MySQL 不回退到内存实现。
+
+这不等于 B3 全部完成：当前目录素材尚未接旧 Asset 表 READY 准入，内存数据不抗进程重启；
+上传流/hash/probe、真实对象播放、MySQL 事务和全局版本仍待后续。
+接入与复现见 [在线脚本任务](../contracts/online-script-tasks.md)。音轨适配继续暂停。
+
 主要范围：AssetService/Controller、Task及Analyze服务、PythonClient、回调接口、仓储与DTO。
 
 任务：

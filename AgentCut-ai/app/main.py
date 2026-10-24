@@ -4,6 +4,8 @@
 运行：cd AgentCut-ai && uvicorn app.main:app --reload
 """
 
+import os
+
 from fastapi import FastAPI
 
 from app.api.analyze import router as analyze_router
@@ -16,6 +18,12 @@ app = FastAPI(
 
 # 业务路由（analyze.py 内已带 /analyze 前缀，直接挂载）
 app.include_router(analyze_router)
+
+if os.environ.get("AGENTCUT_SCRIPT_RUNS_ENABLED", "false").lower() == "true":
+    from app.api.script_runs import ScriptRunService, script_router
+
+    script_runs = ScriptRunService(callback_base=os.environ.get("AGENTCUT_SCRIPT_CALLBACK_BASE", "http://127.0.0.1:8080"))
+    app.include_router(script_router(script_runs))
 
 
 @app.get("/health")
