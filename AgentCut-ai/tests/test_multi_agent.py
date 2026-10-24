@@ -83,7 +83,7 @@ def _make_plan() -> Plan:
         planVersion=1,
         projectId="p",
         title="t",
-        source=Source(assetId="a", url="", duration=12.0, fps=30.0, width=1920, height=1080),
+        source=Source(assetId="asset_test", url="", duration=12.0, fps=30.0, width=1920, height=1080),
         global_=Global(output=OutputConfig(width=1920, height=1080, fps=30.0)),
         timeline=[
             Segment(id="seg_1", keep=True, sourceRange=TimeRange(start=0.0, end=5.0)),

@@ -179,6 +179,21 @@ AnalyzeInput、TaskSubmission、TaskEvent 1.0 的独立契约、三端类型与�
 
 ## 4. B2：真实多模态分析与 AI 脚本生成
 
+### 2026-10-23 优先级调整与 Agent 闭环实施
+
+按项目负责人最新要求，暂停独立音轨/ASR 适配工作，先迭代现有 Agent 决策链路。
+本批从已合并主线独立开发，不依赖尚未合并的音轨 PR。
+
+已实现 PlanAgent 的先硬校验再 QA、三轮内定向修订、保留硬合格最佳草稿、
+规则兜底统一校验，以及评审与实际候选 hash 绑定。QA 输入补齐报告中的原始证据；
+最终候选不再在评审后被静默修改。补充源元数据绑定、删除区间校验和非空保留内容检查。
+每轮结果、失败类型、耗时、最终选择与复核原因随 `analysis.planning` 保存；
+Java 把 QA 不可用、未达标、候选评审不匹配等新版结果映射为 `NEEDS_REVIEW`。
+
+详情、验收命令与边界见 [现有 Agent 受控迭代](../contracts/legacy-agent-planning.md)。
+这仍是 `LEGACY_PLAN` 策略，未把旧 Plan 包装为 B2b 新脚本，也未完成 B2a 的多模态融合验收。
+后续 Agent 工作优先准备 MaterialIndex 的最小可用输入与 ID 导演离线链路，再接入在线流程。
+
 主要范围：Python现有analysis_agent、plan_agent、quality_agent、validator、转写/场景工具与Schema。
 
 任务：

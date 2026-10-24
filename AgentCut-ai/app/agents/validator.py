@@ -1,12 +1,13 @@
 """确定性校验闸（app.agents.validator）。
 
-纯代码（无 LLM）校验剪辑方案 Plan 的可执行性，12 条规则 R1~R12。
-error 级 → valid=False（上层回退确定性方案）；warning 级 → 仅记录，不回退。
+纯代码（无 LLM）校验剪辑方案 Plan：基础 R1~R12，加素材绑定、有限数字和保留内容检查。
+error 级 → valid=False（上层修订或兜底）；warning 级不触发兜底，但要求人工复核。
 
 规则清单见 .omc/plans/multi-agent-refactor.md §5。
 """
 
 import logging
+import math
 from typing import List, Optional
 
 from pydantic import BaseModel, Field
@@ -50,10 +51,39 @@ class DeterministicValidator:
         errors: List[ValidationError] = []
         warnings: List[ValidationError] = []
 
+        # 使用探测报告作为信任边界，模型不能自行扩大 source.duration 绕过越界检查。
+        expected = {
+            "assetId": report.assetId, "url": report.videoUrl, "duration": report.duration,
+            "width": report.width or 1920, "height": report.height or 1080,
+            "fps": report.fps or 30.0,
+        }
+        if any(getattr(plan.source, key) != value for key, value in expected.items()):
+            errors.append(ValidationError(
+                rule="source_identity", severity="error",
+                message="方案 source 必须与分析报告的素材标识、URL 和探测参数一致",
+            ))
+
+        def finite(value):
+            if isinstance(value, float):
+                return math.isfinite(value)
+            if isinstance(value, dict):
+                return all(finite(item) for item in value.values())
+            if isinstance(value, list):
+                return all(finite(item) for item in value)
+            return True
+
+        if not finite(plan.model_dump()):
+            errors.append(ValidationError(rule="finite_numbers", severity="error", message="方案数字必须有限"))
+            return ValidationResult(valid=False, errors=errors)
+
         kept = [seg for seg in plan.timeline if seg.keep]
+        if not kept:
+            errors.append(ValidationError(
+                rule="kept_content", severity="error", message="方案至少需要一个保留片段",
+            ))
 
         # R1: source_range_bounds
-        self._check_source_range_bounds(kept, plan.source.duration, errors)
+        self._check_source_range_bounds(plan.timeline, report.duration, errors)
         # R2: timeline_order_overlap
         self._check_order_overlap(kept, errors)
         # R12: id_unique

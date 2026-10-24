@@ -49,3 +49,5 @@ class QualityReview(BaseModel):
     issues: list[QualityIssue] = Field(default_factory=list)
     dimensionScores: list[DimensionScore] = Field(default_factory=list)
     summary: str = ""
+    # 由程序覆盖，模型不能为其他版本签发评审。
+    candidateHash: Optional[str] = Field(default=None, pattern=r"^[0-9a-f]{64}$")
