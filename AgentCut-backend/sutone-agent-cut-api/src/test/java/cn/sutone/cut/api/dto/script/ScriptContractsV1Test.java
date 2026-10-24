@@ -15,6 +15,7 @@ import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 class ScriptContractsV1Test {
@@ -59,5 +60,28 @@ class ScriptContractsV1Test {
         assertEquals("READY", result.script().reviewStatus());
         assertEquals(8000, result.script().rows().get(1).outputRange().startMs());
         assertEquals("SUCCESS", result.events().get(2).executionStatus());
+    }
+
+    @Test
+    void acceptsProgramBuiltIdDirectorDraft() throws Exception {
+        Path example = CORPUS.resolveSibling("offline-id-director.bundle.json");
+        var result = ScriptContractsV1.parseBundle(Files.readString(example));
+        assertEquals(5, result.materialIndex().scenes().size());
+        assertEquals(6000, result.script().estimatedDurationMs());
+        assertEquals("NEEDS_REVIEW", result.script().reviewStatus());
+        assertEquals(4500, result.script().rows().get(1).sourceParts().get(0).sourceRange().startMs());
+        assertEquals(3000, result.script().rows().get(1).outputRange().startMs());
+        assertEquals(0, result.script().captionCues().size());
+    }
+
+    @Test
+    void acceptsQaProjectedScriptWithoutPromotingSimulatedReview() throws Exception {
+        var result = ScriptContractsV1.parseBundle(Files.readString(CORPUS.resolveSibling("offline-script-review.bundle.json")));
+        assertEquals(3, result.script().rows().size());
+        assertEquals(7000, result.script().estimatedDurationMs());
+        assertEquals("NEEDS_REVIEW", result.script().reviewStatus());
+        assertFalse(result.script().quality().passed());
+        assertEquals(result.script().scriptHash(), result.script().quality().candidateHash());
+        assertEquals(6000, result.script().rows().get(2).outputRange().startMs());
     }
 }

@@ -1,0 +1,39 @@
+{
+  "sourceScenes": 5,
+  "units": 11,
+  "status": "DRAFT",
+  "selectedUnits": [
+    "unit_c9da419640e9b21af692ceb7f21a80197cf4c4b3da0129a984fee4f9848fa6bb",
+    "unit_8c3804d87f8477c67dee03b298dbdeb544308ceba3944fd1a74d87666b864034"
+  ],
+  "sourceParts": [
+    {
+      "startMs": 500,
+      "endMs": 3500
+    },
+    {
+      "startMs": 4500,
+      "endMs": 7500
+    }
+  ],
+  "outputRanges": [
+    {
+      "startMs": 0,
+      "endMs": 3000
+    },
+    {
+      "startMs": 3000,
+      "endMs": 6000
+    }
+  ],
+  "durationMs": 6000,
+  "riskCodes": [
+    "COARSE_ALIGNMENT",
+    "QA_UNAVAILABLE",
+    "SEMANTIC_REVIEW",
+    "SUBTITLE_UNAVAILABLE",
+    "UNTRUSTED_SOURCE",
+    "VISUAL_UNVERIFIED"
+  ],
+  "reviewStatus": "NEEDS_REVIEW"
+}

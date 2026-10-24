@@ -1,0 +1,227 @@
+{
+  "sourceIndex": {
+    "indexSchemaVersion": "source-index-0.1",
+    "indexId": "source_54dab42b510ce615e581297113ae078674767a71fb7feada76b27c80dd8051fb",
+    "assetRef": {
+      "assetId": "id_director_fixture",
+      "assetHash": "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "durationMs": 20000,
+      "displayName": "fictional-camera-demo.mp4"
+    },
+    "detector": {
+      "name": "fixture",
+      "version": "1",
+      "settingsHash": "sha256:bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"
+    },
+    "detectorSource": {
+      "mode": "SIMULATED",
+      "provider": "hand-authored-fixture",
+      "model": null,
+      "reason": "Fictional evidence for offline ID selection; no model or media processing"
+    },
+    "scenes": [
+      {
+        "sceneId": "scene_8758eb89d36c0e661f2b88798ceefb6d82e652821939575602c05cb93e7d6c36",
+        "sourceRange": {
+          "startMs": 0,
+          "endMs": 4000
+        },
+        "origin": "DETECTED",
+        "source": {
+          "mode": "SIMULATED",
+          "provider": "hand-authored-fixture",
+          "model": null,
+          "reason": "Fictional evidence for offline ID selection; no model or media processing"
+        }
+      },
+      {
+        "sceneId": "scene_ea90a96084275dd66b353b2fb30d4af9ababcab984dd8189bfccd19c67c801fa",
+        "sourceRange": {
+          "startMs": 4000,
+          "endMs": 8000
+        },
+        "origin": "DETECTED",
+        "source": {
+          "mode": "SIMULATED",
+          "provider": "hand-authored-fixture",
+          "model": null,
+          "reason": "Fictional evidence for offline ID selection; no model or media processing"
+        }
+      },
+      {
+        "sceneId": "scene_3f66c93ae6d6bac94f4bcb2bf6f597e97b26726542df122a262ce615f0c4be66",
+        "sourceRange": {
+          "startMs": 8000,
+          "endMs": 12000
+        },
+        "origin": "DETECTED",
+        "source": {
+          "mode": "SIMULATED",
+          "provider": "hand-authored-fixture",
+          "model": null,
+          "reason": "Fictional evidence for offline ID selection; no model or media processing"
+        }
+      },
+      {
+        "sceneId": "scene_a9c6c96bde94b0143bc7caaa85510bc06390c36d7706665ea2a297d03a57817b",
+        "sourceRange": {
+          "startMs": 12000,
+          "endMs": 16000
+        },
+        "origin": "DETECTED",
+        "source": {
+          "mode": "SIMULATED",
+          "provider": "hand-authored-fixture",
+          "model": null,
+          "reason": "Fictional evidence for offline ID selection; no model or media processing"
+        }
+      },
+      {
+        "sceneId": "scene_3197ebcd5b81ec9ce3b386acdcd7d0509c24a30e6928c6ff6956a00c15b2a65e",
+        "sourceRange": {
+          "startMs": 16000,
+          "endMs": 20000
+        },
+        "origin": "DETECTED",
+        "source": {
+          "mode": "SIMULATED",
+          "provider": "hand-authored-fixture",
+          "model": null,
+          "reason": "Fictional evidence for offline ID selection; no model or media processing"
+        }
+      }
+    ],
+    "indexedCoverageMs": 20000,
+    "observedCoverageMs": 0,
+    "detectionStatus": "SIMULATED"
+  },
+  "evidence": {
+    "evidenceVersion": "material-evidence-0.1",
+    "evidenceId": "camera_evidence",
+    "revision": 1,
+    "assetRef": {
+      "assetId": "id_director_fixture",
+      "assetHash": "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "durationMs": 20000,
+      "displayName": "fictional-camera-demo.mp4"
+    },
+    "upstreamAnalysisHash": null,
+    "transcripts": [
+      {
+        "transcriptId": "intro",
+        "sourceRange": {
+          "startMs": 500,
+          "endMs": 3500
+        },
+        "text": "先装好镜头，确认卡口锁紧。",
+        "timingQuality": "COARSE_BLOCK",
+        "source": {
+          "mode": "SIMULATED",
+          "provider": "hand-authored-fixture",
+          "model": null,
+          "reason": "Fictional evidence for offline ID selection; no model or media processing"
+        }
+      },
+      {
+        "transcriptId": "demo",
+        "sourceRange": {
+          "startMs": 4500,
+          "endMs": 7500
+        },
+        "text": "取下镜头盖后，再开机测试镜头。",
+        "timingQuality": "COARSE_BLOCK",
+        "source": {
+          "mode": "SIMULATED",
+          "provider": "hand-authored-fixture",
+          "model": null,
+          "reason": "Fictional evidence for offline ID selection; no model or media processing"
+        }
+      },
+      {
+        "transcriptId": "ending",
+        "sourceRange": {
+          "startMs": 18500,
+          "endMs": 19500
+        },
+        "text": "关机收好相机。",
+        "timingQuality": "COARSE_BLOCK",
+        "source": {
+          "mode": "SIMULATED",
+          "provider": "hand-authored-fixture",
+          "model": null,
+          "reason": "Fictional evidence for offline ID selection; no model or media processing"
+        }
+      }
+    ],
+    "observations": [
+      {
+        "frameId": "frame_0",
+        "sceneId": "scene_8758eb89d36c0e661f2b88798ceefb6d82e652821939575602c05cb93e7d6c36",
+        "timestampMs": 2000,
+        "description": "展示镜头操作",
+        "source": {
+          "mode": "SIMULATED",
+          "provider": "hand-authored-fixture",
+          "model": null,
+          "reason": "Fictional evidence for offline ID selection; no model or media processing"
+        }
+      },
+      {
+        "frameId": "frame_1",
+        "sceneId": "scene_ea90a96084275dd66b353b2fb30d4af9ababcab984dd8189bfccd19c67c801fa",
+        "timestampMs": 6000,
+        "description": "展示镜头操作",
+        "source": {
+          "mode": "SIMULATED",
+          "provider": "hand-authored-fixture",
+          "model": null,
+          "reason": "Fictional evidence for offline ID selection; no model or media processing"
+        }
+      }
+    ],
+    "dependencies": [
+      {
+        "transcriptId": "demo",
+        "dependsOnTranscriptId": "intro",
+        "kind": "CONDITION",
+        "level": "REQUIRED"
+      }
+    ]
+  },
+  "submission": {
+    "protocolVersion": "1.0",
+    "messageType": "ANALYZE_REQUEST",
+    "taskId": "task_camera",
+    "projectId": "project_camera",
+    "runId": "run_camera",
+    "attempt": 1,
+    "inputHash": "sha256:a3f3431d9a7728ec35cefd68fc882a08ef7ee1864159fca82d26dceb29d71113",
+    "configVersion": "offline-id-fixture-1",
+    "input": {
+      "inputSchemaVersion": "1.0",
+      "requestId": "request_camera",
+      "assetId": "id_director_fixture",
+      "taskName": "镜头使用演示",
+      "target": {
+        "mode": "TOPIC_EXTRACT",
+        "topic": "镜头",
+        "maxDurationMs": 10000,
+        "desiredDurationMs": 8000,
+        "aspectRatio": "9:16",
+        "subtitleRequested": true,
+        "style": "原声演示",
+        "contentType": "TUTORIAL_INTERVIEW",
+        "editPolicy": "ORIGINAL_ORDER_ORIGINAL_SPEED_HARD_CUT"
+      }
+    },
+    "assetRef": {
+      "assetId": "id_director_fixture",
+      "assetHash": "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "durationMs": 20000,
+      "displayName": "fictional-camera-demo.mp4"
+    },
+    "mediaObjectKey": "fixtures/camera.mp4",
+    "callbackUrl": "http://127.0.0.1:8080/unused-offline-callback"
+  },
+  "indexVersion": 1
+}
