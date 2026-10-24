@@ -1,0 +1,91 @@
+{
+  "vad": {
+    "assetRef": {
+      "assetId": "offline_sample",
+      "assetHash": "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "durationMs": 140000,
+      "displayName": "synthetic-fixture-no-media.mp4"
+    },
+    "detector": {
+      "name": "offline-vad-fixture",
+      "version": "1",
+      "settingsHash": "sha256:44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a"
+    },
+    "source": {
+      "mode": "SIMULATED",
+      "provider": "offline-audio-fixture",
+      "model": "no-model-called",
+      "reason": "Hand-authored VAD and ASR fixture; no real speech recognition"
+    },
+    "audioPresent": true,
+    "reliable": false,
+    "analyzedRanges": [
+      {
+        "startMs": 0,
+        "endMs": 140000
+      }
+    ],
+    "speechRanges": [
+      {
+        "startMs": 55000,
+        "endMs": 95000
+      },
+      {
+        "startMs": 122000,
+        "endMs": 128000
+      }
+    ]
+  },
+  "policy": {
+    "configVersion": "audio-planning-0.1",
+    "maxChunkMs": 30000,
+    "mergeGapMs": 1000,
+    "overlapMs": 500,
+    "maxChunks": 4096
+  },
+  "chunkResults": [
+    {
+      "chunkId": "audio_5e1c90140befdbcdc2250da05b593df9b04e44776ed20181c80e8f5f6fac9b0a",
+      "assetHash": "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "status": "SUCCESS",
+      "text": "这一段完整保留跨窗口的原始转写，继续说明时间轴引用。",
+      "source": {
+        "mode": "SIMULATED",
+        "provider": "offline-audio-fixture",
+        "model": "no-model-called",
+        "reason": "Hand-authored VAD and ASR fixture; no real speech recognition"
+      },
+      "error": null
+    },
+    {
+      "chunkId": "audio_41ba40e0608b2a1fe7d1b9090bdb3bf96491c464dbd6ee814817782b98fe8c06",
+      "assetHash": "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "status": "SUCCESS",
+      "text": "继续说明时间轴引用。后续音频块仍然保留原始全局时间。",
+      "source": {
+        "mode": "SIMULATED",
+        "provider": "offline-audio-fixture",
+        "model": "no-model-called",
+        "reason": "Hand-authored VAD and ASR fixture; no real speech recognition"
+      },
+      "error": null
+    },
+    {
+      "chunkId": "audio_e3e11768c2399e49c65564698d595e66a657611e3f5cb7cfacd1999f21eff486",
+      "assetHash": "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "status": "FAILED",
+      "text": null,
+      "source": {
+        "mode": "UNAVAILABLE",
+        "provider": null,
+        "model": null,
+        "reason": "Injected offline chunk failure"
+      },
+      "error": {
+        "code": "ADAPTER_ERROR",
+        "message": "Injected offline chunk failure",
+        "retryable": false
+      }
+    }
+  ]
+}

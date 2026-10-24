@@ -220,6 +220,16 @@ AnalyzeInput、TaskSubmission、TaskEvent 1.0 的独立契约、三端类型与�
 下一批接独立 VAD/ASR、选中彩色帧、分批 VLM 与 TemporalFusion。当前未迁移在线 AnalysisAgent，
 尚未完成 B2a-1 的完整多模态融合验收，也未调用模型或执行应用渲染。
 
+#### 2026-10-23 第三批实施记录
+
+已实现独立 VAD 观测、含重叠但每次请求不超过 30 秒的音频分片、异步 ASR 适配协议和逐块结果管理。
+转写只派生原始块级全局时间，跨窗口保留同一记录引用；局部失败、模拟、未知覆盖和无语音分别记录。
+新增本地视频/PCM WAV 检测、源 hash/PTS 对齐、离线回放 CLI，以及对应 CI 测试依赖。
+新增 96 项离线测试，隔离 Python 3.14 环境全量 477 项通过，包含真实 CPU VAD 静音验证与失败块恢复。
+实现与范围见[独立音频轨道](../contracts/offline-audio-track.md)。
+
+当前尚未接云端真实 ASR、选中彩色帧、分批 VLM 或 TemporalFusion，在线 AnalysisAgent 仍使用旧链路。
+
 #### 原定任务与验收范围
 
 实现 21 号文档的最小可用部分：

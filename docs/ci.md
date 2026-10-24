@@ -17,9 +17,11 @@
 ## 测试边界
 
 - CI 明确关闭 dotenv、强制模拟、清空模型凭证环境变量，无需仓库模型 Secrets。
-- Python 使用 [requirements-test.txt](../AgentCut-ai/requirements-test.txt)，依赖精确锁定。
+- Python 使用 [requirements-test.txt](../AgentCut-ai/requirements-test.txt) 与
+  [requirements-audio.txt](../AgentCut-ai/requirements-audio.txt)，依赖精确锁定。
   Pydantic 版本与契约生成环境一致；pip check 检查依赖兼容。
-- 测试环境不安装 OpenAI/LangChain、FunASR、PyAV/OpenCV 等可选运行库。模型/解码器路径通过替身验证。
+- 测试环境不安装 OpenAI/LangChain、FunASR、PyAV/OpenCV 等可选运行库。模型/解码器路径通过替身验证；
+  另安装小型本地 WebRTC VAD 组件，用合成 PCM 静音验证真实检测路径，无需云端模型。
 - Java 测试仅使用进程内对象与本机随机端口 HTTP server，不启动 MySQL、Redis、消息队列或 Python 服务。
 - 前端测试直接导入 TypeScript，使用 JSON import attributes 和 WebCrypto，因此统一要求 Node 24+。
   npm lockfile 使用官方注册表地址，并保留锁定版本与完整性校验。
@@ -52,7 +54,7 @@ Python：从仓库根目录创建独立测试虚拟环境，避免把开发模�
 
 ```sh
 python3.11 -m venv /tmp/agentcut-ci-python
-/tmp/agentcut-ci-python/bin/python -m pip install -r AgentCut-ai/requirements-test.txt
+/tmp/agentcut-ci-python/bin/python -m pip install -r AgentCut-ai/requirements-test.txt -r AgentCut-ai/requirements-audio.txt
 /tmp/agentcut-ci-python/bin/python -m pip check
 cd AgentCut-ai
 AGENTCUT_LOAD_DOTENV=false AGENTCUT_AI_SIMULATE=true AGENTCUT_VLM_API_KEY='' AGENTCUT_LLM_API_KEY='' \
