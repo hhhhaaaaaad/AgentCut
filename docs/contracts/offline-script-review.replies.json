@@ -1,0 +1,91 @@
+{
+  "reviewer": {
+    "source": {
+      "mode": "SIMULATED",
+      "provider": "hand-authored-review-fixture",
+      "model": null,
+      "reason": "Recorded fictional review/revision; no model endpoint or media was accessed"
+    },
+    "responses": [
+      {
+        "candidateHash": "sha256:283fc5216c06a52c43ecd1830529603d2f99561f22bcd061d8e77e04fe4951d3",
+        "passed": false,
+        "overallScore": 0.55,
+        "issues": [
+          {
+            "code": "CONTEXT_LOSS",
+            "severity": "HIGH",
+            "rowRefs": [
+              "row_f21a6af4d3c7f6b36fc8c01132d84c09b2ba0a18e0d14762061903a62e69dfc7"
+            ],
+            "unitRefs": [
+              "unit_df0b5bbc3388422b387930d134583ce90e127341ac081d1add4ca230d417ffc3"
+            ],
+            "evidenceRefs": [
+              "ending"
+            ],
+            "reason": "所选片段没有包含原文中的关机收纳提醒",
+            "suggestion": "追加该完整单元作为结尾，保持原序原速"
+          }
+        ],
+        "summary": "虚构评审：建议补回原文已有的结尾提醒"
+      },
+      {
+        "candidateHash": "sha256:aacc1e63d71bcbf1c770508e43e8d975a83f45f51f5f34e243ec5eef25ec4251",
+        "passed": true,
+        "overallScore": 0.95,
+        "issues": [],
+        "summary": "虚构评审通过；模拟来源不能升级为真实验收"
+      }
+    ]
+  },
+  "reviser": {
+    "source": {
+      "mode": "SIMULATED",
+      "provider": "hand-authored-review-fixture",
+      "model": null,
+      "reason": "Recorded fictional review/revision; no model endpoint or media was accessed"
+    },
+    "responses": [
+      {
+        "rows": [
+          {
+            "rowId": "row_7baf9243f7ffdeb0d5dfa2f124e95cfe8c350c13045dd9ba84b2e6c16378f277",
+            "sourceUnitRefs": [
+              "unit_c9da419640e9b21af692ceb7f21a80197cf4c4b3da0129a984fee4f9848fa6bb"
+            ],
+            "narrativeRole": "OTHER",
+            "selectionReason": "规则关键词召回，选题相关性需人工确认",
+            "packagingSuggestions": []
+          },
+          {
+            "rowId": "row_f21a6af4d3c7f6b36fc8c01132d84c09b2ba0a18e0d14762061903a62e69dfc7",
+            "sourceUnitRefs": [
+              "unit_8c3804d87f8477c67dee03b298dbdeb544308ceba3944fd1a74d87666b864034"
+            ],
+            "narrativeRole": "OTHER",
+            "selectionReason": "规则关键词召回，选题相关性需人工确认",
+            "packagingSuggestions": []
+          },
+          {
+            "rowId": "row_9c51d484e970e585408366be3ac4b5602d04f96f37e4b619c451c9afe83a76a2",
+            "sourceUnitRefs": [
+              "unit_df0b5bbc3388422b387930d134583ce90e127341ac081d1add4ca230d417ffc3"
+            ],
+            "narrativeRole": "CONCLUSION",
+            "selectionReason": "保留原文中的关机收纳提醒",
+            "packagingSuggestions": []
+          }
+        ]
+      }
+    ]
+  },
+  "policy": {
+    "maxRounds": 3,
+    "qualityThreshold": 0.85,
+    "maxContextUnits": 128,
+    "maxPromptChars": 160000,
+    "maxResponseChars": 40000,
+    "timeBudgetSeconds": 180.0
+  }
+}

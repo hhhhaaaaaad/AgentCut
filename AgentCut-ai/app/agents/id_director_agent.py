@@ -7,6 +7,7 @@ from typing import Literal
 
 from pydantic import Field, model_validator
 
+from app.agents.model_json import model_json_object
 from app.analysis.script_compiler import compile_script, index_ref
 from app.analysis.source_index import stable_id
 from app.schemas.script_contracts_v1 import (
@@ -142,23 +143,7 @@ def selection_note(mode, source):
 
 
 def _parse_proposal(text):
-    text = text.strip()
-    if text.startswith("```json\n") and text.endswith("```"):
-        text = text[8:-3].strip()
-    elif text.startswith("```\n") and text.endswith("```"):
-        text = text[4:-3].strip()
-
-    def pairs(items):
-        value = {}
-        for key, item in items:
-            require(key not in value, "duplicate JSON key")
-            value[key] = item
-        return value
-
-    def invalid_constant(_):
-        raise ValueError("nonfinite JSON number")
-
-    return DirectorProposal.model_validate(json.loads(text, object_pairs_hook=pairs, parse_constant=invalid_constant))
+    return DirectorProposal.model_validate(model_json_object(text))
 
 
 class IDDirectorAgent:

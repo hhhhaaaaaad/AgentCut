@@ -34,3 +34,13 @@ assert.equal(compiled.script.rows[1].sourceParts[0].sourceRange.startMs, 4500);
 assert.equal(compiled.script.rows[1].outputRange.startMs, 3000);
 assert.equal(compiled.script.captionCues.length, 0);
 console.log('Program-built ID director draft: accepted');
+
+const reviewed = await parseScriptContractBundleV1(JSON.parse(readFileSync(
+  new URL('../../docs/contracts/offline-script-review.bundle.json', import.meta.url), 'utf8')));
+assert.equal(reviewed.script.rows.length, 3);
+assert.equal(reviewed.script.estimatedDurationMs, 7000);
+assert.equal(reviewed.script.reviewStatus, 'NEEDS_REVIEW');
+assert.equal(reviewed.script.quality.passed, false);
+assert.equal(reviewed.script.quality.candidateHash, reviewed.script.scriptHash);
+assert.equal(reviewed.script.rows[2].outputRange.startMs, 6000);
+console.log('QA-projected script with simulated provenance: accepted');

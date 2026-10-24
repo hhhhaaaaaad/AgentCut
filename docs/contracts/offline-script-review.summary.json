@@ -1,0 +1,29 @@
+{
+  "status": "NEEDS_REVIEW",
+  "rounds": 2,
+  "revisions": 1,
+  "selectedRound": 2,
+  "stopReason": "ASSESSMENT_ACCEPTED",
+  "durationMs": 7000,
+  "qualityPassed": false,
+  "rows": 3,
+  "riskCodes": [
+    "COARSE_ALIGNMENT",
+    "SEMANTIC_REVIEW",
+    "SUBTITLE_UNAVAILABLE",
+    "UNTRUSTED_SOURCE",
+    "VISUAL_UNVERIFIED"
+  ],
+  "publications": [
+    {
+      "reviewedCandidateHash": "sha256:283fc5216c06a52c43ecd1830529603d2f99561f22bcd061d8e77e04fe4951d3",
+      "publishedCandidateHash": "sha256:0c6a4b3b89f0c94b395168768d6c14db20134451e47ae8157001114ecbfc13f1",
+      "unchangedContentHash": "sha256:9ba766309ce1c64aad858bdbd968fc960845d6e7f1abeda99d8123bcb39f48c5"
+    },
+    {
+      "reviewedCandidateHash": "sha256:aacc1e63d71bcbf1c770508e43e8d975a83f45f51f5f34e243ec5eef25ec4251",
+      "publishedCandidateHash": "sha256:d14d51f1bd447b3128877f74698cb9921b4206bc3035fac0431eb20d798834bd",
+      "unchangedContentHash": "sha256:bb78bdd8801562a126db496a441eac87ea02b523982875327d810777ed10eeff"
+    }
+  ]
+}
