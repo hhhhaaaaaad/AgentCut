@@ -90,6 +90,10 @@ public final class ScriptContractsV1 {
         validateBundle(bundle);
         return JSON.treeToValue(bundle, ScriptContractBundleV1.class);
     }
+    /** Structure alone does not replace full bundle/context validation. */
+    public static void validateStructure(String name, JsonNode value) {
+        B1Structure.validate(name, value);
+    }
     private static void validRange(JsonNode range, long duration) {
         require(num(range, "startMs") < num(range, "endMs") && num(range, "endMs") <= duration, "invalid source/output range");
     }

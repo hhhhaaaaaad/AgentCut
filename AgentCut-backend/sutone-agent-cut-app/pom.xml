@@ -18,6 +18,10 @@
     <dependencies>
         <dependency>
             <groupId>cn.sutone</groupId>
+            <artifactId>sutone-agent-cut-api</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>cn.sutone</groupId>
             <artifactId>sutone-agent-cut-domain</artifactId>
         </dependency>
         <dependency>
