@@ -24,3 +24,13 @@ for (const sample of corpus.cases) {
   }
 }
 console.log('B1 script/task corpus: ' + accepted + ' accepted, ' + rejected + ' rejected (' + corpus.cases.length + ' shared cases)');
+
+const generated = JSON.parse(readFileSync(new URL('../../docs/contracts/offline-id-director.bundle.json', import.meta.url), 'utf8'));
+const compiled = await parseScriptContractBundleV1(generated);
+assert.equal(compiled.materialIndex.scenes.length, 5);
+assert.equal(compiled.script.estimatedDurationMs, 6000);
+assert.equal(compiled.script.reviewStatus, 'NEEDS_REVIEW');
+assert.equal(compiled.script.rows[1].sourceParts[0].sourceRange.startMs, 4500);
+assert.equal(compiled.script.rows[1].outputRange.startMs, 3000);
+assert.equal(compiled.script.captionCues.length, 0);
+console.log('Program-built ID director draft: accepted');

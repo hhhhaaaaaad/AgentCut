@@ -1,0 +1,730 @@
+{
+  "materialIndex": {
+    "indexSchemaVersion": "1.0",
+    "indexId": "material_0506cae1ab8893dee8e84e8c0eff3a2657bb1c2d62781bad1608ce3ac35b6484",
+    "indexVersion": 1,
+    "indexHash": "sha256:853c0129fb0579145e45846e3bdb50956745fd0b9ffa6a65cbedd182784cbd35",
+    "assetRef": {
+      "assetId": "id_director_fixture",
+      "assetHash": "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "durationMs": 20000,
+      "displayName": "fictional-camera-demo.mp4"
+    },
+    "analysisRef": {
+      "artifactId": "camera_evidence",
+      "revision": 1,
+      "contentHash": "sha256:a96433d1610dad9a8709a9737ae8004539f06075e2d39f62c41ec79759911070"
+    },
+    "scenes": [
+      {
+        "sceneId": "scene_8758eb89d36c0e661f2b88798ceefb6d82e652821939575602c05cb93e7d6c36",
+        "sourceRange": {
+          "startMs": 0,
+          "endMs": 4000
+        }
+      },
+      {
+        "sceneId": "scene_ea90a96084275dd66b353b2fb30d4af9ababcab984dd8189bfccd19c67c801fa",
+        "sourceRange": {
+          "startMs": 4000,
+          "endMs": 8000
+        }
+      },
+      {
+        "sceneId": "scene_3f66c93ae6d6bac94f4bcb2bf6f597e97b26726542df122a262ce615f0c4be66",
+        "sourceRange": {
+          "startMs": 8000,
+          "endMs": 12000
+        }
+      },
+      {
+        "sceneId": "scene_a9c6c96bde94b0143bc7caaa85510bc06390c36d7706665ea2a297d03a57817b",
+        "sourceRange": {
+          "startMs": 12000,
+          "endMs": 16000
+        }
+      },
+      {
+        "sceneId": "scene_3197ebcd5b81ec9ce3b386acdcd7d0509c24a30e6928c6ff6956a00c15b2a65e",
+        "sourceRange": {
+          "startMs": 16000,
+          "endMs": 20000
+        }
+      }
+    ],
+    "observations": [
+      {
+        "frameId": "frame_0",
+        "sceneId": "scene_8758eb89d36c0e661f2b88798ceefb6d82e652821939575602c05cb93e7d6c36",
+        "timestampMs": 2000,
+        "description": "展示镜头操作",
+        "source": {
+          "mode": "SIMULATED",
+          "provider": "hand-authored-fixture",
+          "model": null,
+          "reason": "Fictional evidence for offline ID selection; no model or media processing"
+        }
+      },
+      {
+        "frameId": "frame_1",
+        "sceneId": "scene_ea90a96084275dd66b353b2fb30d4af9ababcab984dd8189bfccd19c67c801fa",
+        "timestampMs": 6000,
+        "description": "展示镜头操作",
+        "source": {
+          "mode": "SIMULATED",
+          "provider": "hand-authored-fixture",
+          "model": null,
+          "reason": "Fictional evidence for offline ID selection; no model or media processing"
+        }
+      }
+    ],
+    "transcripts": [
+      {
+        "transcriptId": "intro",
+        "sourceRange": {
+          "startMs": 500,
+          "endMs": 3500
+        },
+        "text": "先装好镜头，确认卡口锁紧。",
+        "timingQuality": "COARSE_BLOCK",
+        "source": {
+          "mode": "SIMULATED",
+          "provider": "hand-authored-fixture",
+          "model": null,
+          "reason": "Fictional evidence for offline ID selection; no model or media processing"
+        }
+      },
+      {
+        "transcriptId": "demo",
+        "sourceRange": {
+          "startMs": 4500,
+          "endMs": 7500
+        },
+        "text": "取下镜头盖后，再开机测试镜头。",
+        "timingQuality": "COARSE_BLOCK",
+        "source": {
+          "mode": "SIMULATED",
+          "provider": "hand-authored-fixture",
+          "model": null,
+          "reason": "Fictional evidence for offline ID selection; no model or media processing"
+        }
+      },
+      {
+        "transcriptId": "ending",
+        "sourceRange": {
+          "startMs": 18500,
+          "endMs": 19500
+        },
+        "text": "关机收好相机。",
+        "timingQuality": "COARSE_BLOCK",
+        "source": {
+          "mode": "SIMULATED",
+          "provider": "hand-authored-fixture",
+          "model": null,
+          "reason": "Fictional evidence for offline ID selection; no model or media processing"
+        }
+      }
+    ],
+    "units": [
+      {
+        "unitId": "unit_e774006a4bf85b00fa766f3fd7a325b10945fdadaf8eb850d8904e38a2b985fe",
+        "kind": "VISUAL_ONLY",
+        "sourceRange": {
+          "startMs": 0,
+          "endMs": 500
+        },
+        "originalText": "",
+        "timingQuality": "NONE",
+        "transcriptRefs": [],
+        "sceneRefs": [
+          "scene_8758eb89d36c0e661f2b88798ceefb6d82e652821939575602c05cb93e7d6c36"
+        ],
+        "frameRefs": [],
+        "asrSource": {
+          "mode": "UNAVAILABLE",
+          "provider": null,
+          "model": null,
+          "reason": "No audio evidence establishes absence of speech in this visual interval"
+        },
+        "dependencies": []
+      },
+      {
+        "unitId": "unit_c9da419640e9b21af692ceb7f21a80197cf4c4b3da0129a984fee4f9848fa6bb",
+        "kind": "SPEECH",
+        "sourceRange": {
+          "startMs": 500,
+          "endMs": 3500
+        },
+        "originalText": "先装好镜头，确认卡口锁紧。",
+        "timingQuality": "COARSE_BLOCK",
+        "transcriptRefs": [
+          "intro"
+        ],
+        "sceneRefs": [
+          "scene_8758eb89d36c0e661f2b88798ceefb6d82e652821939575602c05cb93e7d6c36"
+        ],
+        "frameRefs": [
+          "frame_0"
+        ],
+        "asrSource": {
+          "mode": "SIMULATED",
+          "provider": "hand-authored-fixture",
+          "model": null,
+          "reason": "Fictional evidence for offline ID selection; no model or media processing"
+        },
+        "dependencies": []
+      },
+      {
+        "unitId": "unit_95cff8bdc5001ec5eabe1464d633283ccbda8a99ca62ed8cef2ca763e1be5d43",
+        "kind": "VISUAL_ONLY",
+        "sourceRange": {
+          "startMs": 3500,
+          "endMs": 4000
+        },
+        "originalText": "",
+        "timingQuality": "NONE",
+        "transcriptRefs": [],
+        "sceneRefs": [
+          "scene_8758eb89d36c0e661f2b88798ceefb6d82e652821939575602c05cb93e7d6c36"
+        ],
+        "frameRefs": [],
+        "asrSource": {
+          "mode": "UNAVAILABLE",
+          "provider": null,
+          "model": null,
+          "reason": "No audio evidence establishes absence of speech in this visual interval"
+        },
+        "dependencies": []
+      },
+      {
+        "unitId": "unit_763c6ea2904345f85d779d4c650ca908f79d772eed07d38fc562e665b86de44a",
+        "kind": "VISUAL_ONLY",
+        "sourceRange": {
+          "startMs": 4000,
+          "endMs": 4500
+        },
+        "originalText": "",
+        "timingQuality": "NONE",
+        "transcriptRefs": [],
+        "sceneRefs": [
+          "scene_ea90a96084275dd66b353b2fb30d4af9ababcab984dd8189bfccd19c67c801fa"
+        ],
+        "frameRefs": [],
+        "asrSource": {
+          "mode": "UNAVAILABLE",
+          "provider": null,
+          "model": null,
+          "reason": "No audio evidence establishes absence of speech in this visual interval"
+        },
+        "dependencies": []
+      },
+      {
+        "unitId": "unit_8c3804d87f8477c67dee03b298dbdeb544308ceba3944fd1a74d87666b864034",
+        "kind": "SPEECH",
+        "sourceRange": {
+          "startMs": 4500,
+          "endMs": 7500
+        },
+        "originalText": "取下镜头盖后，再开机测试镜头。",
+        "timingQuality": "COARSE_BLOCK",
+        "transcriptRefs": [
+          "demo"
+        ],
+        "sceneRefs": [
+          "scene_ea90a96084275dd66b353b2fb30d4af9ababcab984dd8189bfccd19c67c801fa"
+        ],
+        "frameRefs": [
+          "frame_1"
+        ],
+        "asrSource": {
+          "mode": "SIMULATED",
+          "provider": "hand-authored-fixture",
+          "model": null,
+          "reason": "Fictional evidence for offline ID selection; no model or media processing"
+        },
+        "dependencies": [
+          {
+            "unitId": "unit_c9da419640e9b21af692ceb7f21a80197cf4c4b3da0129a984fee4f9848fa6bb",
+            "kind": "CONDITION",
+            "level": "REQUIRED"
+          }
+        ]
+      },
+      {
+        "unitId": "unit_fb969d74930e879827342b1365481879a6742be52ea9c390b445c4b235c17928",
+        "kind": "VISUAL_ONLY",
+        "sourceRange": {
+          "startMs": 7500,
+          "endMs": 8000
+        },
+        "originalText": "",
+        "timingQuality": "NONE",
+        "transcriptRefs": [],
+        "sceneRefs": [
+          "scene_ea90a96084275dd66b353b2fb30d4af9ababcab984dd8189bfccd19c67c801fa"
+        ],
+        "frameRefs": [],
+        "asrSource": {
+          "mode": "UNAVAILABLE",
+          "provider": null,
+          "model": null,
+          "reason": "No audio evidence establishes absence of speech in this visual interval"
+        },
+        "dependencies": []
+      },
+      {
+        "unitId": "unit_f2be6892907231867856970ad0f7cdf1d895f22544cbc585c8a1d3e0837d7712",
+        "kind": "VISUAL_ONLY",
+        "sourceRange": {
+          "startMs": 8000,
+          "endMs": 12000
+        },
+        "originalText": "",
+        "timingQuality": "NONE",
+        "transcriptRefs": [],
+        "sceneRefs": [
+          "scene_3f66c93ae6d6bac94f4bcb2bf6f597e97b26726542df122a262ce615f0c4be66"
+        ],
+        "frameRefs": [],
+        "asrSource": {
+          "mode": "UNAVAILABLE",
+          "provider": null,
+          "model": null,
+          "reason": "No audio evidence establishes absence of speech in this visual interval"
+        },
+        "dependencies": []
+      },
+      {
+        "unitId": "unit_b40ed933b27095eb4353013f5c0d10da73453166b5b2e1079bc9885c53cd7981",
+        "kind": "VISUAL_ONLY",
+        "sourceRange": {
+          "startMs": 12000,
+          "endMs": 16000
+        },
+        "originalText": "",
+        "timingQuality": "NONE",
+        "transcriptRefs": [],
+        "sceneRefs": [
+          "scene_a9c6c96bde94b0143bc7caaa85510bc06390c36d7706665ea2a297d03a57817b"
+        ],
+        "frameRefs": [],
+        "asrSource": {
+          "mode": "UNAVAILABLE",
+          "provider": null,
+          "model": null,
+          "reason": "No audio evidence establishes absence of speech in this visual interval"
+        },
+        "dependencies": []
+      },
+      {
+        "unitId": "unit_ff44c16a83962ad4cadd6339ba0dee3be597c495b42f6fe0ea2bc566304866df",
+        "kind": "VISUAL_ONLY",
+        "sourceRange": {
+          "startMs": 16000,
+          "endMs": 18500
+        },
+        "originalText": "",
+        "timingQuality": "NONE",
+        "transcriptRefs": [],
+        "sceneRefs": [
+          "scene_3197ebcd5b81ec9ce3b386acdcd7d0509c24a30e6928c6ff6956a00c15b2a65e"
+        ],
+        "frameRefs": [],
+        "asrSource": {
+          "mode": "UNAVAILABLE",
+          "provider": null,
+          "model": null,
+          "reason": "No audio evidence establishes absence of speech in this visual interval"
+        },
+        "dependencies": []
+      },
+      {
+        "unitId": "unit_df0b5bbc3388422b387930d134583ce90e127341ac081d1add4ca230d417ffc3",
+        "kind": "SPEECH",
+        "sourceRange": {
+          "startMs": 18500,
+          "endMs": 19500
+        },
+        "originalText": "关机收好相机。",
+        "timingQuality": "COARSE_BLOCK",
+        "transcriptRefs": [
+          "ending"
+        ],
+        "sceneRefs": [
+          "scene_3197ebcd5b81ec9ce3b386acdcd7d0509c24a30e6928c6ff6956a00c15b2a65e"
+        ],
+        "frameRefs": [],
+        "asrSource": {
+          "mode": "SIMULATED",
+          "provider": "hand-authored-fixture",
+          "model": null,
+          "reason": "Fictional evidence for offline ID selection; no model or media processing"
+        },
+        "dependencies": []
+      },
+      {
+        "unitId": "unit_32d6ad8c57ab83cd18ae0a3c9534bda69a53285bfa3d0dc291a660c3e3862be0",
+        "kind": "VISUAL_ONLY",
+        "sourceRange": {
+          "startMs": 19500,
+          "endMs": 20000
+        },
+        "originalText": "",
+        "timingQuality": "NONE",
+        "transcriptRefs": [],
+        "sceneRefs": [
+          "scene_3197ebcd5b81ec9ce3b386acdcd7d0509c24a30e6928c6ff6956a00c15b2a65e"
+        ],
+        "frameRefs": [],
+        "asrSource": {
+          "mode": "UNAVAILABLE",
+          "provider": null,
+          "model": null,
+          "reason": "No audio evidence establishes absence of speech in this visual interval"
+        },
+        "dependencies": []
+      }
+    ]
+  },
+  "decision": {
+    "decisionSchemaVersion": "1.0",
+    "decisionId": "decision_deaee75439f188754d56f5905d48792f5950c60f5431a536c62cc311cde62008",
+    "indexRef": {
+      "indexId": "material_0506cae1ab8893dee8e84e8c0eff3a2657bb1c2d62781bad1608ce3ac35b6484",
+      "indexVersion": 1,
+      "indexHash": "sha256:853c0129fb0579145e45846e3bdb50956745fd0b9ffa6a65cbedd182784cbd35"
+    },
+    "inputHash": "sha256:a3f3431d9a7728ec35cefd68fc882a08ef7ee1864159fca82d26dceb29d71113",
+    "rows": [
+      {
+        "rowId": "row_7baf9243f7ffdeb0d5dfa2f124e95cfe8c350c13045dd9ba84b2e6c16378f277",
+        "sourceUnitRefs": [
+          "unit_c9da419640e9b21af692ceb7f21a80197cf4c4b3da0129a984fee4f9848fa6bb"
+        ],
+        "narrativeRole": "OTHER",
+        "selectionReason": "规则关键词召回，选题相关性需人工确认",
+        "packagingSuggestions": []
+      },
+      {
+        "rowId": "row_f21a6af4d3c7f6b36fc8c01132d84c09b2ba0a18e0d14762061903a62e69dfc7",
+        "sourceUnitRefs": [
+          "unit_8c3804d87f8477c67dee03b298dbdeb544308ceba3944fd1a74d87666b864034"
+        ],
+        "narrativeRole": "OTHER",
+        "selectionReason": "规则关键词召回，选题相关性需人工确认",
+        "packagingSuggestions": []
+      }
+    ]
+  },
+  "script": {
+    "scriptSchemaVersion": "1.0",
+    "scriptId": "script_f46b9a2f3484a74ddcc56dacfeed6b7b077fda699051a073da11d1da10ee60f4",
+    "revision": 1,
+    "projectId": "project_camera",
+    "generationTaskId": "task_camera",
+    "assetRef": {
+      "assetId": "id_director_fixture",
+      "assetHash": "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "durationMs": 20000,
+      "displayName": "fictional-camera-demo.mp4"
+    },
+    "indexRef": {
+      "indexId": "material_0506cae1ab8893dee8e84e8c0eff3a2657bb1c2d62781bad1608ce3ac35b6484",
+      "indexVersion": 1,
+      "indexHash": "sha256:853c0129fb0579145e45846e3bdb50956745fd0b9ffa6a65cbedd182784cbd35"
+    },
+    "inputHash": "sha256:a3f3431d9a7728ec35cefd68fc882a08ef7ee1864159fca82d26dceb29d71113",
+    "target": {
+      "mode": "TOPIC_EXTRACT",
+      "topic": "镜头",
+      "maxDurationMs": 10000,
+      "desiredDurationMs": 8000,
+      "aspectRatio": "9:16",
+      "subtitleRequested": true,
+      "style": "原声演示",
+      "contentType": "TUTORIAL_INTERVIEW",
+      "editPolicy": "ORIGINAL_ORDER_ORIGINAL_SPEED_HARD_CUT"
+    },
+    "title": "镜头使用演示",
+    "rows": [
+      {
+        "rowId": "row_7baf9243f7ffdeb0d5dfa2f124e95cfe8c350c13045dd9ba84b2e6c16378f277",
+        "shotNo": 1,
+        "sourceUnitRefs": [
+          "unit_c9da419640e9b21af692ceb7f21a80197cf4c4b3da0129a984fee4f9848fa6bb"
+        ],
+        "sourceParts": [
+          {
+            "unitId": "unit_c9da419640e9b21af692ceb7f21a80197cf4c4b3da0129a984fee4f9848fa6bb",
+            "sourceRange": {
+              "startMs": 500,
+              "endMs": 3500
+            }
+          }
+        ],
+        "outputRange": {
+          "startMs": 0,
+          "endMs": 3000
+        },
+        "spokenQuotes": [
+          {
+            "unitId": "unit_c9da419640e9b21af692ceb7f21a80197cf4c4b3da0129a984fee4f9848fa6bb",
+            "text": "先装好镜头，确认卡口锁紧。"
+          }
+        ],
+        "visualEvidence": [
+          {
+            "frameId": "frame_0",
+            "observedDescription": "展示镜头操作"
+          }
+        ],
+        "narrativeRole": "OTHER",
+        "selectionReason": "规则关键词召回，选题相关性需人工确认",
+        "dependencyRefs": [],
+        "riskRefs": [
+          "risk_cd827d5e89fbf6081083ac9ba9e60ed51f099677ec715cbc779b61ecc3eae12c",
+          "risk_fe345e9ca3269e30d7414c75c08beb27c95e61603bcf3642caf5e8b17b58cd48",
+          "risk_e51c9f191ba85dac0ce0593830c60b85c1e29c39c61517c9a187f76ba64d85ab",
+          "risk_bdc8ad3829ee04cc99f6872a65459c38e3ce478ead59357fcae9c2a797614847"
+        ],
+        "treatmentNote": "",
+        "audioTreatment": "ORIGINAL",
+        "cutNotes": "原序、原速、硬切；不推断句内边界"
+      },
+      {
+        "rowId": "row_f21a6af4d3c7f6b36fc8c01132d84c09b2ba0a18e0d14762061903a62e69dfc7",
+        "shotNo": 2,
+        "sourceUnitRefs": [
+          "unit_8c3804d87f8477c67dee03b298dbdeb544308ceba3944fd1a74d87666b864034"
+        ],
+        "sourceParts": [
+          {
+            "unitId": "unit_8c3804d87f8477c67dee03b298dbdeb544308ceba3944fd1a74d87666b864034",
+            "sourceRange": {
+              "startMs": 4500,
+              "endMs": 7500
+            }
+          }
+        ],
+        "outputRange": {
+          "startMs": 3000,
+          "endMs": 6000
+        },
+        "spokenQuotes": [
+          {
+            "unitId": "unit_8c3804d87f8477c67dee03b298dbdeb544308ceba3944fd1a74d87666b864034",
+            "text": "取下镜头盖后，再开机测试镜头。"
+          }
+        ],
+        "visualEvidence": [
+          {
+            "frameId": "frame_1",
+            "observedDescription": "展示镜头操作"
+          }
+        ],
+        "narrativeRole": "OTHER",
+        "selectionReason": "规则关键词召回，选题相关性需人工确认",
+        "dependencyRefs": [
+          "unit_c9da419640e9b21af692ceb7f21a80197cf4c4b3da0129a984fee4f9848fa6bb"
+        ],
+        "riskRefs": [
+          "risk_5535ce290342df07f7f8cc2848759a47d750c61c11896c183498b2ba651f12fc",
+          "risk_650b8c3bdb3b196178828423a1ccfe6c2a45cecc7ef4094dfddae2baaac6e056",
+          "risk_3265141f31348a04defffd552a7f7a0778f54ef05180c0c38ef08d5e3a5c045c",
+          "risk_3112e643179e754df3af9643b60a7ea57d0f35be4eccc95a18b02545d61ebe32"
+        ],
+        "treatmentNote": "",
+        "audioTreatment": "ORIGINAL",
+        "cutNotes": "原序、原速、硬切；不推断句内边界"
+      }
+    ],
+    "estimatedDurationMs": 6000,
+    "captionCues": [],
+    "executableActions": [
+      {
+        "actionId": "audio_row_7baf9243f7ffdeb0d5dfa2f124e95cfe8c350c13045dd9ba84b2e6c16378f277",
+        "type": "ORIGINAL_AUDIO",
+        "rowId": "row_7baf9243f7ffdeb0d5dfa2f124e95cfe8c350c13045dd9ba84b2e6c16378f277",
+        "cueId": null
+      },
+      {
+        "actionId": "audio_row_f21a6af4d3c7f6b36fc8c01132d84c09b2ba0a18e0d14762061903a62e69dfc7",
+        "type": "ORIGINAL_AUDIO",
+        "rowId": "row_f21a6af4d3c7f6b36fc8c01132d84c09b2ba0a18e0d14762061903a62e69dfc7",
+        "cueId": null
+      }
+    ],
+    "packagingSuggestions": [],
+    "manualNotes": "规则基线草稿，未经过模型语义评审；包装仅为建议，未执行；需人工回查原片与原话",
+    "riskItems": [
+      {
+        "riskId": "risk_cd827d5e89fbf6081083ac9ba9e60ed51f099677ec715cbc779b61ecc3eae12c",
+        "code": "COARSE_ALIGNMENT",
+        "level": "REVIEW",
+        "rowRefs": [
+          "row_7baf9243f7ffdeb0d5dfa2f124e95cfe8c350c13045dd9ba84b2e6c16378f277"
+        ],
+        "unitRefs": [
+          "unit_c9da419640e9b21af692ceb7f21a80197cf4c4b3da0129a984fee4f9848fa6bb"
+        ],
+        "message": "仅有块级时间，整块选择，不提供句内切点"
+      },
+      {
+        "riskId": "risk_fe345e9ca3269e30d7414c75c08beb27c95e61603bcf3642caf5e8b17b58cd48",
+        "code": "UNTRUSTED_SOURCE",
+        "level": "REVIEW",
+        "rowRefs": [
+          "row_7baf9243f7ffdeb0d5dfa2f124e95cfe8c350c13045dd9ba84b2e6c16378f277"
+        ],
+        "unitRefs": [
+          "unit_c9da419640e9b21af692ceb7f21a80197cf4c4b3da0129a984fee4f9848fa6bb"
+        ],
+        "message": "原声证据为模拟、降级或未知；不得作为已验证原话"
+      },
+      {
+        "riskId": "risk_e51c9f191ba85dac0ce0593830c60b85c1e29c39c61517c9a187f76ba64d85ab",
+        "code": "VISUAL_UNVERIFIED",
+        "level": "REVIEW",
+        "rowRefs": [
+          "row_7baf9243f7ffdeb0d5dfa2f124e95cfe8c350c13045dd9ba84b2e6c16378f277"
+        ],
+        "unitRefs": [
+          "unit_c9da419640e9b21af692ceb7f21a80197cf4c4b3da0129a984fee4f9848fa6bb"
+        ],
+        "message": "该单元缺少真实帧观察，需要回查原片"
+      },
+      {
+        "riskId": "risk_bdc8ad3829ee04cc99f6872a65459c38e3ce478ead59357fcae9c2a797614847",
+        "code": "SUBTITLE_UNAVAILABLE",
+        "level": "REVIEW",
+        "rowRefs": [
+          "row_7baf9243f7ffdeb0d5dfa2f124e95cfe8c350c13045dd9ba84b2e6c16378f277"
+        ],
+        "unitRefs": [
+          "unit_c9da419640e9b21af692ceb7f21a80197cf4c4b3da0129a984fee4f9848fa6bb"
+        ],
+        "message": "请求了字幕，但缺少真实可靠的整条对齐；不按字数伪造时间"
+      },
+      {
+        "riskId": "risk_5535ce290342df07f7f8cc2848759a47d750c61c11896c183498b2ba651f12fc",
+        "code": "COARSE_ALIGNMENT",
+        "level": "REVIEW",
+        "rowRefs": [
+          "row_f21a6af4d3c7f6b36fc8c01132d84c09b2ba0a18e0d14762061903a62e69dfc7"
+        ],
+        "unitRefs": [
+          "unit_8c3804d87f8477c67dee03b298dbdeb544308ceba3944fd1a74d87666b864034"
+        ],
+        "message": "仅有块级时间，整块选择，不提供句内切点"
+      },
+      {
+        "riskId": "risk_650b8c3bdb3b196178828423a1ccfe6c2a45cecc7ef4094dfddae2baaac6e056",
+        "code": "UNTRUSTED_SOURCE",
+        "level": "REVIEW",
+        "rowRefs": [
+          "row_f21a6af4d3c7f6b36fc8c01132d84c09b2ba0a18e0d14762061903a62e69dfc7"
+        ],
+        "unitRefs": [
+          "unit_8c3804d87f8477c67dee03b298dbdeb544308ceba3944fd1a74d87666b864034"
+        ],
+        "message": "原声证据为模拟、降级或未知；不得作为已验证原话"
+      },
+      {
+        "riskId": "risk_3265141f31348a04defffd552a7f7a0778f54ef05180c0c38ef08d5e3a5c045c",
+        "code": "VISUAL_UNVERIFIED",
+        "level": "REVIEW",
+        "rowRefs": [
+          "row_f21a6af4d3c7f6b36fc8c01132d84c09b2ba0a18e0d14762061903a62e69dfc7"
+        ],
+        "unitRefs": [
+          "unit_8c3804d87f8477c67dee03b298dbdeb544308ceba3944fd1a74d87666b864034"
+        ],
+        "message": "该单元缺少真实帧观察，需要回查原片"
+      },
+      {
+        "riskId": "risk_3112e643179e754df3af9643b60a7ea57d0f35be4eccc95a18b02545d61ebe32",
+        "code": "SUBTITLE_UNAVAILABLE",
+        "level": "REVIEW",
+        "rowRefs": [
+          "row_f21a6af4d3c7f6b36fc8c01132d84c09b2ba0a18e0d14762061903a62e69dfc7"
+        ],
+        "unitRefs": [
+          "unit_8c3804d87f8477c67dee03b298dbdeb544308ceba3944fd1a74d87666b864034"
+        ],
+        "message": "请求了字幕，但缺少真实可靠的整条对齐；不按字数伪造时间"
+      },
+      {
+        "riskId": "risk_39a2e093daa792f7e4d831066c7b8c30250550de9f5c5f5d407ec87e952a08fd",
+        "code": "QA_UNAVAILABLE",
+        "level": "REVIEW",
+        "rowRefs": [],
+        "unitRefs": [],
+        "message": "此版本尚未经过绑定候选的语义 QA，保留人工复核草稿"
+      },
+      {
+        "riskId": "risk_fee0ab90b87f7c2955177640be9a1e81205873cca8da3d0d3ce207d3994f5cbd",
+        "code": "SEMANTIC_REVIEW",
+        "level": "REVIEW",
+        "rowRefs": [],
+        "unitRefs": [],
+        "message": "选题相关性及未声明的上下文依赖仍需回查；结构合法不证明原意完整"
+      }
+    ],
+    "scriptHash": "sha256:5a56017cf69431a24f909936f14602a75de40edf7a1e312b69a933337db00cca",
+    "validationReport": {
+      "validationVersion": "id-script-compiler-0.1",
+      "candidateHash": "sha256:5a56017cf69431a24f909936f14602a75de40edf7a1e312b69a933337db00cca",
+      "hardPassed": true,
+      "issueRefs": [
+        "risk_cd827d5e89fbf6081083ac9ba9e60ed51f099677ec715cbc779b61ecc3eae12c",
+        "risk_fe345e9ca3269e30d7414c75c08beb27c95e61603bcf3642caf5e8b17b58cd48",
+        "risk_e51c9f191ba85dac0ce0593830c60b85c1e29c39c61517c9a187f76ba64d85ab",
+        "risk_bdc8ad3829ee04cc99f6872a65459c38e3ce478ead59357fcae9c2a797614847",
+        "risk_5535ce290342df07f7f8cc2848759a47d750c61c11896c183498b2ba651f12fc",
+        "risk_650b8c3bdb3b196178828423a1ccfe6c2a45cecc7ef4094dfddae2baaac6e056",
+        "risk_3265141f31348a04defffd552a7f7a0778f54ef05180c0c38ef08d5e3a5c045c",
+        "risk_3112e643179e754df3af9643b60a7ea57d0f35be4eccc95a18b02545d61ebe32",
+        "risk_39a2e093daa792f7e4d831066c7b8c30250550de9f5c5f5d407ec87e952a08fd",
+        "risk_fee0ab90b87f7c2955177640be9a1e81205873cca8da3d0d3ce207d3994f5cbd"
+      ]
+    },
+    "quality": null,
+    "reviewStatus": "NEEDS_REVIEW"
+  },
+  "submission": {
+    "protocolVersion": "1.0",
+    "messageType": "ANALYZE_REQUEST",
+    "taskId": "task_camera",
+    "projectId": "project_camera",
+    "runId": "run_camera",
+    "attempt": 1,
+    "inputHash": "sha256:a3f3431d9a7728ec35cefd68fc882a08ef7ee1864159fca82d26dceb29d71113",
+    "configVersion": "offline-id-fixture-1",
+    "input": {
+      "inputSchemaVersion": "1.0",
+      "requestId": "request_camera",
+      "assetId": "id_director_fixture",
+      "taskName": "镜头使用演示",
+      "target": {
+        "mode": "TOPIC_EXTRACT",
+        "topic": "镜头",
+        "maxDurationMs": 10000,
+        "desiredDurationMs": 8000,
+        "aspectRatio": "9:16",
+        "subtitleRequested": true,
+        "style": "原声演示",
+        "contentType": "TUTORIAL_INTERVIEW",
+        "editPolicy": "ORIGINAL_ORDER_ORIGINAL_SPEED_HARD_CUT"
+      }
+    },
+    "assetRef": {
+      "assetId": "id_director_fixture",
+      "assetHash": "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "durationMs": 20000,
+      "displayName": "fictional-camera-demo.mp4"
+    },
+    "mediaObjectKey": "fixtures/camera.mp4",
+    "callbackUrl": "http://127.0.0.1:8080/unused-offline-callback"
+  },
+  "events": []
+}
